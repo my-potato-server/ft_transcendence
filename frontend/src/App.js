@@ -47,14 +47,11 @@ class app {
 	}
 
 	dummyClickEvent = ({target}) => {
-        if(target.classList.contains('A')){
-            this.setState({...this.state, locate : '/A'});
+        if(target.classList.contains('Mainpage')){
+            this.setState({...this.state, locate : '/src/pages/Main'});
         }
-        if(target.classList.contains('B')){
-            this.setState({...this.state, locate: '/B'});
-        }
-        if(target.classList.contains('C')){
-            this.setState({...this.state, locate: '/C'});
+        if(target.classList.contains('Signup')){
+            this.setState({...this.state, locate: '/src/pages/Signup'});
         }
     }
 
