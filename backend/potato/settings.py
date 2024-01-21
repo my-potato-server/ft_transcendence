@@ -26,12 +26,13 @@ SECRET_KEY = 'django-insecure-_g#qjxda8#a@a$x0o3avpk8ea^@#3&hb!sa!vc_9e7#v8w7+c1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -72,7 +73,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'potato.wsgi.application'
+# WSGI_APPLICATION = 'potato.wsgi.application'
+ASGI_APPLICATION = 'potato.asgi.application'
 
 
 # Database

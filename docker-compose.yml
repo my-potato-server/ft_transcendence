@@ -32,10 +32,10 @@ services:
         - POSTGRES_PASSWORD=password
         - POSTGRES_INITDB_ARGS=--encoding=UTF-8
 
-#  gameserver:
-#    container_name: gameserver
-#    build: ./gameserver
-#    ports:
-#      - "8000:8000"
-#    depends_on:
-#      - db
+  backend:
+    container_name: backend
+    build: ./backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
