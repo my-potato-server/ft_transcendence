@@ -1,0 +1,41 @@
+version: "3"
+
+volumes:
+  db_data: {}
+  frontend: {}
+
+services:
+  nginx:
+    container_name: nginx
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+#      - ./nginx/conf.d:/etc/nginx/conf.d
+#      - ./nginx/html:/usr/share/nginx/html
+
+  db:
+    container_name: db
+    image: postgres:16
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+        - db_data:/var/lib/postgresql/data
+    environment:
+        - POSTGRES_DB=db
+        - POSTGRES_USER=user
+        - POSTGRES_PASSWORD=password
+        - POSTGRES_INITDB_ARGS=--encoding=UTF-8
+
+#  gameserver:
+#    container_name: gameserver
+#    build: ./gameserver
+#    ports:
+#      - "8000:8000"
+#    depends_on:
+#      - db
