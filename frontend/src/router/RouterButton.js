@@ -18,19 +18,5 @@ export function Heart() {
 	return `
 	<button onclick="printHeart()">하트 출력</button>
     <div id="heart"></div>
-
-    <script>
-        function printHeart() {
-            var heart = "
-  __  __
- /  \\/  \\
- \\     / 
-  \\   /  
-   \\ /   
-    V
-            ";
-            document.getElementById("heart").innerText = heart;
-        }
-	</script>
 	`
 };

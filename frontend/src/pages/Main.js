@@ -17,6 +17,24 @@ export default class Mainpage extends Component {
 	}
 
 	setEvent() {
+		const heartButton = this.$parent.querySelector('button[onclick="printHeart()"]');
+        if (heartButton) {
+            heartButton.onclick = () => this.printHeart();
+        }
+	}
 
+	printHeart() {
+		const heart = `
+  __  __
+ /  \\/  \\
+ \\     / 
+  \\   /  
+   \\ /   
+    V
+		`;
+		const heartContainer = this.$parent.querySelector('#heart');
+		if (heartContainer) {
+			heartContainer.innerHTML = `<pre>${heart}</pre>`;
+		}
 	}
 }
