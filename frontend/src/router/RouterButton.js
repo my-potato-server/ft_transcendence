@@ -1,4 +1,5 @@
-export default function RouterButton() {
+export function RouterButton() {
+	console.log("RouterButton");
 	return `
 		<button type="button" class="Mainpage">
 			Mainpage
@@ -13,6 +14,7 @@ export default function RouterButton() {
 };
 
 export function Heart() {
+	console.log("Heart");
 	return `
 	<button onclick="printHeart()">하트 출력</button>
     <div id="heart"></div>
@@ -29,5 +31,6 @@ export function Heart() {
             ";
             document.getElementById("heart").innerText = heart;
         }
+	</script>
 	`
 };

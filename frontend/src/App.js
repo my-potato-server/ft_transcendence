@@ -17,28 +17,38 @@ class app {
 	}
 
 	setState(newState) {
+		console.log("setState called");
 		const { locate } = this.state;
 		this.state = {...this.state, ...newState};
+		console.log(this.state);
+		console.log(locate);
 		this.render();
+		console.log("setState end");
 	}
 
 	render() {
+		console.log("render start");
 		this.root.innerHTML = '';
 
 		let { locate } = this.state;
-
-		console.log(locate);
-
-		if (locate === '/Mainpage') {
+		console.log("render's locate", locate, this.state);
+		if (locate === '/src/pages/Main.js') {
 			this.Mainpage.renderSequnce(this.state);
 			// this.historyRouterPush('/Mainpage');
 		}
-		else if (locate === '/Signup') {
+		else if (locate === '/src/pages/Signup.js') {
 			this.Signup.renderSequnce(this.state);
 			// this.historyRouterPush('/Signup');
 		}
+		else {
+			this.state = {...this.state, locate : '/Mainpage'};
+			this.Mainpage.renderSequnce(this.state);
+			// this.historyRouterPush('/Mainpage');
+		}
 
 		this.historyRouterPush(locate);
+
+		console.log("render end");
 	}
 
 	historyRouterPush(locate) {
@@ -47,10 +57,10 @@ class app {
 
 	dummyClickEvent = ({target}) => {
         if(target.classList.contains('Mainpage')){
-            this.setState({...this.state, locate : '/src/pages/Main'});
+            this.setState({...this.state, locate : '/src/pages/Main.js'});
         }
         if(target.classList.contains('Signup')){
-            this.setState({...this.state, locate: '/src/pages/Signup'});
+            this.setState({...this.state, locate: '/src/pages/Signup.js'});
         }
     }
 
