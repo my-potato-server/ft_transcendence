@@ -30,13 +30,13 @@ class app {
 		console.log(locate);
 
 		if (locate === '/Mainpage') {
-			this.Mainpage.renderSequnce();
+			this.Mainpage.renderSequnce(this.state);
 		}
 		else if (locate === '/Signup') {
-			this.Signup.renderSequnce();
+			this.Signup.renderSequnce(this.state);
 		}
 		else {
-			this.Mainpage.renderSequnce();
+			this.Mainpage.renderSequnce(this.state);
 		}
 
 		this.historyRouterPush(locate);

@@ -18,7 +18,7 @@ export default class Component {
 
 	setEvent() {} // 이벤트 설정
 
-	renderSequnce() {
+	renderSequnce(state) {
 		this.state = state;
 		this.#render();
 		this.setEvent();
