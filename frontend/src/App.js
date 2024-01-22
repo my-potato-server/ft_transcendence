@@ -1,5 +1,5 @@
-import Mainpage from "./pages/Main";
-import Signup from "./pages/Signup";
+import Mainpage from "./pages/Main.js";
+import Signup from "./pages/Signup.js";
 
 class app {
 
@@ -31,12 +31,11 @@ class app {
 
 		if (locate === '/Mainpage') {
 			this.Mainpage.renderSequnce(this.state);
+			// this.historyRouterPush('/Mainpage');
 		}
 		else if (locate === '/Signup') {
 			this.Signup.renderSequnce(this.state);
-		}
-		else {
-			this.Mainpage.renderSequnce(this.state);
+			// this.historyRouterPush('/Signup');
 		}
 
 		this.historyRouterPush(locate);

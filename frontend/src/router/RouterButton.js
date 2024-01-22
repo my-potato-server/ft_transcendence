@@ -3,16 +3,16 @@ export default function RouterButton() {
 		<button type="button" class="Mainpage">
 			Mainpage
 		</button>
-		<butoon type="button" class="Signup">
+		<button type="button" class="Signup">
 			Signup
 		</button>
 		<button type="button" class="Login">
 			Login
 		</button>
 	`
-}
+};
 
-export default function Heart() {
+export function Heart() {
 	return `
 	<button onclick="printHeart()">하트 출력</button>
     <div id="heart"></div>
@@ -30,4 +30,4 @@ export default function Heart() {
             document.getElementById("heart").innerText = heart;
         }
 	`
-}
+};
