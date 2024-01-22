@@ -13,8 +13,12 @@ services:
     restart: always
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./frontend:/usr/share/nginx/html
+      - ./nginx.crt:/etc/ssl/certs/nginx.crt
+      - ./nginx.key:/etc/ssl/private/nginx.key
 #      - ./nginx/conf.d:/etc/nginx/conf.d
 #      - ./nginx/html:/usr/share/nginx/html
 
