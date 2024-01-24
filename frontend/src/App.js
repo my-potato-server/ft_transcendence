@@ -1,5 +1,7 @@
+// src/App.js
+
 import Mainpage from "./pages/Main.js";
-import Signup from "./pages/Signup.js";
+// import Signup from "./pages/Signup.js";
 import Login from "./pages/Login.js"
 
 class app {
@@ -11,11 +13,12 @@ class app {
 		const ObjectForDI = {$parent:this.root, setState : this.setState.bind(this), state : this.state};
 
 		this.Mainpage = new Mainpage(ObjectForDI);
-		this.Signup = new Signup(ObjectForDI);
+		// this.Signup = new Signup(ObjectForDI);
 		this.Login = new Login(ObjectForDI);
 
 		this.render();
 		this.setDummyEvent();
+
 	}
 
 	setState(newState) {
@@ -34,14 +37,14 @@ class app {
 
 		let { locate } = this.state;
 		console.log("render's locate", locate, this.state);
-		if (locate === '/src/pages/Main.js') {
+		if (locate === '/src/pages/Main') {
 			this.Mainpage.renderSequnce(this.state);
 			// this.historyRouterPush('/Mainpage');
 		}
-		else if (locate === '/src/pages/Signup.js') {
-			this.Signup.renderSequnce(this.state);
-			// this.historyRouterPush('/Signup');
-		}
+		// else if (locate === '/src/pages/Signup.js') {
+		// 	this.Signup.renderSequnce(this.state);
+		// 	// this.historyRouterPush('/Signup');
+		// }
 		else if (locate === '/') {
 			this.Login.renderSequnce(this.state);
 		// 	// this.historyRouterPush('/Mainpage');
@@ -53,21 +56,33 @@ class app {
 	}
 
 	historyRouterPush(locate) {
-		window.history.pushState({}, locate, window.location.origin + locate);
-	}
+        // 현재 위치와 새 위치가 다를 때만 히스토리를 업데이트합니다.
+        if (window.location.pathname !== locate) {
+            window.history.pushState({}, '', locate);
+        }
+    }
+
 
 	dummyClickEvent = ({target}) => {
         if(target.classList.contains('Mainpage')){
-            this.setState({...this.state, locate : '/src/pages/Main.js'});
+            this.setState({...this.state, locate : '/src/pages/Main'});
         }
-        if(target.classList.contains('Signup')){
-            this.setState({...this.state, locate: '/src/pages/Signup.js'});
-        }
+		if(target.classList.contains("Log In")){
+			this.setState({...this.state, locate: '/src/pages/Login'});
+		}
     }
 
     setDummyEvent(){
         this.root.addEventListener('click', this.dummyClickEvent);
     }
+
+	initPopStateEvent() {
+        window.addEventListener('popstate', (event) => {
+            // 현재 URL의 경로를 기반으로 상태를 설정합니다.
+            this.setState({ locate: window.location.pathname });
+        });
+    }
 }
 
-new app();
+const myApp = new app();
+myApp.initPopStateEvent();

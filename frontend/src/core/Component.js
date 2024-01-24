@@ -1,4 +1,5 @@
 // src/core/Component.js
+
 export default class Component {
 
 	constructor($parent, setState, state) {

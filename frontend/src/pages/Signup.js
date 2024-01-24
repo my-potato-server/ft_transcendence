@@ -1,5 +1,6 @@
+// src/pages/Signup.js
+
 import Component from "../core/Component.js";
-import { RouterButton } from "../router/RouterButton.js";
 
 export default class Signup extends Component {
 
@@ -16,4 +17,21 @@ export default class Signup extends Component {
 	setEvent() {
 
 	}
+
+	
 }
+
+export function RouterButton() {
+	console.log("RouterButton");
+	return `
+		<button type="button" class="Mainpage">
+			Mainpage
+		</button>
+		<button type="button" class="Signup">
+			Signup
+		</button>
+		<button type="button" class="Login">
+			Login
+		</button>
+	`
+};
