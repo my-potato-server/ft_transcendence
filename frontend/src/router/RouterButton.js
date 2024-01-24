@@ -20,3 +20,20 @@ export function Heart() {
     <div id="heart"></div>
 	`
 };
+
+export function LoginButton() {
+	console.log("Login");
+	return `
+		<div class="login">
+			<div class="login__container">
+				<h1>Login</h1>
+				<form action="/login" method="POST">
+					<input type="text" name="id" placeholder="ID" />
+					<input type="password" name="password" placeholder="Password" />
+					<input type="submit" value="Log In" />
+				</form>
+				<a href="/signup">Sign up</a>
+			</div>
+		</div>
+	`
+}

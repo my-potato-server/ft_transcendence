@@ -1,5 +1,6 @@
 import Mainpage from "./pages/Main.js";
 import Signup from "./pages/Signup.js";
+import Login from "./pages/Login.js"
 
 class app {
 
@@ -11,6 +12,7 @@ class app {
 
 		this.Mainpage = new Mainpage(ObjectForDI);
 		this.Signup = new Signup(ObjectForDI);
+		this.Login = new Login(ObjectForDI);
 
 		this.render();
 		this.setDummyEvent();
@@ -40,10 +42,9 @@ class app {
 			this.Signup.renderSequnce(this.state);
 			// this.historyRouterPush('/Signup');
 		}
-		else {
-			this.state = {...this.state, locate : '/Mainpage'};
-			this.Mainpage.renderSequnce(this.state);
-			// this.historyRouterPush('/Mainpage');
+		else if (locate === '/') {
+			this.Login.renderSequnce(this.state);
+		// 	// this.historyRouterPush('/Mainpage');
 		}
 
 		this.historyRouterPush(locate);
