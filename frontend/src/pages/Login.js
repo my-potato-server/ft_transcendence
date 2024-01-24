@@ -58,6 +58,12 @@ export default class Login extends Component {
 				this.$parent.auth = true;
 				import('./Main.js').then(({ default: Mainpage }) => {
 					this.setState({ locate: '/src/pages/Main' });
+					this.Mainpage = new Mainpage({
+						$parent: this.$parent,
+						setState: this.setState,
+						state: this.state
+					});
+					this.Mainpage.renderSequnce(this.state);
 				});
 			} else {
 				console.log("로그인 실패");
@@ -95,7 +101,12 @@ export default class Login extends Component {
 			alert("로그인 되었습니다.");
 			import('./Main.js').then(({ default: Mainpage }) => {
 				this.setState({ locate: '/src/pages/Main' });
-				// this.Mainpage.renderSequnce(this.state);
+				this.Mainpage = new Mainpage({
+					$parent: this.$parent,
+					setState: this.setState,
+					state: this.state
+				});
+				this.Mainpage.renderSequnce(this.state);
 			});
 		}
 	}

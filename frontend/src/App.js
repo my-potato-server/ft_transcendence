@@ -1,6 +1,6 @@
 // src/App.js
 
-import Mainpage from "./pages/Main.js";
+// import Mainpage from "./pages/Main.js";
 // import Signup from "./pages/Signup.js";
 import Login from "./pages/Login.js"
 
@@ -12,7 +12,7 @@ class app {
 
 		const ObjectForDI = {$parent:this.root, setState : this.setState.bind(this), state : this.state};
 
-		this.Mainpage = new Mainpage(ObjectForDI);
+		// this.Mainpage = new Mainpage(ObjectForDI);
 		// this.Signup = new Signup(ObjectForDI);
 		this.Login = new Login(ObjectForDI);
 
@@ -37,16 +37,16 @@ class app {
 
 		let { locate } = this.state;
 		console.log("render's locate", locate, this.state);
-		console.log("render's locate", locate, this.state);
-		if (locate === '/src/pages/Main') {
-			this.Mainpage.renderSequnce(this.state);
-			// this.historyRouterPush('/Mainpage');
-		}
+		// console.log("render's locate", locate, this.state);
+		// if (locate === '/src/pages/Main') {
+		// 	this.Mainpage.renderSequnce(this.state);
+		// 	// this.historyRouterPush('/Mainpage');
+		// }
 		// else if (locate === '/src/pages/Signup.js') {
 		// 	this.Signup.renderSequnce(this.state);
 		// 	// this.historyRouterPush('/Signup');
 		// }
-		else if (locate === '/') {
+		if (locate === '/') {
 			this.Login.renderSequnce(this.state);
 		// 	// this.historyRouterPush('/Mainpage');
 		}
