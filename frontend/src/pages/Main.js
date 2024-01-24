@@ -17,6 +17,10 @@ export default class Mainpage extends Component {
 	}
 
 	setEvent() {
+		const logoutButton = this.$parent.querySelector('button[class="Logout"]');
+		if (logoutButton) {
+			logoutButton.onclick = () => this.logout();
+		}
 		const heartButton = this.$parent.querySelector('button[onclick="printHeart()"]');
         if (heartButton) {
             heartButton.onclick = () => this.printHeart();
@@ -38,6 +42,13 @@ export default class Mainpage extends Component {
 		}
 	}
 
+	logout() {
+		console.log("logout");
+		import('./Logout.js').then(({ default: Login }) => {
+		});
+		this.$parent.auth = false;
+		this.setState({locate: '/'});
+	}
 }
 
 export function Heart() {

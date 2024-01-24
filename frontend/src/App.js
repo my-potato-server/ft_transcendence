@@ -18,7 +18,7 @@ class app {
 
 		this.render();
 		this.setDummyEvent();
-
+		this.root.auth = false;
 	}
 
 	setState(newState) {
@@ -36,6 +36,7 @@ class app {
 		this.root.innerHTML = '';
 
 		let { locate } = this.state;
+		console.log("render's locate", locate, this.state);
 		console.log("render's locate", locate, this.state);
 		if (locate === '/src/pages/Main') {
 			this.Mainpage.renderSequnce(this.state);

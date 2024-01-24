@@ -28,6 +28,14 @@ export default class Login extends Component {
 		if (temploginButton) {
 			temploginButton.onclick = () => this.templogin();
 		}
+		const authButton = this.$parent.querySelector('button[class="Get_Auth"]');
+		if (authButton) {
+			authButton.onclick = () => this.getAuth();
+		}
+		const delauthButton = this.$parent.querySelector('button[class="Del_Auth"]');
+		if (delauthButton) {
+			delauthButton.onclick = () => this.delAuth();
+		}
 	}
 
 	login() {
@@ -46,9 +54,14 @@ export default class Login extends Component {
 		.then(response => {
 			if (response.ok) {
 				console.log("로그인 성공");
-				// 로그인 성공 시 필요한 처리 수행
+				alert("로그인 성공");
+				this.$parent.auth = true;
+				import('./Main.js').then(({ default: Mainpage }) => {
+					this.setState({ locate: '/src/pages/Main' });
+				});
 			} else {
 				console.log("로그인 실패");
+				alert("로그인 실패");
 				// 로그인 실패 시 필요한 처리 수행
 			}
 		})
@@ -59,17 +72,43 @@ export default class Login extends Component {
 
 	signup() {
 		console.log("signup");
+		import('./Signup.js').then(({ default: Signup }) => {
+			this.setState({ locate: '/src/pages/Signup' });
+			this.signup = new Signup({
+				$parent: this.$parent,
+				setState: this.setState,
+				state: this.state
+			});
+			this.signup.renderSequnce(this.state);
+		});
 	}
 
 	templogin() {
 		console.log("templogin");
 		// this.root.innerHTML = '';
-		import('./Main.js').then(({ default: Mainpage }) => {
-			this.setState({ locate: '/src/pages/Main' });
-			// this.Mainpage.renderSequnce(this.state);
-		});
+		if (this.$parent.auth === false) {
+			console.log("no auth");
+			alert("로그인이 필요합니다.");
+			return;
+		}
+		else {
+			alert("로그인 되었습니다.");
+			import('./Main.js').then(({ default: Mainpage }) => {
+				this.setState({ locate: '/src/pages/Main' });
+				// this.Mainpage.renderSequnce(this.state);
+			});
+		}
 	}
 
+	getAuth() {
+		console.log("getAuth");
+		this.$parent.auth = true;
+	}
+
+	delAuth() {
+		console.log("delAuth");
+		this.$parent.auth = false;
+	}
 }
 
 export function LoginButton() {
@@ -90,6 +129,14 @@ export function LoginButton() {
 					templogin
 				</button>
 			</div>
+		</div>
+		<div class="auth">
+			<button type="button" class="Get_Auth">
+				Get Auth
+			</button>
+			<button type="button" class="Del_Auth">
+				Del Auth
+			</button>
 		</div>
 	`
 }
