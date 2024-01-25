@@ -8,7 +8,15 @@ export default class Profile extends Component {
 
     constructor(ObjectForDI) {
         super(ObjectForDI.$parent, ObjectForDI.setState, ObjectForDI.state);
+
+        this.buttoncheck = {
+            userinfo : false,
+            deleteid : false,
+            status : false
+        }
     }
+
+
 
     template() {
         console.log("Profile template");
@@ -115,21 +123,32 @@ export default class Profile extends Component {
     }
     userInfo() {
         console.log("userInfo");
-        const infoContainer = this.$parent.querySelector('#info');
-        if (infoContainer) {
-            const infos = this.info();
-            infoContainer.innerHTML = `
-            <pre>
-                <h3>유저 정보</h3>
-                <div>id : ${infos.id}</div>
-                <div>name : ${infos.name}</div>
-                <div>auth : ${infos.auth}</div>
-            </pre>`;
+        if (this.buttoncheck.userinfo) {
+            this.buttoncheck.userinfo = false;
+            const infoContainer = this.$parent.querySelector('#info');
+            if (infoContainer) {
+                infoContainer.innerHTML = '';
+            }
+        } else {
+            const infoContainer = this.$parent.querySelector('#info');
+            if (infoContainer) {
+                const infos = this.info();
+                infoContainer.innerHTML = `
+                <pre>
+                    <h3>유저 정보</h3>
+                    <div>id : ${infos.id}</div>
+                    <div>name : ${infos.name}</div>
+                    <div>auth : ${infos.auth}</div>
+                </pre>`;
+            }
+            this.buttoncheck.userinfo = true;
         }
     }
+
     deleteid() {
         console.log("deleteid");
         // 서버에 id 삭제 요청
+        alert("ID를 삭제합니다.");
         const infos = this.info();
         fetch('/deleteid', {
             method: 'POST',
@@ -170,75 +189,88 @@ export default class Profile extends Component {
         });
         // 성공 시 로그아웃
     }
+
     status() {
         console.log("status");
         // 서버에 레벨, 게임 rank, 승률, 승리 패배 횟수 등 요청
-        const infos = this.info();
-        fetch('/status', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                id : infos.id
-            }),
-        })
-        .then(response => {
-            if (response.ok) {
-                console.log("status 요청 성공");
-                alert("status 요청 성공");
-                // 서버에서 받은 정보를 출력
-                // level, rank, rate, win, lose 요청
-                const statusContainer = this.$parent.querySelector('#status');
-                if (statusContainer) {
-                    const status = response.json();
-                    if (!status) {
-                        console.log("status 에러");
-                        alert("status 요청 실패");
-                        status = {
-                            level : 0,
-                            rank : 0,
-                            rate : 0,
-                            win : 0,
-                            lose : 0
-                        };
-                    }
-                    statusContainer.innerHTML = `
-                    <pre>
-                        <h3>유저 정보</h3>
-                        <div>id : ${infos.id}</div>
-                        <div>name : ${infos.name}</div>
-                        <div>level : ${status.level}</div>
-                        <div>rank : ${status.rank}</div>
-                        <div>rate : ${status.rate}</div>
-                        <div>win : ${status.win}</div>
-                        <div>lose : ${status.lose}</div>
-                    </pre>
-                    `;
-                }
-            } else {
-                console.log("status 요청 실패");
-                alert("status 요청 실패");
-                //이하 테스트용. 스테이터스 요청 정상 동작시 삭제
-                const statusContainer = this.$parent.querySelector('#status');
-                const status = {
-                    level : 0,
-                    rank : 0,
-                    rate : 0,
-                    win : 0,
-                    lose : 0
-                };
-                statusContainer.innerHTML = `
-                    <pre>
-                        <h3>유저 정보(테스트용)</h3>
-                        <div>id : ${infos.id}</div>
-                        <div>name : ${infos.name}</div>
-                        <div>level : ${status.level}</div>
-                        <div>rank : ${status.rank}</div>
-                        <div>rate : ${status.rate}%(${status.win}/${status.lose})</div>
-                    </pre>
-                    `;
+        if (this.buttoncheck.status) {
+            this.buttoncheck.status = false;
+            const statusContainer = this.$parent.querySelector('#status');
+            if (statusContainer) {
+                statusContainer.innerHTML = '';
             }
-        })
+        } else {
+            const infos = this.info();
+            fetch('/status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id : infos.id
+                }),
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log("status 요청 성공");
+                    alert("status 요청 성공");
+                    // 서버에서 받은 정보를 출력
+                    // level, rank, rate, win, lose 요청
+                    const statusContainer = this.$parent.querySelector('#status');
+                    if (statusContainer) {
+                        const status = response.json();
+                        if (!status) {
+                            console.log("status 에러");
+                            alert("status 요청 실패");
+                            status = {
+                                level : 0,
+                                rank : 0,
+                                rate : 0,
+                                win : 0,
+                                lose : 0
+                            };
+                        }
+                        statusContainer.innerHTML = `
+                        <pre>
+                            <h3>유저 정보</h3>
+                            <div>id : ${infos.id}</div>
+                            <div>name : ${infos.name}</div>
+                            <div>level : ${status.level}</div>
+                            <div>rank : ${status.rank}</div>
+                            <div>rate : ${status.rate}</div>
+                            <div>win : ${status.win}</div>
+                            <div>lose : ${status.lose}</div>
+                        </pre>
+                        `;
+                    }
+                } else {
+                    console.log("status 요청 실패");
+                    alert("status 요청 실패");
+                    //이하 테스트용. 스테이터스 요청 정상 동작시 삭제
+                    const statusContainer = this.$parent.querySelector('#status');
+                    const status = {
+                        level : 0,
+                        rank : 0,
+                        rate : 0,
+                        win : 0,
+                        lose : 0
+                    };
+                    statusContainer.innerHTML = `
+                        <pre>
+                            <h3>유저 정보(테스트용)</h3>
+                            <div>id : ${infos.id}</div>
+                            <div>name : ${infos.name}</div>
+                            <div>level : ${status.level}</div>
+                            <div>rank : ${status.rank}</div>
+                            <div>rate : ${status.rate}%(${status.win}/${status.lose})</div>
+                        </pre>
+                        `;
+                }
+            })
+            .catch(error => {
+                console.log("status 요청 실패", error);
+            });
+            this.buttoncheck.status = true;
+        }
     }
 }

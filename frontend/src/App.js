@@ -1,7 +1,5 @@
 // src/App.js
 
-// import Mainpage from "./pages/Main.js";
-// import Signup from "./pages/Signup.js";
 import Login from "./pages/Login.js"
 
 class app {
@@ -12,8 +10,6 @@ class app {
 
 		const ObjectForDI = {$parent:this.root, setState : this.setState.bind(this), state : this.state};
 
-		// this.Mainpage = new Mainpage(ObjectForDI);
-		// this.Signup = new Signup(ObjectForDI);
 		this.Login = new Login(ObjectForDI);
 
 		this.render();
@@ -50,8 +46,16 @@ class app {
 		} else if (locate === '/src/pages/Signup') {
 			if (!this.Signup) { this.makepage(locate); }
 			else { this.Signup.renderSequnce(this.state); }
-		}
-		else if (locate === '/src/pages/main/Profile') {
+		} else if (locate === '/src/pages/main/Game') {
+			if (!this.Game) { this.makepage(locate); }
+			else { this.Game.renderSequnce(this.state); }
+		} else if (locate === '/src/pages/main/Chat') {
+			if (!this.Chat) { this.makepage(locate); }
+			else { this.Chat.renderSequnce(this.state); }
+		} else if (locate === '/src/pages/main/Rank') {
+			if (!this.Rank) { this.makepage(locate); }
+			else { this.Rank.renderSequnce(this.state); }
+		} else if (locate === '/src/pages/main/Profile') {
 			if (!this.Profile) { this.makepage(locate); }
 			else { this.Profile.renderSequnce(this.state); }
 		}
@@ -108,6 +112,33 @@ class app {
 						state: this.state
 					});
 					this.Signup.renderSequnce(this.state);
+				});}
+		else if (locate === '/src/pages/main/Game') {
+				import('./pages/main/Game.js').then(({ default: Game }) => {
+					this.Game = new Game({
+						$parent: this.root,
+						setState: this.setState.bind(this),
+						state: this.state
+					});
+					this.Game.renderSequnce(this.state);
+				});}
+		else if (locate === '/src/pages/main/Chat') {
+				import('./pages/main/Chat.js').then(({ default: Chat }) => {
+					this.Chat = new Chat({
+						$parent: this.root,
+						setState: this.setState.bind(this),
+						state: this.state
+					});
+					this.Chat.renderSequnce(this.state);
+				});}
+		else if (locate === '/src/pages/main/Rank') {
+				import('./pages/main/Rank.js').then(({ default: Rank }) => {
+					this.Rank = new Rank({
+						$parent: this.root,
+						setState: this.setState.bind(this),
+						state: this.state
+					});
+					this.Rank.renderSequnce(this.state);
 				});}
 		else if (locate === '/src/pages/main/Profile') {
 				import('./pages/main/Profile.js').then(({ default: Profile }) => {
