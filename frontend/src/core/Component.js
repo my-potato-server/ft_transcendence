@@ -1,4 +1,5 @@
 // src/core/Component.js
+
 export default class Component {
 
 	constructor($parent, setState, state) {
@@ -8,6 +9,7 @@ export default class Component {
 	}
 
 	template() { // 함수 안에 html을 넣어서 반환
+		console.log("empty template");
 		return '';
 	}
 
@@ -19,6 +21,7 @@ export default class Component {
 	setEvent() {} // 이벤트 설정
 
 	renderSequnce(state) {
+		console.log("renderSequnce");
 		this.state = state;
 		this.#render();
 		this.setEvent();
