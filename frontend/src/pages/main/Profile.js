@@ -88,25 +88,25 @@ export default class Profile extends Component {
 	}
 	game() {
 		console.log("game");
-		this.setState({locate: '/src/pages/Game'});
+		this.setState({locate: '/src/pages/main/Game'});
 	}
 	chat() {
 		console.log("chat");
-		this.setState({locate: '/src/pages/Chat'});
+		this.setState({locate: '/src/pages/main/Chat'});
 	}
 	rank() {
 		console.log("rank");
-		this.setState({locate: '/src/pages/Rank'});
+		this.setState({locate: '/src/pages/main/Rank'});
 	}
 	profile() {
 		console.log("profile");
-		this.setState({locate: '/src/pages/Profile'});
+		this.setState({locate: '/src/pages/main/Profile'});
 	}
 	logout() {
 		console.log("logout");
 		this.$parent.auth = false;
 		this.setState({locate: '/'});
-	}
+    }
 	//
 	//
 	//
