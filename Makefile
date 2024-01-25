@@ -17,7 +17,7 @@ all: $(NAME)
 
 $(NAME) : up
 
-up : check_all prepare_volume
+up : #check_all prepare_volume
 	sudo docker-compose $(COMPOSEYML) up --build -d
 
 down : clean
@@ -64,12 +64,11 @@ down : clean
 
 .PHONY : clean fclean re
 
-clean : remove_host
+clean : # remove_host
 	sudo docker-compose $(COMPOSEYML) down -v
 
 fclean : clean 
-	sudo rm -rf /home/snoh/data
-
+	
 re : 
 	$(MAKE) fclean
 	@echo 1 > /dev/null
