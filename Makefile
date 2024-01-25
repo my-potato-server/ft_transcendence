@@ -17,7 +17,7 @@ all: $(NAME)
 
 $(NAME) : up
 
-up : check_all prepare_volume
+up : check_all# prepare_volume
 	sudo docker-compose $(COMPOSEYML) up --build -d
 
 down : clean
