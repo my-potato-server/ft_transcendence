@@ -1,4 +1,0 @@
-의존성 문제를 해결하기 위해
-Login.js에서 생성하는 Mainpage를
-조건문 형식으로 App.js에서 Login.js에서 Mainpage제작 요청이 들어올 시 import해서 생성하도록 수정.
-그 후 App.js가 로딩될 때, Mainpage.js가 로딩안된다면 성공. 아니면 다른 방법 찾기

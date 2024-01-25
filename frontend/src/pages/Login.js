@@ -56,15 +56,8 @@ export default class Login extends Component {
 				console.log("로그인 성공");
 				alert("로그인 성공");
 				this.$parent.auth = true;
-				import('./Main.js').then(({ default: Mainpage }) => {
-					this.setState({ locate: '/src/pages/Main' });
-					this.Mainpage = new Mainpage({
-						$parent: this.$parent,
-						setState: this.setState,
-						state: this.state
-					});
-					this.Mainpage.renderSequnce(this.state);
-				});
+				this.setState({locate: '/src/pages/Main'});
+				// db에서 유저 id, 이름, 권한 설정 및 기타 내역 저장
 			} else {
 				console.log("로그인 실패");
 				alert("로그인 실패");
@@ -78,20 +71,11 @@ export default class Login extends Component {
 
 	signup() {
 		console.log("signup");
-		import('./Signup.js').then(({ default: Signup }) => {
-			this.setState({ locate: '/src/pages/Signup' });
-			this.signup = new Signup({
-				$parent: this.$parent,
-				setState: this.setState,
-				state: this.state
-			});
-			this.signup.renderSequnce(this.state);
-		});
+		this.setState({locate: '/src/pages/Signup'});
 	}
 
 	templogin() {
 		console.log("templogin");
-		// this.root.innerHTML = '';
 		if (this.$parent.auth === false) {
 			console.log("no auth");
 			alert("로그인이 필요합니다.");
@@ -99,26 +83,29 @@ export default class Login extends Component {
 		}
 		else {
 			alert("로그인 되었습니다.");
-			import('./Main.js').then(({ default: Mainpage }) => {
-				this.setState({ locate: '/src/pages/Main' });
-				this.Mainpage = new Mainpage({
-					$parent: this.$parent,
-					setState: this.setState,
-					state: this.state
-				});
-				this.Mainpage.renderSequnce(this.state);
-			});
+			console.log(this.$parent.userinfo);
+			this.setState({locate: '/src/pages/Main'});
 		}
 	}
 
 	getAuth() {
 		console.log("getAuth");
 		this.$parent.auth = true;
+		this.$parent.userinfo = {
+			id : 'test',
+			name : 'test',
+			auth : true
+		};
 	}
 
 	delAuth() {
 		console.log("delAuth");
 		this.$parent.auth = false;
+		this.$parent.userinfo = {
+			id : '',
+			name : '',
+			auth : false
+		};
 	}
 }
 

@@ -19,6 +19,11 @@ class app {
 		this.render();
 		this.setDummyEvent();
 		this.root.auth = false;
+		this.root.userinfo = {
+			id : '',
+			name : '',
+			auth : false
+		};
 	}
 
 	setState(newState) {
@@ -37,18 +42,18 @@ class app {
 
 		let { locate } = this.state;
 		console.log("render's locate", locate, this.state);
-		// console.log("render's locate", locate, this.state);
-		// if (locate === '/src/pages/Main') {
-		// 	this.Mainpage.renderSequnce(this.state);
-		// 	// this.historyRouterPush('/Mainpage');
-		// }
-		// else if (locate === '/src/pages/Signup.js') {
-		// 	this.Signup.renderSequnce(this.state);
-		// 	// this.historyRouterPush('/Signup');
-		// }
 		if (locate === '/') {
 			this.Login.renderSequnce(this.state);
-		// 	// this.historyRouterPush('/Mainpage');
+		} else if (locate === '/src/pages/Main') {
+			if (!this.Mainpage) { this.makepage(locate); }
+			else { this.Mainpage.renderSequnce(this.state); }
+		} else if (locate === '/src/pages/Signup') {
+			if (!this.Signup) { this.makepage(locate); }
+			else { this.Signup.renderSequnce(this.state); }
+		}
+		else if (locate === '/src/pages/main/Profile') {
+			if (!this.Profile) { this.makepage(locate); }
+			else { this.Profile.renderSequnce(this.state); }
 		}
 
 		this.historyRouterPush(locate);
@@ -65,16 +70,16 @@ class app {
 
 
 	dummyClickEvent = ({target}) => {
-        if(target.classList.contains('Mainpage')){
-            this.setState({...this.state, locate : '/src/pages/Main'});
-        }
-		if(target.classList.contains("Log In")){
-			this.setState({...this.state, locate: '/src/pages/Login'});
-		}
+        // if(target.classList.contains('Mainpage')){
+        //     this.setState({...this.state, locate : '/src/pages/Main'});
+        // }
+		// if(target.classList.contains("Log In")){
+		// 	this.setState({...this.state, locate: '/src/pages/Login'});
+		// }
     }
 
     setDummyEvent(){
-        this.root.addEventListener('click', this.dummyClickEvent);
+        // this.root.addEventListener('click', this.dummyClickEvent);
     }
 
 	initPopStateEvent() {
@@ -83,6 +88,38 @@ class app {
             this.setState({ locate: window.location.pathname });
         });
     }
+
+	makepage(locate) {
+		console.log("makepage");
+		if (locate === '/src/pages/Main') {
+				import('./pages/Main.js').then(({ default: Mainpage }) => {
+					this.Mainpage = new Mainpage({
+						$parent: this.root,
+						setState: this.setState.bind(this),
+						state: this.state
+					});
+					this.Mainpage.renderSequnce(this.state);
+				});}
+		else if (locate === '/src/pages/Signup') {
+				import('./pages/Signup.js').then(({ default: Signup }) => {
+					this.Signup = new Signup({
+						$parent: this.root,
+						setState: this.setState.bind(this),
+						state: this.state
+					});
+					this.Signup.renderSequnce(this.state);
+				});}
+		else if (locate === '/src/pages/main/Profile') {
+				import('./pages/main/Profile.js').then(({ default: Profile }) => {
+					this.Profile = new Profile({
+						$parent: this.root,
+						setState: this.setState.bind(this),
+						state: this.state
+					});
+					this.Profile.renderSequnce(this.state);
+				});
+			}
+	}
 }
 
 const myApp = new app();

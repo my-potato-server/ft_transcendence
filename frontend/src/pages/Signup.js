@@ -28,15 +28,16 @@ export default class Signup extends Component {
 	signup() {
 		console.log("signup");
 		const id = this.$parent.querySelector('input[name="id"]').value;
+		const name = this.$parent.querySelector('input[name="name"]').value;
 		const password = this.$parent.querySelector('input[name="password"]').value;
-		console.log("id", id, "password", password);
+		console.log("id", id, "name", name, "password", password);
 		// HTTP POST 요청 보내기
 		fetch('/signup', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ id, password })
+			body: JSON.stringify({ id, name, password })
 		})
 		.then(response => {
 			if (response.ok) {
@@ -66,6 +67,7 @@ export function RouterButton() {
 			<div class="Signup__container">
 				<h1>SIGN UP</h1>
 				<input type="text" name="id" placeholder="ID" />
+				<input type="text" name="name" placeholder="Name" />
 				<input type="password" name="password" placeholder="Password" />
 			</div>
 		</div>
