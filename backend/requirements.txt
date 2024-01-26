@@ -2,3 +2,4 @@ Django==5.0.1
 typing_extensions==4.9.0
 channels[daphne]==4.0.0
 django-cors-headers==4.3.1
+psycopg[binary]==3.1.17
