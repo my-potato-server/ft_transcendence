@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'daphne',
     'corsheaders',
+    'ninja',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'account.apps.AccountConfig',
+    'main.apps.MainConfig',
 ]
 
 MIDDLEWARE = [
@@ -140,3 +142,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "account.User"
+
+# 42 API Key
+FT_UID_KEY = "u-s4t2ud-716b5af4c08f00ee95664b04bbd3d3ef9f758df59a4b61afd547ccc62a760b52"
+FT_SECRET_KEY = "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"

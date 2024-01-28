@@ -1,6 +1,9 @@
 from django.contrib.auth.backends import ModelBackend
+from ninja.security import HttpBearer
 
 from .models import User
+
+from main.jwt import validate_token
 
 
 class CustomBackend(ModelBackend):
@@ -16,3 +19,8 @@ class CustomBackend(ModelBackend):
             return User.objects.get(login=login)
         except User.DoesNotExist:
             return None
+
+
+class AuthBearer(HttpBearer):
+    def authenticate(self, request, token):
+        return validate_token(token)
