@@ -6,7 +6,7 @@ from django.conf import settings
 def create_token(login):
 	payload = {
 		'login': login,
-		'exp': datetime.datetime.utcnow() + datetime.timedelta(days=30),
+		'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=30),
 	}
 	token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
 	return token
