@@ -117,7 +117,8 @@ export default class Game extends Component {
         this.gameContainer.appendChild(canvas);
 
         import('../../apps/offline_pong.js').then(({ default: offline_pong }) => {
-            offline_pong(canvas.id);
+            if (offline_pong(canvas.id) == 1)
+				this.setState({locate: '/src/pages/Main'});
         });
     }
     online() {

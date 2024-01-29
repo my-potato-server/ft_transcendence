@@ -5,7 +5,6 @@ import RouterButton from "../../routers/RouterButton.js";
 import RankButton from "../../routers/RankButton.js";
 
 export default class Rank extends Component {
-
 	constructor(ObjectForDI) {
 		super(ObjectForDI.$parent, ObjectForDI.setState, ObjectForDI.state);
 	}
@@ -82,5 +81,4 @@ export default class Rank extends Component {
 	//
 	//
 	//
-
 }

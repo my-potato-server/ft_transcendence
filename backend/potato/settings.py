@@ -35,7 +35,6 @@ INSTALLED_APPS = [
     'daphne',
     'corsheaders',
     'ninja',
-    'onevsonepong',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

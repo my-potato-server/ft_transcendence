@@ -36,7 +36,7 @@ export default function OnlinePong(canvasID) {
 
     let keysPressed = {};
 
-    const socket = new WebSocket('wss://localhost:5432/ws/ovopong/');
+    const socket = new WebSocket('wss://localhost:443/ws/ovopong/');
 
     socket.onopen = function (e) {
         console.log('Connection established!');

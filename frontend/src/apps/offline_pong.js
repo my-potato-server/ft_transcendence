@@ -5,6 +5,10 @@ export default function OfflinePong(canvasID) {
     const canvas = document.getElementById(canvasID);
     const ctx = canvas.getContext('2d');
 
+    let gameState = 'playing'; // 게임 상태 ('playing', 'ended')
+    let winner = null;
+    let leftScore = 0;
+    let rightScore = 0;
     // Canvas 크기 설정
     canvas.width = 1280;
     canvas.height = 720;
@@ -32,12 +36,34 @@ export default function OfflinePong(canvasID) {
     let keysPressed = {};
 
     document.addEventListener('keydown', (event) => {
+        if (["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(event.key)) {
+            event.preventDefault(); // 화살표 키에 대한 기본 동작을 방지
+        }
         keysPressed[event.key] = true;
+
+        if (event.key === 'Enter' && gameState === 'ended') {
+            resetGame();
+        }
     });
+
+    function showWinner() {
+        ctx.font = '48px Arial';
+        ctx.fillStyle = '#FFF';
+        ctx.fillText(`${winner} player Win! (${leftScore} : ${rightScore})`, canvas.width / 2 - 200, canvas.height / 2 - 50);
+        ctx.fillText("Press Enter to replay", canvas.width / 2 - 250, canvas.height / 2 + 50);
+    }
 
     document.addEventListener('keyup', (event) => {
         delete keysPressed[event.key];
     });
+
+    function resetGame() {
+        gameState = 'playing';
+        ball.scoreLeft = 0;
+        ball.scoreRight = 0;
+        resetBall();
+        gameLoop();
+    }
 
     //
     // 공 그리기
@@ -141,11 +167,25 @@ export default function OfflinePong(canvasID) {
 
     // 게임 루프
     function gameLoop() {
-        moveBall();
-        movePaddles();
-        draw();
+        if (gameState === 'playing') {
+            moveBall();
+            movePaddles();
+            draw();
+            if ((ball.scoreLeft === 5 || ball.scoreRight === 5) && gameState === 'playing') {
+                gameState = 'ended';
+                winner = ball.scoreLeft === 5 ? "Left" : "Right";
+                winner === "Left" ? leftScore++ : rightScore++;
+                resetBall();
+            }
+        }
+
+        if (gameState === 'ended') {
+            showWinner();
+        }
+
         requestAnimationFrame(gameLoop);
     }
+
 
     // 게임 시작
     gameLoop();

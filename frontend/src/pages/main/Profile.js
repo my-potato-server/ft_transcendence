@@ -16,8 +16,6 @@ export default class Profile extends Component {
         }
     }
 
-
-
     template() {
         console.log("Profile template");
         return `
