@@ -16,10 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.urls import include
 from .views import index
 from account.apis import api as account_api
 
 urlpatterns = [
     path('', index),
     path('account/', account_api.urls),
+    path('ws/ovopong/', include('onevsonepong.routing.websocket_urlpatterns')),
 ]

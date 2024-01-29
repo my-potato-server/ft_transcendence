@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'daphne',
     'corsheaders',
     'ninja',
+    'onevsonepong',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -78,7 +79,7 @@ TEMPLATES = [
 
 # WSGI_APPLICATION = 'potato.wsgi.application'
 ASGI_APPLICATION = 'potato.asgi.application'
-
+# WSGI_APPLICATION = 'onevsonepong.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

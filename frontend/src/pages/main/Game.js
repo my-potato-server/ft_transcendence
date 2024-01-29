@@ -133,6 +133,9 @@ export default class Game extends Component {
 		// canvas.width = 1280;
 		// canvas.height = 720;
 		// this.gameContainer.appendChild(canvas);
+		import('../../apps/online_pong.js').then(({ default: online_pong }) => {
+			online_pong(match.id);
+		});
     }
     tournament() {
         console.log("tournament");
