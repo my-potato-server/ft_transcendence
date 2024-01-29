@@ -26,6 +26,7 @@ export default function OnlinePong(canvasID) {
         }
     };
 
+    let thisPlayer = 0;
     let gameover = false;
     let winner = 0;
     const paddleHeight = 60;
@@ -54,13 +55,16 @@ export default function OnlinePong(canvasID) {
     };
 
     document.addEventListener('keydown', (event) => {
+        if (["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(event.key)) {
+            event.preventDefault(); // 화살표 키에 대한 기본 동작을 방지
+        }
         // keysPressed[event.key] = true;
 
         if (['ArrowUp', 'ArrowDown'].includes(event.key)) {
             socket.send(JSON.stringify({
                 action: 'move_paddle',
                 key: event.key,
-                player: '1',
+                player: thisPlayer,
                 left_paddle_y: leftPaddleY,
                 right_paddle_y: rightPaddleY,
                 ball_position: {
@@ -79,7 +83,7 @@ export default function OnlinePong(canvasID) {
         socket.send(JSON.stringify({
             action: 'none',
             key: 'none',
-            player: '0',
+            player: thisPlayer,
             left_paddle_y: leftPaddleY,
             right_paddle_y: rightPaddleY,
             ball_position: {
@@ -140,14 +144,21 @@ export default function OnlinePong(canvasID) {
 
     function updateGameScreen(data) {
         console.log(data);
-        leftPaddleY = data.left_paddle_y;
-        rightPaddleY = data.right_paddle_y;
-        ball.x = data.ball_position.x;
-        ball.y = data.ball_position.y;
-        ball.scoreLeft = data.left_player_score;
-        ball.scoreRight = data.right_player_score;
-        gameover = data.game_over;
-        winner = data.winner;
-        draw();
+        if (data.game_status ==  'start') {
+            leftPaddleY = data.left_paddle_y;
+            rightPaddleY = data.right_paddle_y;
+            ball.x = data.ball_position.x;
+            ball.y = data.ball_position.y;
+            ball.scoreLeft = data.left_player_score;
+            ball.scoreRight = data.right_player_score;
+            gameover = data.game_over;
+            winner = data.winner;
+            draw();
+        } else if (data.game_status == 'waiting') {
+            thisPlayer = data.player;
+            setInterval(sendloop, 1000 / 60);
+        } else {
+            console.log('error');
+        }
     };
 }
