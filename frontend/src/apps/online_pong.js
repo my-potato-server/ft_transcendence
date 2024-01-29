@@ -52,6 +52,25 @@ export default function OnlinePong(canvasID) {
 
     socket.onerror = function(error) {
         console.error('WebSocket Error:', error);
+
+        setTimeout(function() {
+            socket = new WebSocket('wss://localhost:443/ws/ovopong/');
+
+            socket.onopen = function (e) {
+                console.log('Connection re-established!');
+            };
+
+            socket.onmessage = function (event) {
+                const data = JSON.parse(event.data);
+                if (data) {
+                    updateGameScreen(data);
+                }
+            };
+
+            socket.onerror = function(error) {
+                console.error('WebSocket Error:', error);
+            };
+        }, 1000); // 1초마다 재시도
     };
 
     document.addEventListener('keydown', (event) => {

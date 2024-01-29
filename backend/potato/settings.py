@@ -78,7 +78,16 @@ TEMPLATES = [
 
 # WSGI_APPLICATION = 'potato.wsgi.application'
 ASGI_APPLICATION = 'potato.asgi.application'
-# WSGI_APPLICATION = 'onevsonepong.wsgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
