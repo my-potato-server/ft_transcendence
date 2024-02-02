@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="X9YFU1M3zQTbdFv3TltE" name="pong 게임">
-        <mxGraphModel dx="2534" dy="1231" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" background="none" math="0" shadow="0">
+        <mxGraphModel dx="1114" dy="301" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" background="none" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -169,7 +169,7 @@
         </mxGraphModel>
     </diagram>
     <diagram id="ca_aAwq-7KcnAU3wva2U" name="페이지-2">
-        <mxGraphModel dx="1774" dy="862" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+        <mxGraphModel dx="2026" dy="1151" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -219,7 +219,7 @@
         </mxGraphModel>
     </diagram>
     <diagram id="cKjNJEI_JPijRERl9RBU" name="pong game 좌표계">
-        <mxGraphModel dx="1774" dy="862" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+        <mxGraphModel dx="2026" dy="1151" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -400,7 +400,7 @@
         </mxGraphModel>
     </diagram>
     <diagram name="pong game 좌표계 : 공의 이동방향 " id="9zDRe7eZPIrnCutnycpC">
-        <mxGraphModel dx="1774" dy="862" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="1" shadow="0">
+        <mxGraphModel dx="2026" dy="1151" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="1" shadow="0">
             <root>
                 <mxCell id="1CqgnF9wyETxFuR-4U4P-0"/>
                 <mxCell id="1CqgnF9wyETxFuR-4U4P-1" parent="1CqgnF9wyETxFuR-4U4P-0"/>
@@ -598,6 +598,120 @@
                 </mxCell>
                 <mxCell id="PUxVM80rYCl6e2eVfKGz-0" value="\( f(x, y) = (x, |y|\mod 1) \)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;fillStyle=hatch;strokeWidth=3;fontSize=34;" parent="1CqgnF9wyETxFuR-4U4P-1" vertex="1">
                     <mxGeometry x="940" y="180" width="540" height="50" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="rglzF_9HsJqLd1ihEn2s" name="페이지-5">
+        <mxGraphModel dx="1114" dy="301" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="lcTWWJKz--JxLMF0r5SD-1" value="게임 진행" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="200" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-1" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="lcTWWJKz--JxLMF0r5SD-2" target="lcTWWJKz--JxLMF0r5SD-5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-10" style="edgeStyle=none;html=1;" parent="1" source="lcTWWJKz--JxLMF0r5SD-2" target="lcTWWJKz--JxLMF0r5SD-4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-12" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="lcTWWJKz--JxLMF0r5SD-2" target="_RZNyQmAcLZVwigEW261-6" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-13" style="edgeStyle=none;html=1;" parent="1" source="lcTWWJKz--JxLMF0r5SD-2" target="_RZNyQmAcLZVwigEW261-11" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-20" style="edgeStyle=none;html=1;entryX=0.985;entryY=0.153;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="lcTWWJKz--JxLMF0r5SD-2" target="_RZNyQmAcLZVwigEW261-19" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-25" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="lcTWWJKz--JxLMF0r5SD-2" target="lcTWWJKz--JxLMF0r5SD-3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="lcTWWJKz--JxLMF0r5SD-2" value="게임" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="590" y="240" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="lcTWWJKz--JxLMF0r5SD-3" value="이벤트 큐&lt;br&gt;(시간 우선순위)" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="740" y="320" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="lcTWWJKz--JxLMF0r5SD-4" value="상태" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="590" y="370" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="lcTWWJKz--JxLMF0r5SD-5" value="이벤트&lt;br&gt;히스토리" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="490" y="370" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="lcTWWJKz--JxLMF0r5SD-7" value="&lt;h1&gt;이벤트&lt;/h1&gt;&lt;p&gt;물체의 속도가 변화하는 부분&lt;/p&gt;&lt;p&gt;물체, 변화된 속도, 시간 값을 가짐&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="20" y="320" width="190" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="lcTWWJKz--JxLMF0r5SD-8" value="&lt;h1&gt;상태&lt;/h1&gt;&lt;div&gt;게임의 상태, 기물의 위치와 속도가 정의됨.&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;초기값과 이벤트 히스토리로서 정의됨&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="20" y="460" width="190" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="lcTWWJKz--JxLMF0r5SD-9" value="&lt;h1&gt;게임&lt;/h1&gt;&lt;div&gt;이벤트의 모음으로 정의됨&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="20" y="210" width="190" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="WOjXUNc_tdu__Tsusyqk-1" value="&lt;font style=&quot;font-size: 49px;&quot;&gt;&lt;b&gt;pong game&lt;br&gt;구현&lt;br&gt;&lt;/b&gt;&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="20" width="330" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-2" value="초기값" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="510" y="590" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-3" value="이벤트" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="510" y="560" width="80" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-4" value="이벤트" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="510" y="540" width="80" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-5" value="이벤트" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="510" y="520" width="80" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-6" value="충돌 이벤트 버퍼 [1]" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="690" y="370" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-22" style="edgeStyle=none;html=1;" parent="1" source="_RZNyQmAcLZVwigEW261-7" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="950" y="290" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-7" value="메서드:&lt;br&gt;이벤트 입력" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="910" y="210" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-11" value="결과" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="740" y="270" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-15" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="_RZNyQmAcLZVwigEW261-14" target="_RZNyQmAcLZVwigEW261-16" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1110" y="130" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-14" value="게임 시작" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="980" y="110" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-16" value="초기 상태 세팅" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="1110" y="110" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-18" value="&lt;h1&gt;메서드: 게임 시작&lt;/h1&gt;&lt;p&gt;타이머 초기화&lt;/p&gt;&lt;p&gt;기물들을 초기 위치에 배치하기&lt;/p&gt;&lt;p&gt;공에 속도 부여 이벤트 큐에 추가,&lt;/p&gt;&lt;p&gt;게임 업데이트()&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="1110" y="180" width="190" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-19" value="타이머" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="440" y="300" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-21" value="메서드:&lt;br&gt;게임 업데이트" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="850" y="130" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-23" value="메서드:&lt;br&gt;이벤트 입력" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="910" y="300" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-24" value="&lt;h1&gt;메서드: 게임 업데이트&lt;/h1&gt;&lt;p&gt;1. 충돌 이벤트 버퍼에서 이벤트 확인&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;1-1 만약 실행시간이 지났다면, 이벤트_수행(충돌 이벤트 버퍼)&lt;/p&gt;&lt;p&gt;2. 이벤트 큐가 차 있다면, 꺼내어 이벤트_수행(이벤트)&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="1110" y="360" width="220" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-26" value="메서드:&lt;br&gt;상태 업데이트" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="740" y="490" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-27" value="&lt;h1&gt;메서드: 이벤트 수행(이벤트)&lt;/h1&gt;&lt;p&gt;이벤트 하나를 히스토리에 추가하고 상태를 업데이트&lt;/p&gt;&lt;p&gt;1. 이벤트를 받는다.&lt;/p&gt;&lt;p&gt;2. 이벤트를 기준으로 상태를 업데이트한다.&lt;/p&gt;&lt;p&gt;3. 업데이트한 상태를 바탕으로 충돌 이벤트 버퍼를 업데이트한다&lt;/p&gt;&lt;p&gt;4. 이벤트를 히스토리에 넣는다.&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="1110" y="540" width="220" height="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="_RZNyQmAcLZVwigEW261-28" value="&lt;h1 style=&quot;line-height: 120%;&quot;&gt;메서드: 상태 업데이트(이벤트)&lt;/h1&gt;&lt;p style=&quot;line-height: 120%;&quot;&gt;1. 이벤트 주체의 상태를 확인하고 위치를 계산.&lt;/p&gt;&lt;p style=&quot;line-height: 120%;&quot;&gt;2. 새 (위치, 속도, 시간) 부여&lt;/p&gt;&lt;p style=&quot;line-height: 120%;&quot;&gt;3. 게임 결과 업데이트&lt;/p&gt;&lt;p style=&quot;line-height: 120%;&quot;&gt;4. 상태를 바탕으로 다음 충돌 계산&lt;/p&gt;&lt;p style=&quot;line-height: 120%;&quot;&gt;5. 계산 결과를 이벤트로 만들어 충돌 이벤트 버퍼에 추가&lt;/p&gt;&lt;p style=&quot;line-height: 120%;&quot;&gt;6. 리턴&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="840" y="490" width="220" height="265" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
