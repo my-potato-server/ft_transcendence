@@ -34,12 +34,15 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'daphne',
     'corsheaders',
+    'ninja',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'account.apps.AccountConfig',
+    'main.apps.MainConfig',
 ]
 
 MIDDLEWARE = [
@@ -82,8 +85,12 @@ ASGI_APPLICATION = 'potato.asgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': '0.0.0.0',
+        'PORT': 5432,
+        'NAME': 'db',
+        'USER': 'user',
+        'PASSWORD': 'password',
     }
 }
 
@@ -104,6 +111,11 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+]
+
+AUTHENTICATION_BACKENDS = [
+    'account.auth.CustomBackend',
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 
@@ -128,3 +140,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = "account.User"
+
+# 42 API Key
+FT_UID_KEY = "u-s4t2ud-716b5af4c08f00ee95664b04bbd3d3ef9f758df59a4b61afd547ccc62a760b52"
+FT_SECRET_KEY = "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"

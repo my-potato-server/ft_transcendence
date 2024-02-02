@@ -1,4 +1,4 @@
-// src/pages/main/Profile.js
+// src/pages/main/Game.js
 
 import Component from "../../core/Component";
 import RouterButton from "../../routers/RouterButton";
@@ -122,6 +122,17 @@ export default class Game extends Component {
     }
     online() {
         console.log("online");
+
+		const match = document.createElement('canvas');
+		match.id = 'matchCanvas';
+		match.width = 1280;
+		match.height = 720;
+		this.gameContainer.appendChild(match);
+		// const canvas = document.createElement('canvas');
+		// canvas.id = 'pongCanvas';
+		// canvas.width = 1280;
+		// canvas.height = 720;
+		// this.gameContainer.appendChild(canvas);
     }
     tournament() {
         console.log("tournament");
