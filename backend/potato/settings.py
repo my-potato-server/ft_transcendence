@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'daphne',
     'corsheaders',
     'ninja',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

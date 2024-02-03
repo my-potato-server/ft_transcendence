@@ -109,32 +109,59 @@ export default class Login extends Component {
 	}
 }
 
+// before bootstrap
+// export function LoginButton() {
+// 	console.log("Login");
+// 	return `
+// 		<div class="login">
+// 			<div class="login__container">
+// 				<h1>Login</h1>
+// 				<input type="text" name="id" placeholder="ID" />
+// 				<input type="password" name="password" placeholder="Password" />
+// 				<button type="button" class="Log In">
+// 					Log In
+// 				</button>
+// 				<button type="button" class="Signup">
+// 					Signup
+// 				</button>
+// 				<button type="button" class="templogin">
+// 					templogin
+// 				</button>
+// 			</div>
+// 		</div>
+// 		<div class="auth">
+// 			<button type="button" class="Get_Auth">
+// 				Get Auth
+// 			</button>
+// 			<button type="button" class="Del_Auth">
+// 				Del Auth
+// 			</button>
+// 		</div>
+// 	`
+// }
+
 export function LoginButton() {
-	console.log("Login");
-	return `
-		<div class="login">
-			<div class="login__container">
-				<h1>Login</h1>
-				<input type="text" name="id" placeholder="ID" />
-				<input type="password" name="password" placeholder="Password" />
-				<button type="button" class="Log In">
-					Log In
-				</button>
-				<button type="button" class="Signup">
-					Signup
-				</button>
-				<button type="button" class="templogin">
-					templogin
-				</button>
-			</div>
-		</div>
-		<div class="auth">
-			<button type="button" class="Get_Auth">
-				Get Auth
-			</button>
-			<button type="button" class="Del_Auth">
-				Del Auth
-			</button>
-		</div>
-	`
+    console.log("Login");
+    return `
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h1 class="h3 mb-3 font-weight-normal text-center">Login</h1>
+                            <input type="text" name="id" class="form-control mb-2" placeholder="ID" required autofocus />
+                            <input type="password" name="password" class="form-control mb-2" placeholder="Password" required />
+                            <button class="btn btn-lg btn-primary btn-block" type="button">Log In</button>
+                            <button class="btn btn-lg btn-secondary btn-block mt-2" type="button">Signup</button>
+                            <button class="btn btn-lg btn-info btn-block mt-2" type="button">templogin</button>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-center">
+                        <button class="btn btn-sm btn-outline-primary" type="button">Get Auth</button>
+                        <button class="btn btn-sm btn-outline-danger" type="button">Del Auth</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
 }

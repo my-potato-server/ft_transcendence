@@ -60,22 +60,53 @@ export default class Signup extends Component {
 	}
 }
 
+//before BootStrap
+// export function RouterButton() {
+// 	console.log("RouterButton");
+// 	return `
+// 		<div class="Signup">
+// 			<div class="Signup__container">
+// 				<h1>SIGN UP</h1>
+// 				<input type="text" name="id" placeholder="ID" />
+// 				<input type="text" name="name" placeholder="Name" />
+// 				<input type="password" name="password" placeholder="Password" />
+// 			</div>
+// 		</div>
+// 		<button type="button" class="Signup">
+// 			Sign up
+// 		</button>
+// 		<button type="button" class="Login">
+// 			Login Page
+// 		</button>
+// 	`
+// };
+
 export function RouterButton() {
-	console.log("RouterButton");
-	return `
-		<div class="Signup">
-			<div class="Signup__container">
-				<h1>SIGN UP</h1>
-				<input type="text" name="id" placeholder="ID" />
-				<input type="text" name="name" placeholder="Name" />
-				<input type="password" name="password" placeholder="Password" />
-			</div>
-		</div>
-		<button type="button" class="Signup">
-			Sign up
-		</button>
-		<button type="button" class="Login">
-			Login Page
-		</button>
-	`
+    console.log("RouterButton");
+    return `
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h1 class="card-title text-center mb-4">SIGN UP</h1>
+                            <div class="form-group mb-3">
+                                <input type="text" name="id" class="form-control" placeholder="ID" />
+                            </div>
+                            <div class="form-group mb-3">
+                                <input type="text" name="name" class="form-control" placeholder="Name" />
+                            </div>
+                            <div class="form-group mb-3">
+                                <input type="password" name="password" class="form-control" placeholder="Password" />
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-primary Signup">Sign up</button>
+                                <button type="button" class="btn btn-secondary Login">Login Page</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
 };
