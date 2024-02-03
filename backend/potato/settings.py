@@ -34,7 +34,6 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'daphne',
     'corsheaders',
-    'ninja',
     'channels',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -44,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'account.apps.AccountConfig',
     'main.apps.MainConfig',
+    'ninja',
 ]
 
 MIDDLEWARE = [
