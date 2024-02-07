@@ -1,53 +1,68 @@
-import math
+import numpy as np
 import time
 
 def window(lowerbound, x, upperbound):
     return max(lowerbound, min(x, upperbound))
 
-def normalize_vec2(tuple_vector):
-    # 튜플의 요소 추출
-    a, b = tuple_vector
-
+def normalize_vec2(vector):
+    # NumPy 배열로 변환
+    vector = np.array(vector)
     # 벡터의 크기 계산
-    magnitude = math.sqrt(a**2 + b**2)
-
+    magnitude = np.linalg.norm(vector)
     # 정규화된 벡터 계산
-    normalized_vector = (a / magnitude, b / magnitude)
-
+    normalized_vector = vector / magnitude
     return normalized_vector
 
 class Obje():
-    def __init__(self) -> None:
-        self.position = tuple(float, float)
-        self.velocity = tuple(float, float)
-        self.reftime = float # 위치와 속도가 업데이트된 시간
-        pass
+    def __init__(self):
+        self.position = np.array([0.0, 0.0])
+        self.velocity = np.array([0.0, 0.0])
+        self.reftime = 0.0
+        self.will_collide = True
+        
+        self.speed = 0.2
+        self.width = 0.02
+        self.height = 0.16
 
-    def updateStatue(self, position, velocity, time):
-        self.position = position
-        self.velocity = velocity
+    def updateStatus(self, position, velocity, time):
+        self.position = np.array(position)
+        self.velocity = np.array(velocity)
         self.reftime = time
 
     def updateVelocity(self, velocity, time):
         self.position = self.getPosition(time)
-        self.velocity = velocity
+        self.velocity = np.array(velocity)
         self.reftime = time
 
-    def getPosition(self, time) -> tuple(float, float):
-        #return (time - self.reftime) * self.velocity + self.position  (이건 넘파이 수식)
-        timediff = (time - self.reftime)
-        return tuple(timediff * self.velocity[0] + self.position[0], timediff * self.velocity[1] + self.position[1])
-        
-    def getVelocity(self, time) -> tuple(float, float): pass
+    def getPosition(self, time):
+        timediff = time - self.reftime
+        return self.position + timediff * self.velocity
+
+    def getVelocity(self, time):
+        return self.velocity
+
+    def 
 
 class Ball(Obje):
+    def __init__(self):
+        super().__init__()
+        self.Width = 0.02
+        self.eHeight = 0.16
+        self.Speed = 0.2
     pass
 
 class Paddle(Obje):
-    def getPosition(self, time) -> tuple(float, float):
-        #return (time - self.reftime) * self.velocity + self.position  (이건 넘파이 수식)
-        timediff = (time - self.reftime)
-        return tuple(self.position[0], window(0, timediff * self.velocity[1] + self.position[1], 1))
+    def __init__(self):
+        super().__init__()
+        self.Width = 0.02
+        self.eHeight = 0.16
+        self.Speed = 0.2
+
+    def getPosition(self, time):
+        timediff = time - self.reftime
+        new_position_y = self.position[1] + timediff * self.velocity[1]
+        new_position_y = np.clip(new_position_y, 0, 1)  # np.clip을 사용하여 경계값 내로 제한
+        return np.array([self.position[0], new_position_y])
 
 
 
@@ -72,7 +87,8 @@ class Timer():
         self.start_time = None
         self.elapsed_time = 0
 
-
+class Event():
+    pass
 
 
 # 게임 서버에서 돌아가는 퐁 게임
@@ -160,9 +176,9 @@ class PongGame():
 
     def gamestart():
         # 타이머 초기화
-
+        timer.start()
         # 기물들을 초기 위치에 배치하기
-
+        state["player1"] = 
         # 공에 속도 부여 이벤트 큐에 추가,
 
         # 게임 업데이트()
