@@ -86,7 +86,7 @@ ASGI_APPLICATION = 'potato.asgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'HOST': '0.0.0.0',
+        'HOST': 'db',
         'PORT': 5432,
         'NAME': 'db',
         'USER': 'user',
@@ -131,10 +131,21 @@ USE_I18N = True
 USE_TZ = True
 
 
+# USE_X_FORWARDED_HOST = True
+# FORCE_SCRIPT_NAME = '/api/'
+# SESSION_COOKIE_PATH = '/api/'
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+# STATICFILES_DIRS = (
+#     os.path.join(BASE_DIR, "static/"),
+# )
+
+# MEDIA_URL = '/api/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles/")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
