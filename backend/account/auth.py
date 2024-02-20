@@ -1,9 +1,11 @@
 from django.contrib.auth.backends import ModelBackend
+from django.contrib.auth import authenticate as django_authenticate
+from django.contrib.auth import login
 from ninja.security import HttpBearer
 
 from .models import User
 
-from main.jwt import validate_token
+from main.jwt import get_decoded_token
 
 
 class CustomBackend(ModelBackend):
@@ -23,4 +25,8 @@ class CustomBackend(ModelBackend):
 
 class AuthBearer(HttpBearer):
     def authenticate(self, request, token):
-        return validate_token(token)
+        if decoded_token := get_decoded_token(token):
+            if user := django_authenticate(request=request, login=decoded_token['login']):
+                login(request, user)
+                return user
+        return None

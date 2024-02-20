@@ -3,20 +3,22 @@ import datetime
 from django.conf import settings
 
 
-def create_token(login):
+def create_token(user):
 	payload = {
-		'login': login,
+		'user_id': user.id,
+		'login': user.login,
+		'nickname': user.nickname,
 		'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=30),
 	}
 	token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
 	return token
 
 
-def validate_token(token) -> bool:
+def get_decoded_token(token):
 	try:
-		jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+		decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
 	except jwt.ExpiredSignatureError:
-		return False
+		return None
 	except jwt.InvalidTokenError:
-		return False
-	return True
+		return None
+	return decoded_token
