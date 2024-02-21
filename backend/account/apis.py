@@ -1,12 +1,14 @@
+from typing import List
 from ninja import NinjaAPI, File
 from ninja.files import UploadedFile
 from django.contrib.auth import authenticate
 from django.conf import settings
+from django.db.models import Q
 
 from .requests import LoginRequest
-from .responses import LoginResponse, UserResponse
+from .responses import LoginResponse, UserResponse, FriendResponse
 from .ft_auth import FtAuth
-from .models import User
+from .models import User, Friendship
 from .auth import AuthBearer
 
 from main.responses import ErrorResponse
@@ -64,3 +66,37 @@ def edit_image(request, image: UploadedFile = File(...)):
 	request.user.image = image
 	request.user.save()
 	return 200, {"message": "Image changed"}
+
+
+@friend_api.post("/list", auth=AuthBearer(), response={200: List[UserResponse]})
+def list_friends(request):
+	friends = Friendship.objects.filter(Q(from_user=request.user) | Q(to_user=request.user), accepted=True)
+	friends_list = [
+		UserResponse(user=f.from_user if f.to_user == request.user else f.to_user)
+		for f in friends
+	]
+	return 200, {"friends": friends_list}
+
+
+@friend_api.get("/requests", auth=AuthBearer(), response={200: List[UserResponse]})
+def list_requests(request):
+	requests = Friendship.objects \
+		.filter(Q(from_user=request.user) | Q(to_user=request.user), accepted=False) \
+		.exclude(requested_by=request.user)
+	return 200, {"requests": [UserResponse(user=f.from_user) for f in requests]}
+
+
+@friend_api.post("/request", auth=AuthBearer())
+def request_friend(request, user_id: int):
+	user = User.objects.get(id=user_id)
+	if user == request.user:
+		return 400, {"message": "You can't add yourself"}
+	if Friendship.objects \
+			.filter(Q(from_user=request.user, to_user=user) | Q(from_user=user, to_user=request.user)) \
+			.exists():
+		return 400, {"message": "You are already friends"}
+	Friendship.objects.create(from_user=request.user, to_user=user, requested_by=request.user)
+	return 200, {"message": "Friend request sent"}
+
+@friend_api.post("/accept", auth=AuthBearer())
+def accept_friend()
