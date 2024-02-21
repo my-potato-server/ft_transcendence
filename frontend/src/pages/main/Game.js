@@ -1,8 +1,8 @@
 // src/pages/main/Game.js
 
-import Component from "../../core/Component";
-import RouterButton from "../../routers/RouterButton";
-import GameButton from "../../routers/GameButton";
+import Component from "../../core/Component.js";
+import RouterButton from "../../routers/RouterButton.js";
+import GameButton from "../../routers/GameButton.js";
 
 export default class Game extends Component {
 

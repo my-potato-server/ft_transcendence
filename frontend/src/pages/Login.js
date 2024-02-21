@@ -29,7 +29,7 @@ export default class Login extends Component {
 		if (temploginButton) {
 			temploginButton.onclick = () => this.templogin();
 		}
-		const _42loginButton = this.$parent.querySelector('.42Login');
+		const _42loginButton = this.$parent.querySelector('.ftLogin');
 		if (_42loginButton) {
 			_42loginButton.onclick = () => this._42login();
 		}
@@ -45,6 +45,12 @@ export default class Login extends Component {
 
 	_42login() {
 		console.log("42login");
+		fetch("/api/account/42-oauth-url", {
+			method: 'GET',
+		})
+		.then(async response => {
+			window.location.href = JSON.parse(await response.text());
+		})
 	}
 
 	login() {
@@ -132,7 +138,7 @@ export function LoginButton() {
 							<button class="btn btn-lg btn-primary btn-block Log_In" type="button">Log In</button>
 							<button class="btn btn-lg btn-secondary btn-block mt-2 Signup" type="button">Signup</button>
 							<button class="btn btn-lg btn-info btn-block mt-2 templogin" type="button">templogin</button>
-							<button class="btn btn-lg btn-info btn-block mt-2 42login" type="button">42 Login</button>
+							<button class="btn btn-lg btn-info btn-block mt-2 ftLogin" type="button">42 Login</button>
 						</div>
 					</div>
 					<div class="mt-3 text-center">

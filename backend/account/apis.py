@@ -34,10 +34,10 @@ def auth_test(request):
 	return 200, {"message": f"Ok. This user is {request.auth}."}
 
 
-@account_api.get("/test-url")
-def test_url(request):
+@account_api.get("/42-oauth-url")
+def ft_oauth_url(request):
 	ft_api_sign_in = "https://api.intra.42.fr/oauth/authorize"
-	redirect_uri = "https://localhost"
+	redirect_uri = "https://localhost/src/pages/Main"
 	response_type = "code"
 	ft_api_scope = "public"
 	url = (

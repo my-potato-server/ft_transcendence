@@ -1,8 +1,8 @@
 // src/pages/main/Profile.js
 
-import Component from "../../core/Component";
-import RouterButton from "../../routers/RouterButton";
-import ProfileButton from "../../routers/ProfileButton";
+import Component from "../../core/Component.js";
+import RouterButton from "../../routers/RouterButton.js";
+import ProfileButton from "../../routers/ProfileButton.js";
 
 export default class Profile extends Component {
 
