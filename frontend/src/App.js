@@ -20,18 +20,37 @@ class app {
 			name : '',
 			auth : false
 		};
+
 	}
+
+	//  네비게이션 이벤트 없을 때
+	// setState(newState) {
+	// 	console.log("setState called");
+	// 	const { locate } = this.state;
+	// 	this.state = {...this.state, ...newState};
+	// 	console.log(this.state);
+	// 	console.log(locate);
+	// 	this.render();
+	// 	console.log("setState end");
+	// }
 
 	setState(newState) {
 		console.log("setState called");
 		const { locate } = this.state;
-		this.state = {...this.state, ...newState};
-		console.log(this.state);
-		console.log(locate);
-		this.render();
+
+		// 상태가 실제로 변경되었는지 확인
+		if (this.state.locate !== newState.locate) {
+			this.state = {...this.state, ...newState};
+			console.log(this.state);
+			console.log(locate);
+			this.render();
+		} else {
+			// 상태가 변경되지 않았다면, 렌더링을 하지 않음
+			console.log("No state change detected");
+		}
+
 		console.log("setState end");
 	}
-
 	render() {
 		console.log("render start");
 		this.root.innerHTML = '';
@@ -152,6 +171,124 @@ class app {
 			}
 	}
 }
+
+window.navigateTo = function(path) {
+    console.log(`Navigating to ${path}`);
+    myApp.setState({ locate: path });
+};
+
+let isFriendListVisible = false;
+let friendListUpdateInterval;
+
+function renderAddFriendForm() {
+    return `
+        <div id="addFriendForm">
+            <input type="text" id="friendIdInput" placeholder="친구의 아이디를 입력하세요">
+            <button onclick="addFriend()">확인</button>
+        </div>
+    `;
+}
+
+window.navigateToProfile = async function() {
+	const friendListContainer = document.getElementById('friendListContainer');
+    if (!friendListContainer) {
+        console.error('Friend list container not found!');
+        return;
+    }
+
+    if (!isFriendListVisible) {
+		try {
+			const friendList = await fetchFriendList();
+            const friendListHtml = friendList.map(friend => `<li>${friend.name} - ${friend.isOnline ? 'Online' : 'Offline'}</li>`).join('');
+            friendListContainer.innerHTML = `<ul>${friendListHtml}</ul>`;
+
+			// 5초마다 친구의 온라인 상태 업데이트
+			friendListUpdateInterval = setInterval(async () => {
+				const updatedFriendList = await fetchFriendList();
+				const updatedFriendListHtml = updatedFriendList.map(friend => `<li>${friend.name} - ${friend.isOnline ? 'Online' : 'Offline'}</li>`).join('');
+				friendListContainer.innerHTML = `<ul>${updatedFriendListHtml}</ul>`;
+			}, 5000);
+
+			isFriendListVisible = true;
+		} catch (error) {
+            friendListContainer.innerHTML = `<p>친구 목록을 불러오지 못했습니다</p>`;
+        }
+		// 친구 추가 버튼 추가
+		friendListContainer.innerHTML += renderAddFriendForm();
+		friendListContainer.classList.add('visible');
+        isFriendListVisible = true;
+	}
+	else {
+		// 친구 목록 숨기기
+		// friendListContainer.style.display = 'none';
+		clearInterval(friendListUpdateInterval); // 업데이트 중지
+		friendListContainer.classList.remove('visible');
+		isFriendListVisible = false;
+	}
+};
+
+async function fetchFriendList() {
+    try {
+        const response = await fetch('/friendList', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: myApp.root.userinfo.id }),
+        });
+        if (!response.ok) {
+            throw new Error('친구 목록을 불러오지 못했습니다');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('친구 목록을 불러오지 못했습니다', error);
+        throw error;
+    }
+};
+
+window.addFriend = async function() {
+    const friendIdInput = document.getElementById('friendIdInput');
+    const friendId = friendIdInput.value.trim(); // 입력된 아이디 가져오기
+
+    // 입력된 아이디가 비어있는지 확인
+    if (!friendId) {
+        alert('친구의 아이디를 입력하세요');
+        return;
+    }
+
+    try {
+        // 서버에 친구 추가 요청 보내기
+        const response = await fetch('/addFriend', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                userId: myApp.root.userinfo.id, // 현재 사용자 아이디
+                friendId: friendId, // 추가할 친구의 아이디
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error('친구 추가에 실패했습니다');
+        }
+
+        // 성공 시 알림 출력
+        alert('친구가 추가되었습니다');
+    } catch (error) {
+        console.error('친구 추가에 실패했습니다', error);
+        alert('친구 추가에 실패했습니다');
+    }
+
+    // 입력 폼 초기화
+    friendIdInput.value = '';
+};
+
+window.logout = function() {
+    console.log("Logging out...");
+	myApp.root.auth = false;
+    myApp.setState({ locate: '/' });
+};
 
 const myApp = new app();
 myApp.initPopStateEvent();

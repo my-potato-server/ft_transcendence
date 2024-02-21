@@ -13,128 +13,80 @@ export default class Game extends Component {
     template() {
         console.log("Game template");
         return `
-        ${RouterButton()}
+        ${RouterButton('/src/pages/main/Game')}
         ${GameButton()}
         `;
     }
 
     setEvent() {
-        //
-		//RouterButton
-		//
-		const mainpageButton = this.$parent.querySelector('button[class="Mainpage"]');
-		if (mainpageButton) {
-			mainpageButton.onclick = () => this.mainpage();
-		}
-		const gameButton = this.$parent.querySelector('button[class="Game"]');
-		if (gameButton) {
-			gameButton.onclick = () => this.game();
-		}
-		const chatButton = this.$parent.querySelector('button[class="Chat"]');
-		if (chatButton) {
-			chatButton.onclick = () => this.chat();
-		}
-		const rankButton = this.$parent.querySelector('button[class="Rank"]');
-		if (rankButton) {
-			rankButton.onclick = () => this.rank();
-		}
-		const profileButton = this.$parent.querySelector('button[class="Profile"]');
-		if (profileButton) {
-			profileButton.onclick = () => this.profile();
-		}
-		const logoutButton = this.$parent.querySelector('button[class="Logout"]');
-		if (logoutButton) {
-			logoutButton.onclick = () => this.logout();
-		}
-		//
-		//
-		//
+		this.gameContainer = this.$parent.querySelector('.game-canvas-container');
+        this.gameSelectionButtons = this.$parent.querySelector('.game-selection-buttons');
 
-        //
-        //Game
-        //
-        this.gameContainer = this.$parent.querySelector('div[class="gameContainer"]');
-
-        const offlineButton = this.$parent.querySelector('button[class="Offline"]');
-        if (offlineButton) {
-            offlineButton.onclick = () => this.offline();
-        }
-        const onlineButton = this.$parent.querySelector('button[class="Online"]');
-        if (onlineButton) {
-            onlineButton.onclick = () => this.online();
-        }
-        const tournamentButton = this.$parent.querySelector('button[class="Tournament"]');
-        if (tournamentButton) {
-            tournamentButton.onclick = () => this.tournament();
-        }
-        //
-        //
-        //
-    }
-
-    //
-	// RouterButton
-	//
-	mainpage() {
-		console.log("mainpage");
-		this.setState({locate: '/src/pages/Main'});
-	}
-	game() {
-		console.log("game");
-		this.setState({locate: '/src/pages/main/Game'});
-	}
-	chat() {
-		console.log("chat");
-		this.setState({locate: '/src/pages/main/Chat'});
-	}
-	rank() {
-		console.log("rank");
-		this.setState({locate: '/src/pages/main/Rank'});
-	}
-	profile() {
-		console.log("profile");
-		this.setState({locate: '/src/pages/main/Profile'});
-	}
-	logout() {
-		console.log("logout");
-		this.$parent.auth = false;
-		this.setState({locate: '/'});
-	}
-	//
-	//
-	//
-
-    //
-    //Game
-    //
-    offline() {
-        console.log("offline");
-
-        const canvas = document.createElement('canvas');
-        canvas.id = 'pongCanvas';
-        canvas.width = 1280;
-        canvas.height = 720;
-        this.gameContainer.appendChild(canvas);
-
-        import('../../apps/offline_pong.js').then(({ default: offline_pong }) => {
-            offline_pong(canvas.id);
+		this.$parent.querySelectorAll('.game-button').forEach(button => {
+            button.addEventListener('click', (event) => {
+                this.handleGameModeSelection(event.target.id);
+            });
         });
-    }
-    online() {
-        console.log("online");
 
-		const match = document.createElement('canvas');
-		match.id = 'matchCanvas';
-		match.width = 1280;
-		match.height = 720;
-		this.gameContainer.appendChild(match);
-		// const canvas = document.createElement('canvas');
-		// canvas.id = 'pongCanvas';
-		// canvas.width = 1280;
-		// canvas.height = 720;
-		// this.gameContainer.appendChild(canvas);
+		const backButton = this.$parent.querySelector('#back');
+        if (backButton) {
+            backButton.addEventListener('click', () => {
+                this.handleBackButton();
+            });
+        }
     }
-    tournament() {
-        console.log("tournament");
+
+	handleGameModeSelection(mode) {
+        console.log(`${mode} game mode selected`);
+        this.showCanvas();
+
+		this.currentGame = null;
+
+		const canvas = this.$parent.querySelector('#gameCanvas');
+		const ctx = canvas.getContext('2d');
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Load the appropriate game module based on the selection
+        switch (mode) {
+            case 'offline':
+                import('../../apps/offline_pong.js').then(({ default: offline_pong }) => {
+                    this.currentGame = offline_pong(canvas.id);
+                });
+                break;
+            case 'online':
+                import('../../apps/online_pong.js').then(({ default: online_pong }) => {
+                    this.currentGame = online_pong(canvas.id);
+                });
+                break;
+			case 'tournament':
+				console.log("Tournament mode not yet implemented");
+				break;
+			default:
+				console.error(`Unknown game mode: ${mode}`);
+        }
     }
+
+	handleBackButton() {
+		console.log("Returning to game selection");
+
+		if (this.currentGame) {
+			console.log("stop game");
+			this.currentGame();
+		}
+		this.currentGame = null;
+		this.hideCanvas(); // 캔버스를 숨기는 함수를 호출합니다.
+	}
+
+	showCanvas() {
+		const navbarHeight = document.querySelector('.navbar').offsetHeight;
+		this.gameContainer.style.marginTop = `${navbarHeight}px`;
+		this.gameSelectionButtons.classList.add('d-none');
+		this.gameContainer.classList.remove('d-none');
+	}
+
+	hideCanvas() {
+		this.gameSelectionButtons.classList.remove('d-none');
+		this.gameContainer.classList.add('d-none');
+	}
+
 }

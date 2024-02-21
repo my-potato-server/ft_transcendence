@@ -1,21 +1,49 @@
 // src/routers/GameButton.js
 
+// export default function GameButton() {
+// 	console.log("GameButton");
+// 	return `
+// 		<div class="GameButton">
+// 			<button type="button" class="Offline">
+// 				Offline
+// 			</button>
+// 			<button type="button" class="Online">
+// 				Online
+// 			</button>
+// 			<button type="button" class"Tournament">
+// 				Tournament
+// 			</button>
+// 		</div>
+// 		<div class="gameContainer">
+// 			<canvas id="pongCanvas"></canvas>
+// 		</div>
+// 	`;
+// }
+
 export default function GameButton() {
-    console.log("GameButton");
-    return `
-        <div class="GameButton">
-            <button type="button" class="Offline">
-                Offline
-            </button>
-            <button type="button" class="Online">
-                Online
-            </button>
-            <button type="button" class"Tournament">
-                Tournament
-            </button>
-        </div>
-        <div class="gameContainer">
-            <canvas id="pongCanvas"></canvas>
-        </div>
-    `;
+	console.log("GameButton");
+	// Game Selection Buttons
+	return `
+	<div class="game-selection-buttons text-center mt-5" style="margin-left: 20px; margin-right: 20px;">
+		<div class="row">
+			<div class="col">
+				<button id="offline" class="btn btn-primary btn-lg game-button" style="height: 300px; width: 100%;">Offline</button>
+			</div>
+			<div class="col">
+				<button id="online" class="btn btn-primary btn-lg game-button" style="height: 300px; width: 100%;">Online</button>
+			</div>
+			<div class="col">
+				<button id="tournament" class="btn btn-primary btn-lg game-button" style="height: 300px; width: 100%;">Tournament</button>
+			</div>
+		</div>
+	</div>
+	<div class="game-canvas-container d-none justify-content-center align-items-center" style="height: 100vh; display: flex; flex-direction: column;">
+		<div>
+		<canvas id="gameCanvas" width="1280" height="720" style="border: 2px solid #000;"></canvas>
+		</div>
+		<div>
+			<button id="back" class="btn btn-secondary mt-3">Back</button>
+		</div>
+	</div>
+`;
 }

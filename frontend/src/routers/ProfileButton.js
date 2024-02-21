@@ -1,21 +1,55 @@
 // src/routers/ProfileButton.js
 
+import injectProfileStyles from "../styles/profilestyle";
+
+// export default function ProfileButton() {
+//     console.log("ProfileButton");
+// 	return `
+// 		<div class="ProfileButton">
+// 			<button type="button" class="UserInfo">
+//                 User Info
+//             </button>
+//             <button type="button" class="Status">
+//                 Status
+//             </button>
+//             <button type="button" class="MatchHistory">
+//                 Match History
+//             </button>
+//             <button type="button" class="DeleteID">
+//                 Delete Account
+//             </button>
+// 		</div>
+//         <div id=info></div>
+//         <div id=delete></div>
+//         <div id=status></div>
+// 	`
+// }
+
 export default function ProfileButton() {
-    console.log("ProfileButton");
+	console.log("ProfileButton");
+	injectProfileStyles();
 	return `
-		<div class="ProfileButton">
-			<button type="button" class="UserInfo">
-                User Info
-            </button>
-            <button type="button" class="DeleteID">
-                Delete Account
-            </button>
-            <button type="button" class="Status">
-                Status
-            </button>
+	<div class="profile-container">
+		<div class="user-details">
+			<div class="user-photo">
+				<img src="https://assets.gadgets360cdn.com/img/crypto/dogecoin-logo.jpg?downsize=120:120" alt="User Photo">
+			</div>
+			<div class="user-info">
+				<div class="name">Mr.Potato</div>
+				<div class="level">Level: 999</div>
+				<div class="joined">가입일: 2022.07.04. D+583</div>
+			</div>
 		</div>
-        <div id=info></div>
-        <div id=delete></div>
-        <div id=status></div>
+	</div>
+	<div class="profile-container">
+		<div class="buttons">
+			<button type="button" class="UserInfo">Info</button>
+			<button type="button" class="MatchHistory">Match History</button>
+			<button type="button" class="DeleteID">Delete Account</button>
+		</div>
+		<div class="dropdown-content" id="info"></div>
+		<div class="dropdown-content" id="matchHistory"></div>
+		<div class="dropdown-content" id="delete"></div>
+	</div>
 	`
 }

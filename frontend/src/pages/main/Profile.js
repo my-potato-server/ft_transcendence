@@ -16,48 +16,15 @@ export default class Profile extends Component {
         }
     }
 
-
-
     template() {
         console.log("Profile template");
         return `
-        ${RouterButton()}
+        ${RouterButton('/src/pages/main/Profile')}
         ${ProfileButton()}
         `;
     }
 
     setEvent() {
-        //
-		//RouterButton
-		//
-		const mainpageButton = this.$parent.querySelector('button[class="Mainpage"]');
-		if (mainpageButton) {
-			mainpageButton.onclick = () => this.mainpage();
-		}
-		const gameButton = this.$parent.querySelector('button[class="Game"]');
-		if (gameButton) {
-			gameButton.onclick = () => this.game();
-		}
-		const chatButton = this.$parent.querySelector('button[class="Chat"]');
-		if (chatButton) {
-			chatButton.onclick = () => this.chat();
-		}
-		const rankButton = this.$parent.querySelector('button[class="Rank"]');
-		if (rankButton) {
-			rankButton.onclick = () => this.rank();
-		}
-		const profileButton = this.$parent.querySelector('button[class="Profile"]');
-		if (profileButton) {
-			profileButton.onclick = () => this.profile();
-		}
-		const logoutButton = this.$parent.querySelector('button[class="Logout"]');
-		if (logoutButton) {
-			logoutButton.onclick = () => this.logout();
-		}
-		//
-		//
-		//
-
         //
         //Profile
         //
@@ -73,43 +40,11 @@ export default class Profile extends Component {
         if (status) {
             status.onclick = () => this.status();
         }
-        //
-        //
-        //
+        const matchHistory = this.$parent.querySelector('button[class="MatchHistory"]');
+        if (matchHistory) {
+            matchHistory.onclick = () => this.matchHistory();
+        }
     }
-
-
-    //
-	// RouterButton
-	//
-	mainpage() {
-		console.log("mainpage");
-		this.setState({locate: '/src/pages/Main'});
-	}
-	game() {
-		console.log("game");
-		this.setState({locate: '/src/pages/main/Game'});
-	}
-	chat() {
-		console.log("chat");
-		this.setState({locate: '/src/pages/main/Chat'});
-	}
-	rank() {
-		console.log("rank");
-		this.setState({locate: '/src/pages/main/Rank'});
-	}
-	profile() {
-		console.log("profile");
-		this.setState({locate: '/src/pages/main/Profile'});
-	}
-	logout() {
-		console.log("logout");
-		this.$parent.auth = false;
-		this.setState({locate: '/'});
-    }
-	//
-	//
-	//
 
     //
     //Profile
@@ -122,7 +57,7 @@ export default class Profile extends Component {
         };
     }
     userInfo() {
-        console.log("userInfo");
+        console.log("userInfo", this.buttoncheck.userinfo);
         if (this.buttoncheck.userinfo) {
             this.buttoncheck.userinfo = false;
             const infoContainer = this.$parent.querySelector('#info');
@@ -140,6 +75,7 @@ export default class Profile extends Component {
                     <div>name : ${infos.name}</div>
                     <div>auth : ${infos.auth}</div>
                 </pre>`;
+                infoContainer.style.display = 'block';
             }
             this.buttoncheck.userinfo = true;
         }
@@ -271,6 +207,69 @@ export default class Profile extends Component {
                 console.log("status 요청 실패", error);
             });
             this.buttoncheck.status = true;
+        }
+    }
+
+    matchHistory() {
+        if (this.buttoncheck.matchHistory) {
+            this.buttoncheck.matchHistory = false;
+            const matchHistoryContainer = this.$parent.querySelector('#matchHistory');
+            if (matchHistoryContainer) {
+                matchHistoryContainer.innerHTML = '';
+            }
+        } else {
+            console.log("matchHistory");
+            // 서버에 매치 히스토리 요청
+            alert("매치 히스토리를 요청합니다.");
+            const infos = this.info();
+            fetch('/matchHistory', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id : infos.id
+                }),
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log("matchhistory 요청 성공");
+                    alert("matchhistory 요청 성공");
+                    // 서버에서 받은 정보를 출력
+                    const matchHistoryContainer = this.$parent.querySelector('#matchHistory');
+                    if (matchHistoryContainer) {
+                        const matchHistory = response.json();
+                        if (!matchHistory) {
+                            console.log("matchhistory 에러");
+                            alert("matchhistory 요청 실패");
+                            matchHistory = {
+                                match : []
+                            };
+                        }
+                        matchHistoryContainer.innerHTML = `
+                        <pre>
+                            <h3>매치 히스토리</h3>
+                            <div>${matchHistory.match}</div>
+                        </pre>
+                        `;
+                    }
+                } else {
+                    console.log("matchhistory 요청 실패");
+                    alert("matchhistory 요청 실패");
+                    //이하 테스트용. 매치 히스토리 요청 정상 동작시 삭제
+                    const matchHistoryContainer = this.$parent.querySelector('#matchHistory');
+                    matchHistoryContainer.innerHTML = `
+                        <pre>
+                            <h3>매치 히스토리(테스트용)</h3>
+                        </pre>
+                        `;
+                    matchHistoryContainer.style.display = 'block';
+                    this.buttoncheck.matchHistory = true;
+                }
+            })
+            .catch(error => {
+                console.log("matchhistory 요청 실패..", error);
+            });
         }
     }
 }
