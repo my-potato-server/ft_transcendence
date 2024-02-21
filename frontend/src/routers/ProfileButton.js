@@ -1,6 +1,6 @@
 // src/routers/ProfileButton.js
 
-import injectProfileStyles from "../styles/profilestyle";
+import injectProfileStyles from "../styles/profilestyle.js";
 
 // export default function ProfileButton() {
 //     console.log("ProfileButton");

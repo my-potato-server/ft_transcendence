@@ -45,6 +45,12 @@ export default class Login extends Component {
 
 	_42login() {
 		console.log("42login");
+		fetch("/api/account/42-oauth-url", {
+			method: 'GET',
+		})
+		.then(async response => {
+			window.location.href = JSON.parse(await response.text());
+		})
 	}
 
 	login() {
