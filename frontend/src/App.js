@@ -20,7 +20,7 @@ class app {
 			name : '',
 			auth : false
 		};
-
+		this.root.token = '';
 	}
 
 	//  네비게이션 이벤트 없을 때
@@ -77,6 +77,9 @@ class app {
 		} else if (locate === '/src/pages/main/Profile') {
 			if (!this.Profile) { this.makepage(locate); }
 			else { this.Profile.renderSequnce(this.state); }
+		} else if (locate === '/src/pages/GetAuth') {
+			if (!this.GetAuth) { this.makepage(locate); }
+			else { this.GetAuth.renderSequnce(this.state); }
 		}
 
 		this.historyRouterPush(locate);
@@ -167,6 +170,17 @@ class app {
 						state: this.state
 					});
 					this.Profile.renderSequnce(this.state);
+				});
+			}
+		else if (locate === '/src/pages/GetAuth') {
+				import('./pages/GetAuth.js').then(({ default: GetAuth }) => {
+					this.GetAuth = new GetAuth({
+						$parent: this.root,
+						setState: this.setState.bind(this),
+						state: this.state
+					});
+					this.GetAuth.url = window.location.href;
+					this.GetAuth.renderSequnce(this.state);
 				});
 			}
 	}

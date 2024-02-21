@@ -37,7 +37,7 @@ def auth_test(request):
 @account_api.get("/42-oauth-url")
 def ft_oauth_url(request):
 	ft_api_sign_in = "https://api.intra.42.fr/oauth/authorize"
-	redirect_uri = "https://localhost/src/pages/Main"
+	redirect_uri = "https://localhost/src/pages/GetAuth"
 	response_type = "code"
 	ft_api_scope = "public"
 	url = (

@@ -74,6 +74,7 @@ export default class Profile extends Component {
                     <div>id : ${infos.id}</div>
                     <div>name : ${infos.name}</div>
                     <div>auth : ${infos.auth}</div>
+                    <div>token : ${this.$parent.token}</div>
                 </pre>`;
                 infoContainer.style.display = 'block';
             }
