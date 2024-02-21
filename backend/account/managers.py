@@ -10,7 +10,7 @@ class UserManager(BaseUserManager):
         return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length))
 
     def create_user(self, login):
-        user = self.model(login=login)
+        user = self.model(login=login, nickname=login)
         user.set_password(self._get_random_string(30))
         user.save(using=self._db)
         return user
