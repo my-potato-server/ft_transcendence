@@ -6,14 +6,13 @@ from django.conf import settings
 from django.db.models import Q
 
 from .requests import LoginRequest
-from .responses import LoginResponse, UserResponse, FriendResponse
+from .responses import LoginResponse, UserResponse, FriendshipResponse
 from .ft_auth import FtAuth
 from .models import User, Friendship
 from .auth import AuthBearer
 
 from main.responses import ErrorResponse
 from main.jwt import create_token
-
 
 account_api = NinjaAPI()
 friend_api = NinjaAPI()
@@ -78,15 +77,19 @@ def list_friends(request):
 	return 200, {"friends": friends_list}
 
 
-@friend_api.get("/requests", auth=AuthBearer(), response={200: List[UserResponse]})
+@friend_api.get("/requests", auth=AuthBearer(), response={200: List[FriendshipResponse]})
 def list_requests(request):
 	requests = Friendship.objects \
 		.filter(Q(from_user=request.user) | Q(to_user=request.user), accepted=False) \
 		.exclude(requested_by=request.user)
-	return 200, {"requests": [UserResponse(user=f.from_user) for f in requests]}
+	request_list = [
+		FriendshipResponse(id=f.id, user=f.from_user if f.to_user == request.user else f.to_user)
+		for f in requests
+	]
+	return 200, {"requests": request_list}
 
 
-@friend_api.post("/request", auth=AuthBearer())
+@friend_api.post("/request/{user_id}", auth=AuthBearer())
 def request_friend(request, user_id: int):
 	user = User.objects.get(id=user_id)
 	if user == request.user:
@@ -98,5 +101,14 @@ def request_friend(request, user_id: int):
 	Friendship.objects.create(from_user=request.user, to_user=user, requested_by=request.user)
 	return 200, {"message": "Friend request sent"}
 
-@friend_api.post("/accept", auth=AuthBearer())
-def accept_friend()
+
+@friend_api.post("/accept/{request_id}", auth=AuthBearer())
+def accept_friend(request, request_id: int):
+	friendship = Friendship.objects.get(id=request_id)
+	if friendship.requested_by == request.user:
+		return 400, {"message": "You can't accept your own request"}
+	if friendship.from_user != request.user and friendship.to_user != request.user:
+		return 400, {"message": "This request is not for you"}
+	friendship.accepted = True
+	friendship.save()
+	return 200, {"message": "Friend request accepted"}
