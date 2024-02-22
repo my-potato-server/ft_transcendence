@@ -10,17 +10,27 @@ class app {
 
 		const ObjectForDI = {$parent:this.root, setState : this.setState.bind(this), state : this.state};
 
+		const auth = sessionStorage.getItem('auth') === 'true'; // 문자열 "true"를 boolean으로 변환
+		const token = sessionStorage.getItem('token');
+		console.log("new app");
+		if (auth) {
+			this.root.auth = true;
+			this.root.token = token;
+		} else {
+			this.root.auth = false;
+			this.root.token = '';
+		}
 		this.Login = new Login(ObjectForDI);
 
 		this.render();
 		this.setDummyEvent();
-		this.root.auth = false;
-		this.root.userinfo = {
-			id : '',
-			name : '',
-			auth : false
-		};
-		this.root.token = '';
+		// this.root.auth = false;
+		// this.root.userinfo = {
+		// 	id : '',
+		// 	name : '',
+		// 	auth : false
+		// };
+		// this.root.token = '';
 	}
 
 	//  네비게이션 이벤트 없을 때
@@ -57,31 +67,70 @@ class app {
 
 		let { locate } = this.state;
 		console.log("render's locate", locate, this.state);
-		if (locate === '/') {
-			this.Login.renderSequnce(this.state);
-		} else if (locate === '/src/pages/Main') {
-			if (!this.Mainpage) { this.makepage(locate); }
-			else { this.Mainpage.renderSequnce(this.state); }
-		} else if (locate === '/src/pages/Signup') {
-			if (!this.Signup) { this.makepage(locate); }
-			else { this.Signup.renderSequnce(this.state); }
-		} else if (locate === '/src/pages/main/Game') {
-			if (!this.Game) { this.makepage(locate); }
-			else { this.Game.renderSequnce(this.state); }
-		} else if (locate === '/src/pages/main/Chat') {
-			if (!this.Chat) { this.makepage(locate); }
-			else { this.Chat.renderSequnce(this.state); }
-		} else if (locate === '/src/pages/main/Rank') {
-			if (!this.Rank) { this.makepage(locate); }
-			else { this.Rank.renderSequnce(this.state); }
-		} else if (locate === '/src/pages/main/Profile') {
-			if (!this.Profile) { this.makepage(locate); }
-			else { this.Profile.renderSequnce(this.state); }
-		} else if (locate === '/src/pages/GetAuth') {
-			if (!this.GetAuth) { this.makepage(locate); }
-			else { this.GetAuth.renderSequnce(this.state); }
+		
+		// if (locate === '/') {
+		// 	this.Login.renderSequnce(this.state);
+		// } else if (locate === '/src/pages/Main') {
+		// 	if (!this.Mainpage) { this.makepage(locate); }
+		// 	else { this.Mainpage.renderSequnce(this.state); }
+		// } else if (locate === '/src/pages/Signup') {
+		// 	if (!this.Signup) { this.makepage(locate); }
+		// 	else { this.Signup.renderSequnce(this.state); }
+		// } else if (locate === '/src/pages/main/Game') {
+		// 	if (!this.Game) { this.makepage(locate); }
+		// 	else { this.Game.renderSequnce(this.state); }
+		// } else if (locate === '/src/pages/main/Chat') {
+		// 	if (!this.Chat) { this.makepage(locate); }
+		// 	else { this.Chat.renderSequnce(this.state); }
+		// } else if (locate === '/src/pages/main/Rank') {
+		// 	if (!this.Rank) { this.makepage(locate); }
+		// 	else { this.Rank.renderSequnce(this.state); }
+		// } else if (locate === '/src/pages/main/Profile') {
+		// 	if (!this.Profile) { this.makepage(locate); }
+		// 	else { this.Profile.renderSequnce(this.state); }
+		// } else if (locate === '/src/pages/GetAuth') {
+		// 	if (!this.GetAuth) { this.makepage(locate); }
+		// 	else { this.GetAuth.renderSequnce(this.state); }
+		// }
+		if (this.root.auth === true) {
+			if (locate === '/') {
+				this.Login.renderSequnce(this.state);
+			} else if (locate === '/src/pages/Main') {
+				if (!this.Mainpage) { this.makepage(locate); }
+				else { this.Mainpage.renderSequnce(this.state); }
+			} else if (locate === '/src/pages/Signup') {
+				if (!this.Signup) { this.makepage(locate); }
+				else { this.Signup.renderSequnce(this.state); }
+			} else if (locate === '/src/pages/main/Game') {
+				if (!this.Game) { this.makepage(locate); }
+				else { this.Game.renderSequnce(this.state); }
+			} else if (locate === '/src/pages/main/Chat') {
+				if (!this.Chat) { this.makepage(locate); }
+				else { this.Chat.renderSequnce(this.state); }
+			} else if (locate === '/src/pages/main/Rank') {
+				if (!this.Rank) { this.makepage(locate); }
+				else { this.Rank.renderSequnce(this.state); }
+			} else if (locate === '/src/pages/main/Profile') {
+				if (!this.Profile) { this.makepage(locate); }
+				else { this.Profile.renderSequnce(this.state); }
+			} else if (locate === '/src/pages/GetAuth') {
+				if (!this.GetAuth) { this.makepage(locate); }
+				else { this.GetAuth.renderSequnce(this.state); }
+			}
 		}
-
+		else {
+			if (locate === '/') {
+				this.Login.renderSequnce(this.state);
+			} else if (locate === '/src/pages/Signup') {
+				if (!this.Signup) { this.makepage(locate); }
+				else { this.Signup.renderSequnce(this.state); }
+			} else if (locate === '/src/pages/GetAuth') {
+				if (!this.GetAuth) { this.makepage(locate); }
+				else { this.GetAuth.renderSequnce(this.state); }
+			} else {
+				this.setState({locate: '/'});
+			}
+		}
 		this.historyRouterPush(locate);
 
 		console.log("render end");
@@ -301,6 +350,9 @@ window.addFriend = async function() {
 window.logout = function() {
     console.log("Logging out...");
 	myApp.root.auth = false;
+	myApp.root.token = '';
+	sessionStorage.removeItem('auth');
+    sessionStorage.removeItem('token');
     myApp.setState({ locate: '/' });
 };
 

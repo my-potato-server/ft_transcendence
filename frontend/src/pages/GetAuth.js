@@ -51,6 +51,8 @@ export default class GetAuth extends Component {
             console.log("token", token);
             this.$parent.auth = true;
             this.$parent.token = token;
+            sessionStorage.setItem('auth', 'true');
+            sessionStorage.setItem('token', token);
             this.setState({locate: '/src/pages/Main'});
         })
         .catch(error => {
