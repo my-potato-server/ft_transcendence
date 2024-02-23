@@ -14,8 +14,8 @@ from .auth import AuthBearer
 from main.responses import ErrorResponse
 from main.jwt import create_token
 
-account_api = NinjaAPI()
-friend_api = NinjaAPI()
+account_api = NinjaAPI(urls_namespace="account")
+friend_api = NinjaAPI(urls_namespace="friend")
 
 
 @account_api.post("/login", response={200: LoginResponse, 400: ErrorResponse})
