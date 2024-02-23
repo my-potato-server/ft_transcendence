@@ -119,6 +119,7 @@ class app {
 			}
 		}
 		else {
+			// alert("로그인이 필요합니다");
 			if (locate === '/') {
 				this.Login.renderSequnce(this.state);
 			} else if (locate === '/src/pages/Signup') {
@@ -250,6 +251,14 @@ function renderAddFriendForm() {
             <button onclick="addFriend()">확인</button>
         </div>
     `;
+}
+
+window.navigateToSubscribe = async function() {
+	alert("구독");
+	// 유저 정보 먼저 요청,
+	// 구독 양식 팝업박스 생성
+	// 구독 제출
+	// modal 사용, 사진 있음
 }
 
 window.navigateToProfile = async function() {
