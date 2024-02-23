@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from .models import Subscription
 
 
-main_api = NinjaAPI()
+main_api = NinjaAPI(urls_namespace="main")
 
 
 @main_api.post("/subscribe")
