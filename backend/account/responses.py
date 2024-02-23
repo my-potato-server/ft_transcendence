@@ -9,3 +9,8 @@ class LoginResponse(Schema):
 
 class UserResponse(Schema):
 	user: UserSchema
+
+
+class FriendshipResponse(Schema):
+	id: int
+	user: UserSchema
