@@ -8,9 +8,11 @@ class MyConsumer(AsyncWebsocketConsumer):
         self.user = self.scope["user"]
         if self.user.is_authenticated:
             await self.accept()
-            await capis.connect_to_server(self.user)  # 사용자 인스턴스 전달
+            self.user_room  = await capis.connect_to_server(self.user)  # 사용자 인스턴스 전달
+            self.user_session_identify = f'user_session_{self.user_room.id}'
+
             await self.channel_layer.group_add(     # 사용자별 그룹에 가입
-                f'user_{self.user.username}',
+                self.user_session_identify,
                 self.channel_name
             )
         else:
@@ -20,7 +22,7 @@ class MyConsumer(AsyncWebsocketConsumer):
         if self.user.is_authenticated:
             await capis.disconnect_to_server(self.user)  # 사용자 인스턴스 전달
             await self.channel_layer.group_discard(
-                f'user_{self.user.username}',
+                self.user_session_identify,
                 self.channel_name
             )
 
@@ -38,7 +40,7 @@ class MyConsumer(AsyncWebsocketConsumer):
             'matchserver.delete_room': capis.delete_room,
             # 'matchserver.delete_room': capis.delete_room,
         }
-
+ 
         # # 메서드 실행
         # if method in method_actions:
         #     response = await method_actions[method](**parameters)
@@ -61,5 +63,22 @@ class MyConsumer(AsyncWebsocketConsumer):
             'data': data or {}  # data가 None이면 빈 딕셔너리를 반환
         }
         await self.send(text_data=json.dumps(response))
+
+
+    # 메시지 전송
+    async def send_message(self, event):
+        # event 딕셔너리에서 메시지 데이터 추출
+        method = event['method']
+        status = event['status']
+        identify = event['identify']
+        data = event['data']
+
+        # 클라이언트에게 메시지 전송
+        await self.send(text_data=json.dumps({
+            'method': method,
+            'status': status,
+            'identify': identify,
+            'data': data
+        }))
 
     

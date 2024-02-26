@@ -17,10 +17,12 @@ def connect_to_server(user, password=None):
     # 끊어진지 얼마 안 되었다면, 자동으로 재접속 시도 (이후 구현)
     # 끊어진지 오래 되었거나 정보가 없다면, 새로 접속
 
-    UserRoom.objects.update_or_create(
+    user_room = UserRoom.objects.update_or_create(
             user=user,
             defaults={'room': None}  # 사용자가 방에 들어가 있지 않음을 가정
-        )
+            )
+    
+    return user_room
 
     pass
 
@@ -38,6 +40,8 @@ def disconnect_to_server(user, password=None):
         # 사용자에 대한 UserRoom 레코드가 없는 경우, 필요한 처리 수행
         pass
     pass
+
+
 
 
 @database_sync_to_async
@@ -98,6 +102,43 @@ def create_room(name, password=None):
 #         return {'status': 'Error', 'message': 'Room does not exist'}
 
 
+# 방 조회하기
+@database_sync_to_async
+def list_room():
+    rooms = Room.objects.all().values('id', 'name')  # id와 name 필드만 가져옴
+    return list(rooms)
+    pass
+
+# 방 참여하기
+@database_sync_to_async
+def enter_room(user_id, room_id, room_password=None):
+    
+    try:
+        user_room = UserRoom.objects.get(user__id=user_id)
+        room = Room.objects.get(id=room_id)
+        if not room.password == room_password: 
+            return {'status': 'Error', 'message': 'Wrong Room Password'}
+        user_room.room = room
+        user_room.save()
+        return {'status': 'OK', 'message': 'Room entered'}
+    except UserRoom.DoesNotExist:
+        return {'status': 'Error', 'message': 'UserRoom does not exist'}
+    except Room.DoesNotExist:
+        return {'status': 'Error', 'message': 'Room does not exist'}
+
+
+# 방 나가기
+@database_sync_to_async
+def exit_room(user_id):
+    try:
+        user_room = UserRoom.objects.get(user__id=user_id)
+        user_room.room = None
+        user_room.save()
+        return {'status': 'OK', 'message': 'Room exited'}
+    except UserRoom.DoesNotExist:
+        return {'status': 'Error', 'message': 'UserRoom does not exist'}
+
+
 # 방 삭제 함수
 @database_sync_to_async
 def delete_room(room_id):
@@ -132,20 +173,29 @@ def delete_room(room_id):
 #     return {'status': 'OK', 'message': 'Room deleted', 'room_id': kwargs.get('room_id')}
 
 
-def send_message_to(self, username, method, status, identify, data=None):
+def send_message_to(self, user_session_identify, method, status, identify, data=None):
     channel_layer = get_channel_layer()
     # 사용자별 고유 그룹 이름을 정의 (예: username을 그룹 이름으로 사용)
-    group_name = f'user_{username}'
+    group_name = user_session_identify
     
-    response = {
+    # 메시지 형식을 Channels가 인식할 수 있도록 구성
+    message = {
+        'type': 'chat_message',  # Consumer 내에서 정의해야 할 메서드 이름
         'method': method,
         'status': status,
         'identify': identify,
-        'data': data or {}  # data가 None이면 빈 딕셔너리를 반환
+        'data': data or {}
     }
 
     # 비동기 함수를 동기 코드 내에서 호출
     async_to_sync(channel_layer.group_send)(
         group_name,
-        response
+        message
     )
+
+# 데이터베이스를 조회해서 특정 방에 있는 사람들의 모든 유저의 ID를 세션ID 형태로 리턴
+@database_sync_to_async
+def get_user_session_identifiers(room_id):
+    user_rooms = UserRoom.objects.filter(room__id=room_id)
+    session_identifiers = [f'user_session_{user_room.user.id}' for user_room in user_rooms]
+    return session_identifiers
