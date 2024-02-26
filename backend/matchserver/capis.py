@@ -148,7 +148,7 @@ def delete_room(room_id):
 
     try:
         room = Room.objects.get(id=room_id)
-    except ObjectDoesNotExist:
+    except:
         return {'status': 'Error', 'message': "Room does not exist"}
 
     # 권한 검사 (예시 코드, 실제 구현에는 사용자 인증 로직 필요)
@@ -161,10 +161,17 @@ def delete_room(room_id):
 
 
     # 빙에 있는 인원 내보내기 ========
+    send_message_to_room_that_room_was_updated(room_id)
+    user_ids = get_user_ids_by_room_id()
+    for id in user_ids:
+        exit_room(id)
 
     # 방 삭제 로직
     room.delete()
     return {'status': 'OK', 'message': 'Room deleted'}
+
+
+
 
 
 # async def undefined_method(self, **kwargs):
@@ -173,6 +180,7 @@ def delete_room(room_id):
 #     return {'status': 'OK', 'message': 'Room deleted', 'room_id': kwargs.get('room_id')}
 
 
+# 클라이언트에게 웹 소켓으로 메시지를 보냄.
 async def send_message_to(self, user_session_identify, method, status, identify, data=None):
     channel_layer = get_channel_layer()
     # 사용자별 고유 그룹 이름을 정의 (예: username을 그룹 이름으로 사용)
@@ -195,17 +203,24 @@ async def send_message_to(self, user_session_identify, method, status, identify,
 
 # 데이터베이스를 조회해서 특정 방에 있는 사람들의 모든 유저의 ID를 세션ID 형태로 리턴
 @database_sync_to_async
-def get_user_session_identifiers(room_id):
+def get_user_session_identifiers_by_room_id(room_id):
     user_rooms = UserRoom.objects.filter(room__id=room_id)
     session_identifiers = [f'user_session_{user_room.user.id}' for user_room in user_rooms]
     return session_identifiers
 
+# 데이터베이스를 조회해서 특정 방에 있는 사람들의 모든 유저의 ID를 리턴
+@database_sync_to_async
+def get_user_ids_by_room_id(room_id):
+    user_rooms = UserRoom.objects.filter(room__id=room_id)
+    user_ids = [user_room.user.id for user_room in user_rooms]
+    return user_ids
 
 
+# 특정 방에 있는 모든 클라이언트에게 메시지를 보냄
 async def send_message_to_room(self, room_id, message):
     channel_layer = get_channel_layer()
     # 사용자별 고유 그룹 이름을 정의 (예: username을 그룹 이름으로 사용)
-    session_identifires = get_user_session_identifiers(room_id)
+    session_identifires = get_user_session_identifiers_by_room_id(room_id)
     
     # 메시지 형식을 Channels가 인식할 수 있도록 구성
     message += {
@@ -218,3 +233,8 @@ async def send_message_to_room(self, room_id, message):
             message
         )    
     
+# 보낼만한 메시지
+async def send_message_to_room_that_room_was_deleted(self, room_id):
+    pass
+async def send_message_to_room_that_room_was_updated(self, room_id):
+    pass
