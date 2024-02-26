@@ -2,21 +2,41 @@
 # json으로 받아 consumer가 호출할 수 있는 함수들으 모음
 import re
 
+from django.util import timezone
 from channels.db import database_sync_to_async
-from .models import Room
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
+
+from .models import Room, UserRoom
 
 
 @database_sync_to_async
-def connect_to_server(name, password=None):
-    # 데이터베이스에 기록이 남아있는지 확인
-    # 끊어진지 얼마 안 되었다면, 자동으로 재접속 시도
+def connect_to_server(user, password=None):
+    # 데이터베이스에 기록이 남아있는지 확인 (이후 구현)
+    # 끊어진지 얼마 안 되었다면, 자동으로 재접속 시도 (이후 구현)
     # 끊어진지 오래 되었거나 정보가 없다면, 새로 접속
+
+    UserRoom.objects.update_or_create(
+            user=user,
+            defaults={'room': None}  # 사용자가 방에 들어가 있지 않음을 가정
+        )
+
     pass
 
 @database_sync_to_async
-def disconnect_to_server(name, password=None):
+def disconnect_to_server(user, password=None):
     # 정상 종료인 경우 데이터베이스에서 기록을 삭제
     # 비정상 종료인 경우, 최근 끊어짐 시각에 기록을 남김
+    
+    # 사용자의 UserRoom 레코드를 찾아 left_at 필드에 현재 시각 기록
+    try:
+        user_room = UserRoom.objects.get(user=user)
+        user_room.left_at = timezone.now()
+        user_room.save()
+    except UserRoom.DoesNotExist:
+        # 사용자에 대한 UserRoom 레코드가 없는 경우, 필요한 처리 수행
+        pass
     pass
 
 
@@ -111,3 +131,21 @@ def delete_room(room_id):
 #     # 예시 응답
 #     return {'status': 'OK', 'message': 'Room deleted', 'room_id': kwargs.get('room_id')}
 
+
+def send_message_to(self, username, method, status, identify, data=None):
+    channel_layer = get_channel_layer()
+    # 사용자별 고유 그룹 이름을 정의 (예: username을 그룹 이름으로 사용)
+    group_name = f'user_{username}'
+    
+    response = {
+        'method': method,
+        'status': status,
+        'identify': identify,
+        'data': data or {}  # data가 None이면 빈 딕셔너리를 반환
+    }
+
+    # 비동기 함수를 동기 코드 내에서 호출
+    async_to_sync(channel_layer.group_send)(
+        group_name,
+        response
+    )

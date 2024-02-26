@@ -5,10 +5,25 @@ import json
 
 class MyConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        await self.accept()
+        self.user = self.scope["user"]
+        if self.user.is_authenticated:
+            await self.accept()
+            await capis.connect_to_server(self.user)  # 사용자 인스턴스 전달
+            await self.channel_layer.group_add(     # 사용자별 그룹에 가입
+                f'user_{self.user.username}',
+                self.channel_name
+            )
+        else:
+            await self.close()
 
     async def disconnect(self, close_code):
-        pass
+        if self.user.is_authenticated:
+            await capis.disconnect_to_server(self.user)  # 사용자 인스턴스 전달
+            await self.channel_layer.group_discard(
+                f'user_{self.user.username}',
+                self.channel_name
+            )
+
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
@@ -46,3 +61,5 @@ class MyConsumer(AsyncWebsocketConsumer):
             'data': data or {}  # data가 None이면 빈 딕셔너리를 반환
         }
         await self.send(text_data=json.dumps(response))
+
+    
