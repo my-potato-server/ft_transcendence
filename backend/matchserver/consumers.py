@@ -67,18 +67,26 @@ class MyConsumer(AsyncWebsocketConsumer):
 
     # 메시지 전송
     async def send_message(self, event):
-        # event 딕셔너리에서 메시지 데이터 추출
-        method = event['method']
-        status = event['status']
-        identify = event['identify']
-        data = event['data']
+        await self.send(text_data=json.dumps(event))
+        # # event 딕셔너리에서 메시지 데이터 추출
+        # method = event['method']
+        # status = event['status']
+        # identify = event['identify']
+        # data = event['data']
 
+        # event -= {'type': 'send_message'}
+
+        # # 클라이언트에게 메시지 전송
+        # await self.send(text_data=json.dumps({
+        #     'method': method,
+        #     'status': status,
+        #     'identify': identify,
+        #     'data': data
+        # }))
+        
         # 클라이언트에게 메시지 전송
-        await self.send(text_data=json.dumps({
-            'method': method,
-            'status': status,
-            'identify': identify,
-            'data': data
-        }))
+        # await self.send(text_data=json.dumps(event))
+
+
 
     

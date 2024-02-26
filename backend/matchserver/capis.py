@@ -173,14 +173,14 @@ def delete_room(room_id):
 #     return {'status': 'OK', 'message': 'Room deleted', 'room_id': kwargs.get('room_id')}
 
 
-def send_message_to(self, user_session_identify, method, status, identify, data=None):
+async def send_message_to(self, user_session_identify, method, status, identify, data=None):
     channel_layer = get_channel_layer()
     # 사용자별 고유 그룹 이름을 정의 (예: username을 그룹 이름으로 사용)
     group_name = user_session_identify
     
     # 메시지 형식을 Channels가 인식할 수 있도록 구성
     message = {
-        'type': 'chat_message',  # Consumer 내에서 정의해야 할 메서드 이름
+        'type': 'send_message',  # Consumer 내에서 정의해야 할 메서드 이름
         'method': method,
         'status': status,
         'identify': identify,
@@ -188,7 +188,7 @@ def send_message_to(self, user_session_identify, method, status, identify, data=
     }
 
     # 비동기 함수를 동기 코드 내에서 호출
-    async_to_sync(channel_layer.group_send)(
+    await channel_layer.group_send(
         group_name,
         message
     )
@@ -199,3 +199,22 @@ def get_user_session_identifiers(room_id):
     user_rooms = UserRoom.objects.filter(room__id=room_id)
     session_identifiers = [f'user_session_{user_room.user.id}' for user_room in user_rooms]
     return session_identifiers
+
+
+
+async def send_message_to_room(self, room_id, message):
+    channel_layer = get_channel_layer()
+    # 사용자별 고유 그룹 이름을 정의 (예: username을 그룹 이름으로 사용)
+    session_identifires = get_user_session_identifiers(room_id)
+    
+    # 메시지 형식을 Channels가 인식할 수 있도록 구성
+    message += {
+        'type': 'send_message',  # Consumer 내에서 정의해야 할 메서드 이름
+    }
+
+    for id in session_identifires:
+        await channel_layer.group_send(
+            id,
+            message
+        )    
+    
