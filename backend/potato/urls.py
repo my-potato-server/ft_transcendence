@@ -19,11 +19,13 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from .views import index
-
-from account.apis import account_api
+from account.apis import account_api, friend_api
+from main.apis import main_api
+from game.apis import match_api
 
 urlpatterns = [
-    path('', index),
+    path('', main_api.urls),
     path('account/', account_api.urls),
+    path('friend/', friend_api.urls),
+    path('match/', match_api.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

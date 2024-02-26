@@ -66,17 +66,33 @@ export default class Profile extends Component {
             }
         } else {
             const infoContainer = this.$parent.querySelector('#info');
-            if (infoContainer) {
-                const infos = this.info();
+            fetch('/account/me', {
+                method: 'GET',
+            })
+            .then(async response => {
+                const infos = {id, login, nickname, image} = await response.json();
                 infoContainer.innerHTML = `
                 <pre>
                     <h3>유저 정보</h3>
                     <div>id : ${infos.id}</div>
                     <div>name : ${infos.name}</div>
                     <div>auth : ${infos.auth}</div>
+                    <div>token : ${this.$parent.token}</div>
                 </pre>`;
                 infoContainer.style.display = 'block';
-            }
+            })
+            // if (infoContainer) {
+            //     const infos = this.info();
+            //     infoContainer.innerHTML = `
+            //     <pre>
+            //         <h3>유저 정보</h3>
+            //         <div>id : ${infos.id}</div>
+            //         <div>name : ${infos.name}</div>
+            //         <div>auth : ${infos.auth}</div>
+            //         <div>token : ${this.$parent.token}</div>
+            //     </pre>`;
+            //     infoContainer.style.display = 'block';
+            // }
             this.buttoncheck.userinfo = true;
         }
     }

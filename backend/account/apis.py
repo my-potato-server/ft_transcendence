@@ -1,20 +1,21 @@
+from typing import List
 from ninja import NinjaAPI, File
 from ninja.files import UploadedFile
 from django.contrib.auth import authenticate
 from django.conf import settings
+from django.db.models import Q
 
 from .requests import LoginRequest
-from .responses import LoginResponse, UserResponse
+from .responses import LoginResponse, UserResponse, FriendshipResponse
 from .ft_auth import FtAuth
-from .models import User
+from .models import User, Friendship
 from .auth import AuthBearer
 
 from main.responses import ErrorResponse
 from main.jwt import create_token
 
-
-account_api = NinjaAPI()
-friend_api = NinjaAPI()
+account_api = NinjaAPI(urls_namespace="account")
+friend_api = NinjaAPI(urls_namespace="friend")
 
 
 @account_api.post("/login", response={200: LoginResponse, 400: ErrorResponse})
@@ -37,7 +38,7 @@ def auth_test(request):
 @account_api.get("/42-oauth-url")
 def ft_oauth_url(request):
 	ft_api_sign_in = "https://api.intra.42.fr/oauth/authorize"
-	redirect_uri = "https://localhost/src/pages/Main"
+	redirect_uri = "https://localhost/src/pages/GetAuth"
 	response_type = "code"
 	ft_api_scope = "public"
 	url = (
@@ -64,3 +65,50 @@ def edit_image(request, image: UploadedFile = File(...)):
 	request.user.image = image
 	request.user.save()
 	return 200, {"message": "Image changed"}
+
+
+@friend_api.post("/list", auth=AuthBearer(), response={200: List[UserResponse]})
+def list_friends(request):
+	friends = Friendship.objects.filter(Q(from_user=request.user) | Q(to_user=request.user), accepted=True)
+	friends_list = [
+		UserResponse(user=f.from_user if f.to_user == request.user else f.to_user)
+		for f in friends
+	]
+	return 200, {"friends": friends_list}
+
+
+@friend_api.get("/requests", auth=AuthBearer(), response={200: List[FriendshipResponse]})
+def list_requests(request):
+	requests = Friendship.objects \
+		.filter(Q(from_user=request.user) | Q(to_user=request.user), accepted=False) \
+		.exclude(requested_by=request.user)
+	request_list = [
+		FriendshipResponse(id=f.id, user=f.from_user if f.to_user == request.user else f.to_user)
+		for f in requests
+	]
+	return 200, {"requests": request_list}
+
+
+@friend_api.post("/request/{user_id}", auth=AuthBearer())
+def request_friend(request, user_id: int):
+	user = User.objects.get(id=user_id)
+	if user == request.user:
+		return 400, {"message": "You can't add yourself"}
+	if Friendship.objects \
+			.filter(Q(from_user=request.user, to_user=user) | Q(from_user=user, to_user=request.user)) \
+			.exists():
+		return 400, {"message": "You are already friends"}
+	Friendship.objects.create(from_user=request.user, to_user=user, requested_by=request.user)
+	return 200, {"message": "Friend request sent"}
+
+
+@friend_api.post("/accept/{request_id}", auth=AuthBearer())
+def accept_friend(request, request_id: int):
+	friendship = Friendship.objects.get(id=request_id)
+	if friendship.requested_by == request.user:
+		return 400, {"message": "You can't accept your own request"}
+	if friendship.from_user != request.user and friendship.to_user != request.user:
+		return 400, {"message": "This request is not for you"}
+	friendship.accepted = True
+	friendship.save()
+	return 200, {"message": "Friend request accepted"}
