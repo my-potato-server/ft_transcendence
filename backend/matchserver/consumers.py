@@ -3,6 +3,26 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 import capis
 import json
 
+import capis
+from inspect import isfunction, getmembers
+
+def get_method_actions(prefix, module):
+    method_actions = {}
+    # getmembers 함수를 사용하여 모듈 내의 모든 멤버를 조회
+    for name, func in getmembers(module, isfunction):
+        if name.startswith(prefix):  # 특정 접두사로 시작하는 함수 이름을 필터링
+            action_name = f"matchserver.{name}"
+            method_actions[action_name] = func
+    return method_actions
+
+# 'capis' 모듈에서 'prefix'로 시작하는 모든 함수를 method_actions 딕셔너리에 추가
+prefix = ""  # 필요한 경우 특정 접두사를 설정할 수 있습니다.
+method_actions = get_method_actions(prefix, capis)
+
+# 사용 예시
+print(method_actions)
+
+
 class MyConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user = self.scope["user"]
@@ -17,6 +37,11 @@ class MyConsumer(AsyncWebsocketConsumer):
             )
         else:
             await self.close()
+        
+        # capis에서 부를 수 있는 함수들을 method_action에 담는다.
+        prefix = ""  # 필요한 경우 특정 접두사를 설정할 수 있습니다.
+        self.method_action = get_method_actions(prefix, capis)
+ 
 
     async def disconnect(self, close_code):
         if self.user.is_authenticated:
@@ -34,12 +59,14 @@ class MyConsumer(AsyncWebsocketConsumer):
         identify = text_data_json.get('identify')
 
 
-        # 메서드 딕셔너리
+        # 메서드 딕셔너리 (예시다. 아래에서 덮어쓴다.)
         method_actions = {
             'matchserver.make_room': capis.make_room,
             'matchserver.delete_room': capis.delete_room,
             # 'matchserver.delete_room': capis.delete_room,
         }
+        # 원형은 위와 같다. 이는 connect에서 게산한 내용으로 덮어 쓰는 것
+        method_actions = self.method_action
  
         # # 메서드 실행
         # if method in method_actions:
