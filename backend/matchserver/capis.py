@@ -171,6 +171,28 @@ def delete_room(room_id):
     return {'status': 'OK', 'message': 'Room deleted'}
 
 
+# 방의 정보를 요청
+@database_sync_to_async
+def info_room(room_id):
+    # 어떤거 전해줘야 하나...
+    # 방 이름
+    # 방 참여자 명단. 닉네임으로
+    # 또 필요한거 있나? 
+    try:
+        room = Room.objects.get(id=room_id)
+        user_rooms = UserRoom.objects.filter(room=room)
+        
+        # 방 참여자 명단 추출
+        participants = [user_room.user.username for user_room in user_rooms]
+        
+        room_info = {
+            'name': room.name,
+            'participants': participants,
+            # 필요하다면 여기에 더 많은 방 정보를 추가할 수 있습니다.
+        }
+        return {'status': 'OK', 'data': room_info}
+    except Room.DoesNotExist:
+        return {'status': 'Error', 'message': 'Room does not exist'}
 
 
 
