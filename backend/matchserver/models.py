@@ -26,4 +26,3 @@ class UserRoom(models.Model):
     joined_at = models.DateTimeField(auto_now_add=True)
     # 게임서버와 연결이 끊어진 시각 (재접속용 기록)
     left_at = models.DateTimeField(null=True, blank=True)
-    
