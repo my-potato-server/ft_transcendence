@@ -14,6 +14,9 @@ export default class Profile extends Component {
             deleteid : false,
             status : false
         }
+
+        this.infos = JSON.parse(this.$parent.userinfo).user;
+        console.log("Profile", this.infos);
     }
 
     template() {
@@ -46,41 +49,6 @@ export default class Profile extends Component {
         }
     }
 
-    //
-    //Profile
-    //
-    // userInfo() {
-    //     console.log("userInfo", this.buttoncheck.userinfo);
-    //     if (this.buttoncheck.userinfo) {
-    //         this.buttoncheck.userinfo = false;
-    //         const infoContainer = this.$parent.querySelector('#info');
-    //         if (infoContainer) {
-    //             infoContainer.innerHTML = '';
-    //         }
-    //     } else {
-    //         const infoContainer = this.$parent.querySelector('#info');
-    //         fetch('/account/me', {
-    //             method: 'GET',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //                 'authorization': 'Bearer ' + this.$parent.token,
-    //             }
-    //         })
-    //         .then(async response => {
-    //             const infos = await response.json();
-    //             console.log(infos);
-    //             infoContainer.innerHTML = `
-    //             <pre>
-    //                 <h3>유저 정보</h3>
-    //                 <div>id : ${infos.user.id}</div>
-    //                 <div>name : ${infos.user.login}</div>
-    //                 <div>nickname : ${infos.user.nickname}</div>
-    //             </pre>`;
-    //             infoContainer.style.display = 'block';
-    //         })
-    //         this.buttoncheck.userinfo = true;
-    //     }
-    // }
     userInfo() {
         if (this.buttoncheck.userinfo) {
             this.buttoncheck.userinfo = false;
@@ -91,16 +59,22 @@ export default class Profile extends Component {
         } else {
             const infoContainer = this.$parent.querySelector('#info');
             console.log("userInfo", this.$parent.userinfo);
+            console.log("userInfo2", this.infos);
+            const infos = {
+                id : this.infos.id,
+                login : this.infos.login,
+                nickname : this.infos.nickname
+            }
             infoContainer.innerHTML = `
             <pre>
                 <h3>유저 정보</h3>
-                <div>id : ${this.$parent.userinfo.id}</div>
-                <div>name : ${this.$parent.userinfo.login}</div>
-                <div>nickname : ${this.$parent.userinfo.nickname}</div>
+                <div>id : ${infos.id}</div>
+                <div>name : ${infos.login}</div>
+                <div>nickname : ${infos.nickname}</div>
             </pre>`;
             infoContainer.style.display = 'block';
+            this.buttoncheck.userinfo = true;
         }
-        this.buttoncheck.userinfo = true;
     }
 
     deleteid() {
