@@ -1,9 +1,8 @@
 # chat/consumers.py
 from channels.generic.websocket import AsyncWebsocketConsumer
-import capis
 import json
 
-import capis
+from matchserver import capis
 from inspect import isfunction, getmembers
 
 def get_method_actions(prefix, module):

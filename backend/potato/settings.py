@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'game.apps.GameConfig',
     'channels',
+    'matchserver',
 ]
 
 MIDDLEWARE = [

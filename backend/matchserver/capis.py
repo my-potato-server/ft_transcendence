@@ -2,7 +2,7 @@
 # json으로 받아 consumer가 호출할 수 있는 함수들으 모음
 import re
 
-from django.util import timezone
+from django.utils import timezone
 from channels.db import database_sync_to_async
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
