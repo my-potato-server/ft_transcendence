@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate
 from django.conf import settings
 from django.db.models import Q
 
-from .requests import LoginRequest
+from .requests import LoginRequest, EditNicknameRequest
 from .responses import LoginResponse, UserResponse, FriendshipResponse
 from .ft_auth import FtAuth
 from .models import User, Friendship
@@ -54,8 +54,8 @@ def me(request):
 
 
 @account_api.post("/edit-nickname", auth=AuthBearer())
-def edit_nickname(request, nickname: str):
-	request.user.nickname = nickname
+def edit_nickname(request, body: EditNicknameRequest):
+	request.user.nickname = body.nickname
 	request.user.save()
 	return 200, {"message": "Nickname changed"}
 
