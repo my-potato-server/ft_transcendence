@@ -102,6 +102,19 @@ def request_friend(request, user_id: int):
 	return 200, {"message": "Friend request sent"}
 
 
+@friend_api.post("/request-by-login/{login}", auth=AuthBearer())
+def request_by_login(request, login: str):
+	user = User.objects.get(login=login)
+	if user == request.user:
+		return 400, {"message": "You can't add yourself"}
+	if Friendship.objects \
+			.filter(Q(from_user=request.user, to_user=user) | Q(from_user=user, to_user=request.user)) \
+			.exists():
+		return 400, {"message": "You are already friends"}
+	Friendship.objects.create(from_user=request.user, to_user=user, requested_by=request.user)
+	return 200, {"message": "Friend request sent"}
+
+
 @friend_api.post("/accept/{request_id}", auth=AuthBearer())
 def accept_friend(request, request_id: int):
 	friendship = Friendship.objects.get(id=request_id)
