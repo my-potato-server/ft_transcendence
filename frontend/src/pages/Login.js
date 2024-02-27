@@ -17,14 +17,14 @@ export default class Login extends Component {
 	}
 
 	setEvent() {
-		const loginButton = this.$parent.querySelector('.Log_In');
-		if (loginButton) {
-			loginButton.onclick = () => this.login();
-		}
-		const SignupButton = this.$parent.querySelector('.Signup');
-		if (SignupButton) {
-			SignupButton.onclick = () => this.signup();
-		}
+		// const loginButton = this.$parent.querySelector('.Log_In');
+		// if (loginButton) {
+		// 	loginButton.onclick = () => this.login();
+		// }
+		// const SignupButton = this.$parent.querySelector('.Signup');
+		// if (SignupButton) {
+		// 	SignupButton.onclick = () => this.signup();
+		// }
 		// const temploginButton = this.$parent.querySelector('.templogin');
 		// if (temploginButton) {
 		// 	temploginButton.onclick = () => this.templogin();
@@ -133,10 +133,6 @@ export function LoginButton() {
 				<div class="col-md-6">
 					<div class="card">
 						<div class="card-body">
-							<input type="text" name="id" class="form-control mb-2" placeholder="ID" required autofocus />
-							<input type="password" name="password" class="form-control mb-2" placeholder="Password" required />
-							<button class="btn btn-lg btn-primary btn-block Log_In" type="button">Log In</button>
-							<button class="btn btn-lg btn-secondary btn-block mt-2 Signup" type="button">Signup</button>
 							<button class="btn btn-lg btn-info btn-block mt-2 ftLogin" type="button">42 Login</button>
 						</div>
 					</div>
@@ -145,6 +141,29 @@ export function LoginButton() {
 		</div>
     `;
 }
+
+// db login exist ver
+// export function LoginButton() {
+//     console.log("Login");
+// 	injectLoginStyles();
+//     return `
+// 		<div class="container mt-5">
+// 			<div class="row justify-content-center">
+// 				<div class="col-md-6">
+// 					<div class="card">
+// 						<div class="card-body">
+// 							<input type="text" name="id" class="form-control mb-2" placeholder="ID" required autofocus />
+// 							<input type="password" name="password" class="form-control mb-2" placeholder="Password" required />
+// 							<button class="btn btn-lg btn-primary btn-block Log_In" type="button">Log In</button>
+// 							<button class="btn btn-lg btn-secondary btn-block mt-2 Signup" type="button">Signup</button>
+// 							<button class="btn btn-lg btn-info btn-block mt-2 ftLogin" type="button">42 Login</button>
+// 						</div>
+// 					</div>
+// 				</div>
+// 			</div>
+// 		</div>
+//     `;
+// }
 
 // temp login exist ver
 // export function LoginButton() {

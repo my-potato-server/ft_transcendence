@@ -15,7 +15,11 @@ export default class Profile extends Component {
             status : false
         }
 
-        this.infos = JSON.parse(this.$parent.userinfo).user;
+        // if (this.$parent.auth) {
+        //     this.infos = JSON.parse(this.$parent.userinfo).user;
+        //     console.log("Profile", this.infos);
+        // }
+        this.infos = this.$parent.userinfo;
         console.log("Profile", this.infos);
     }
 
@@ -39,13 +43,21 @@ export default class Profile extends Component {
         if (deleteid) {
             deleteid.onclick = () => this.deleteid();
         }
-        const status = this.$parent.querySelector('button[class="Status"]');
-        if (status) {
-            status.onclick = () => this.status();
-        }
+        // const status = this.$parent.querySelector('button[class="Status"]');
+        // if (status) {
+        //     status.onclick = () => this.status();
+        // }
         const matchHistory = this.$parent.querySelector('button[class="MatchHistory"]');
         if (matchHistory) {
             matchHistory.onclick = () => this.matchHistory();
+        }
+        const ProfilePhoto = this.$parent.querySelector('button[class="ProfilePhoto"]');
+        if (ProfilePhoto) {
+            ProfilePhoto.onclick = () => this.profilePhoto();
+        }
+        const Nickname = this.$parent.querySelector('button[class="Nickname"]');
+        if (Nickname) {
+            Nickname.onclick = () => this.nickname();
         }
     }
 
@@ -122,89 +134,89 @@ export default class Profile extends Component {
         // 성공 시 로그아웃
     }
 
-    status() {
-        console.log("status");
-        // 서버에 레벨, 게임 rank, 승률, 승리 패배 횟수 등 요청
-        if (this.buttoncheck.status) {
-            this.buttoncheck.status = false;
-            const statusContainer = this.$parent.querySelector('#status');
-            if (statusContainer) {
-                statusContainer.innerHTML = '';
-            }
-        } else {
-            const infos = this.info();
-            fetch('/status', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    id : infos.id
-                }),
-            })
-            .then(response => {
-                if (response.ok) {
-                    console.log("status 요청 성공");
-                    alert("status 요청 성공");
-                    // 서버에서 받은 정보를 출력
-                    // level, rank, rate, win, lose 요청
-                    const statusContainer = this.$parent.querySelector('#status');
-                    if (statusContainer) {
-                        const status = response.json();
-                        if (!status) {
-                            console.log("status 에러");
-                            alert("status 요청 실패");
-                            status = {
-                                level : 0,
-                                rank : 0,
-                                rate : 0,
-                                win : 0,
-                                lose : 0
-                            };
-                        }
-                        statusContainer.innerHTML = `
-                        <pre>
-                            <h3>유저 정보</h3>
-                            <div>id : ${infos.id}</div>
-                            <div>name : ${infos.name}</div>
-                            <div>level : ${status.level}</div>
-                            <div>rank : ${status.rank}</div>
-                            <div>rate : ${status.rate}</div>
-                            <div>win : ${status.win}</div>
-                            <div>lose : ${status.lose}</div>
-                        </pre>
-                        `;
-                    }
-                } else {
-                    console.log("status 요청 실패");
-                    alert("status 요청 실패");
-                    //이하 테스트용. 스테이터스 요청 정상 동작시 삭제
-                    const statusContainer = this.$parent.querySelector('#status');
-                    const status = {
-                        level : 0,
-                        rank : 0,
-                        rate : 0,
-                        win : 0,
-                        lose : 0
-                    };
-                    statusContainer.innerHTML = `
-                        <pre>
-                            <h3>유저 정보(테스트용)</h3>
-                            <div>id : ${infos.id}</div>
-                            <div>name : ${infos.name}</div>
-                            <div>level : ${status.level}</div>
-                            <div>rank : ${status.rank}</div>
-                            <div>rate : ${status.rate}%(${status.win}/${status.lose})</div>
-                        </pre>
-                        `;
-                }
-            })
-            .catch(error => {
-                console.log("status 요청 실패", error);
-            });
-            this.buttoncheck.status = true;
-        }
-    }
+    // status() {
+    //     console.log("status");
+    //     // 서버에 레벨, 게임 rank, 승률, 승리 패배 횟수 등 요청
+    //     if (this.buttoncheck.status) {
+    //         this.buttoncheck.status = false;
+    //         const statusContainer = this.$parent.querySelector('#status');
+    //         if (statusContainer) {
+    //             statusContainer.innerHTML = '';
+    //         }
+    //     } else {
+    //         const infos = this.info();
+    //         fetch('/status', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({
+    //                 id : infos.id
+    //             }),
+    //         })
+    //         .then(response => {
+    //             if (response.ok) {
+    //                 console.log("status 요청 성공");
+    //                 alert("status 요청 성공");
+    //                 // 서버에서 받은 정보를 출력
+    //                 // level, rank, rate, win, lose 요청
+    //                 const statusContainer = this.$parent.querySelector('#status');
+    //                 if (statusContainer) {
+    //                     const status = response.json();
+    //                     if (!status) {
+    //                         console.log("status 에러");
+    //                         alert("status 요청 실패");
+    //                         status = {
+    //                             level : 0,
+    //                             rank : 0,
+    //                             rate : 0,
+    //                             win : 0,
+    //                             lose : 0
+    //                         };
+    //                     }
+    //                     statusContainer.innerHTML = `
+    //                     <pre>
+    //                         <h3>유저 정보</h3>
+    //                         <div>id : ${infos.id}</div>
+    //                         <div>name : ${infos.name}</div>
+    //                         <div>level : ${status.level}</div>
+    //                         <div>rank : ${status.rank}</div>
+    //                         <div>rate : ${status.rate}</div>
+    //                         <div>win : ${status.win}</div>
+    //                         <div>lose : ${status.lose}</div>
+    //                     </pre>
+    //                     `;
+    //                 }
+    //             } else {
+    //                 console.log("status 요청 실패");
+    //                 alert("status 요청 실패");
+    //                 //이하 테스트용. 스테이터스 요청 정상 동작시 삭제
+    //                 const statusContainer = this.$parent.querySelector('#status');
+    //                 const status = {
+    //                     level : 0,
+    //                     rank : 0,
+    //                     rate : 0,
+    //                     win : 0,
+    //                     lose : 0
+    //                 };
+    //                 statusContainer.innerHTML = `
+    //                     <pre>
+    //                         <h3>유저 정보(테스트용)</h3>
+    //                         <div>id : ${infos.id}</div>
+    //                         <div>name : ${infos.name}</div>
+    //                         <div>level : ${status.level}</div>
+    //                         <div>rank : ${status.rank}</div>
+    //                         <div>rate : ${status.rate}%(${status.win}/${status.lose})</div>
+    //                     </pre>
+    //                     `;
+    //             }
+    //         })
+    //         .catch(error => {
+    //             console.log("status 요청 실패", error);
+    //         });
+    //         this.buttoncheck.status = true;
+    //     }
+    // }
 
     matchHistory() {
         if (this.buttoncheck.matchHistory) {
@@ -267,5 +279,17 @@ export default class Profile extends Component {
                 console.log("matchhistory 요청 실패..", error);
             });
         }
+    }
+
+    profilePhoto() {
+        console.log("profilePhoto");
+        // 서버에 프로필 사진 변경 요청
+        // alert("프로필 사진을 변경합니다.");
+    }
+
+    nickname() {
+        console.log("nickname");
+        // 서버에 닉네임 변경 요청
+        // alert("닉네임을 변경합니다.");
     }
 }

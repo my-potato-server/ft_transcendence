@@ -36,10 +36,14 @@ export default function ProfileButton() {
 	<div class="profile-container">
 		<div class="user-details">
 			<div class="user-photo">
-				<img src="${image}" style="height: 120px; width: 120px; alt="User Photo">
+				<button type="buttona" class="ProfilePhoto">
+					<img src="${image}" style="height: 120px; width: 120px;" alt="User Photo">
+				</button>
 			</div>
 			<div class="user-info">
-				<div class="name">${name}</div>
+				<div class="name">
+					<button type="buttonb" class="Nickname">${name}</button>
+				</div>
 				<div class="level">Level: 999</div>
 				<div class="joined">가입일: 2022.07.04. D+583</div>
 			</div>
