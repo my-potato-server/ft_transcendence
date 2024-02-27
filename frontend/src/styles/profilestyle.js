@@ -54,6 +54,19 @@ export default function injectProfileStyles() {
         cursor: pointer;
     }
 
+    .ProfilePhoto {
+        background-color: #fff;
+        border: 1px solid #000;
+        border-radius: 50%;
+    }
+
+    .Nickname {
+        background-color: #fff;
+        border: 1px solid #000;
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+
     .dropdown-content {
         display: none;
         text-align: left;

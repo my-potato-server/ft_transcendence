@@ -53,10 +53,22 @@ export default class GetAuth extends Component {
             this.$parent.token = token;
             sessionStorage.setItem('auth', 'true');
             sessionStorage.setItem('token', token);
-            this.setState({locate: '/src/pages/Main'});
+            // this.setState({locate: '/src/pages/Main'});
+            return fetch('/account/me', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'authorization': 'Bearer ' + sessionStorage.getItem('token'),
+            }})
         })
-        .catch(error => {
-            console.error('로그인 중 오류 발생:', error);
+        .then(async response => {
+            console.log("response", response);
+            const infos = await response.json();
+            console.log(infos);
+            this.$parent.userinfo = JSON.stringify(infos);
+            sessionStorage.setItem('userinfo', JSON.stringify(infos));
+            this.setState({ locate: '/src/pages/Main'});
         });
+        // this.setState({ locate: '/src/pages/Main'});
     }
 }
