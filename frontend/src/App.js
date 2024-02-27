@@ -15,7 +15,7 @@ class app {
 		const userinfo = sessionStorage.getItem('userinfo');
 		console.log("userinfo", userinfo);
 		console.log("new app");
-		if (auth) {
+		if (auth && token && userinfo) {
 			this.root.auth = true;
 			this.root.token = token;
 			this.root.userinfo = JSON.parse(userinfo).user;

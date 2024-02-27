@@ -291,5 +291,27 @@ export default class Profile extends Component {
         console.log("nickname");
         // 서버에 닉네임 변경 요청
         // alert("닉네임을 변경합니다.");
+        console.log('token?', sessionStorage.getItem('token'));
+        console.log('tokken?', this.$parent.token);
+        const newNickname = prompt("새로운 닉네임을 입력하세요:");
+        fetch('/account/edit-nickname', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': 'Bearer ' + sessionStorage.getItem('token')
+            },
+            body: JSON.stringify({
+                nickname : newNickname
+            }),
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log("닉네임 변경 성공");
+                // 서버 응답에 따른 처리 추가
+            } else {
+                console.error("닉네임 변경 실패");
+                // 실패한 경우에 대한 처리 추가
+            }
+        })
     }
 }
