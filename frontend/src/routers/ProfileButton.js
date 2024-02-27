@@ -28,11 +28,14 @@ import injectProfileStyles from "../styles/profilestyle.js";
 export default function ProfileButton() {
 	console.log("ProfileButton");
 	injectProfileStyles();
+	const info = sessionStorage.getItem('userinfo');
+	const image = "https://localhost" + JSON.parse(info).image + "?downsize=120:120";
+	console.log("image", image);
 	return `
 	<div class="profile-container">
 		<div class="user-details">
 			<div class="user-photo">
-				<img src="https://assets.gadgets360cdn.com/img/crypto/dogecoin-logo.jpg?downsize=120:120" alt="User Photo">
+				<img src="${image}" style="height: 120px; width: 120px; alt="User Photo">
 			</div>
 			<div class="user-info">
 				<div class="name">Mr.Potato</div>

@@ -12,6 +12,8 @@ class app {
 
 		const auth = sessionStorage.getItem('auth') === 'true'; // 문자열 "true"를 boolean으로 변환
 		const token = sessionStorage.getItem('token');
+		const userinfo = sessionStorage.getItem('userinfo');
+		console.log("userinfo", userinfo);
 		console.log("new app");
 		if (auth) {
 			this.root.auth = true;
@@ -24,25 +26,7 @@ class app {
 
 		this.render();
 		this.setDummyEvent();
-		// this.root.auth = false;
-		// this.root.userinfo = {
-		// 	id : '',
-		// 	name : '',
-		// 	auth : false
-		// };
-		// this.root.token = '';
 	}
-
-	//  네비게이션 이벤트 없을 때
-	// setState(newState) {
-	// 	console.log("setState called");
-	// 	const { locate } = this.state;
-	// 	this.state = {...this.state, ...newState};
-	// 	console.log(this.state);
-	// 	console.log(locate);
-	// 	this.render();
-	// 	console.log("setState end");
-	// }
 
 	setState(newState) {
 		console.log("setState called");
@@ -67,7 +51,6 @@ class app {
 
 		let { locate } = this.state;
 		console.log("render's locate", locate, this.state);
-		
 		// if (locate === '/') {
 		// 	this.Login.renderSequnce(this.state);
 		// } else if (locate === '/src/pages/Main') {

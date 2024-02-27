@@ -49,50 +49,55 @@ export default class Profile extends Component {
     //
     //Profile
     //
-    info() {
-        return {
-            id : this.$parent.userinfo.id,
-            name : this.$parent.userinfo.name,
-            auth : this.$parent.userinfo.auth
-        };
-    }
-    userInfo() {
-        console.log("userInfo", this.buttoncheck.userinfo);
+    // userInfo() {
+    //     console.log("userInfo", this.buttoncheck.userinfo);
+    //     if (this.buttoncheck.userinfo) {
+    //         this.buttoncheck.userinfo = false;
+    //         const infoContainer = this.$parent.querySelector('#info');
+    //         if (infoContainer) {
+    //             infoContainer.innerHTML = '';
+    //         }
+    //     } else {
+    //         const infoContainer = this.$parent.querySelector('#info');
+    //         fetch('/account/me', {
+    //             method: 'GET',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'authorization': 'Bearer ' + this.$parent.token,
+    //             }
+    //         })
+    //         .then(async response => {
+    //             const infos = await response.json();
+    //             console.log(infos);
+    //             infoContainer.innerHTML = `
+    //             <pre>
+    //                 <h3>유저 정보</h3>
+    //                 <div>id : ${infos.user.id}</div>
+    //                 <div>name : ${infos.user.login}</div>
+    //                 <div>nickname : ${infos.user.nickname}</div>
+    //             </pre>`;
+    //             infoContainer.style.display = 'block';
+    //         })
+    //         this.buttoncheck.userinfo = true;
+    //     }
+    // }
+    userInfio() {
         if (this.buttoncheck.userinfo) {
             this.buttoncheck.userinfo = false;
             const infoContainer = this.$parent.querySelector('#info');
             if (infoContainer) {
                 infoContainer.innerHTML = '';
-            }
-        } else {
-            const infoContainer = this.$parent.querySelector('#info');
-            fetch('/account/me', {
-                method: 'GET',
-            })
-            .then(async response => {
-                const infos = {id, login, nickname, image} = await response.json();
+            } else {
+                const infoContainer = this.$parent.querySelector('#info');
                 infoContainer.innerHTML = `
                 <pre>
                     <h3>유저 정보</h3>
-                    <div>id : ${infos.id}</div>
-                    <div>name : ${infos.name}</div>
-                    <div>auth : ${infos.auth}</div>
-                    <div>token : ${this.$parent.token}</div>
+                    <div>id : ${this.$parent.userinfo.id}</div>
+                    <div>name : ${this.$parent.userinfo.name}</div>
+                    <div>nickname : ${this.$parent.userinfo.nickname}</div>
                 </pre>`;
                 infoContainer.style.display = 'block';
-            })
-            // if (infoContainer) {
-            //     const infos = this.info();
-            //     infoContainer.innerHTML = `
-            //     <pre>
-            //         <h3>유저 정보</h3>
-            //         <div>id : ${infos.id}</div>
-            //         <div>name : ${infos.name}</div>
-            //         <div>auth : ${infos.auth}</div>
-            //         <div>token : ${this.$parent.token}</div>
-            //     </pre>`;
-            //     infoContainer.style.display = 'block';
-            // }
+            }
             this.buttoncheck.userinfo = true;
         }
     }
