@@ -29,6 +29,7 @@ class MyConsumer(AsyncWebsocketConsumer):
             await self.accept()
             self.user_room  = await capis.connect_to_server(self.user)  # 사용자 인스턴스 전달
             self.user_session_identify = f'user_session_{self.user_room.user.id}'
+            self.user_id = self.user_room.user.id
 
             await self.channel_layer.group_add(     # 사용자별 그룹에 가입
                 self.user_session_identify,
@@ -66,7 +67,10 @@ class MyConsumer(AsyncWebsocketConsumer):
         }
         # 원형은 위와 같다. 이는 connect에서 게산한 내용으로 덮어 쓰는 것
         method_actions = self.method_action
- 
+        
+        # 파라미터에서 user_id는 덮어쓰기
+        parameters['user_id'] = self.user_id
+
         # # 메서드 실행
         # if method in method_actions:
         #     response = await method_actions[method](**parameters)

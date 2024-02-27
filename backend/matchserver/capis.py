@@ -83,13 +83,35 @@ def create_room(name, password=None):
     #         return {'status': 'Error', 'message': "Password must contain at least one digit"}
     #     if not re.search("[!@#$%^&*(),.?\":{}|<>]", password):
     #         return {'status': 'Error', 'message': "Password must contain at least one special character"}
-    
-    # 데이터베이스 접근하여 방 생성 =====
-    room, created = Room.objects.get_or_create(name=name, defaults={'password': password})
-    if created:
-        return {'status': 'OK', 'message': 'Room created', 'room_id': room.id}
-    else:
-        return {'status': 'Error', 'message': 'Room already exists'}
+
+    ###
+    ### 유저는 방에 참여하고 있으면 안 됨.
+    try:
+        # 유저가 이미 방에 참여하고 있는지 확인
+        user_room = UserRoom.objects.filter(user__id=user_id, room__isnull=False).first()
+        if user_room:
+            # 이미 다른 방에 참여 중이면 에러 메시지 반환
+            return {'status': 'Error', 'message': 'User is already in a room.'}
+        
+            # 데이터베이스 접근하여 방 생성 =====
+        room, created = Room.objects.get_or_create(name=name, defaults={'password': password})
+        if created:
+            return {'status': 'OK', 'message': 'Room created', 'room_id': room.id}
+        else:
+            return {'status': 'Error', 'message': 'Room already exists'}
+    except :
+        return {'status': 'Error', 'message': 'Failed to create room due to an integrity error.'}   
+        # # 유저가 참여하고 있지 않은 경우, 새로운 방 생성
+        # with transaction.atomic():
+        #     room = Room.objects.create(name=room_name)
+        #     UserRoom.objects.update_or_create(
+        #         user_id=user_id,
+        #         defaults={'room': room}
+        #     )
+        #     return {'status': 'OK', 'message': 'Room created successfully.', 'room_id': room.id}
+
+
+
 
 # @database_sync_to_async
 # def delete_room(room_id):
@@ -112,9 +134,10 @@ def list_room():
 # 방 참여하기
 @database_sync_to_async
 def enter_room(user_id, room_id, room_password=None):
-    
     try:
         user_room = UserRoom.objects.get(user__id=user_id)
+        # 유저가 이미 방에 참여하고 있는지 확인
+        if (user_room.room): return {'status': 'Error', 'message': 'User is already in a room.'}
         room = Room.objects.get(id=room_id)
         if not room.password == room_password: 
             return {'status': 'Error', 'message': 'Wrong Room Password'}
