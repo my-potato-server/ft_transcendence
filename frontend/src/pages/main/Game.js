@@ -54,9 +54,10 @@ export default class Game extends Component {
                 });
                 break;
             case 'online':
-                import('../../apps/online_pong.js').then(({ default: online_pong }) => {
-                    this.currentGame = online_pong(canvas.id);
-                });
+                // import('../../apps/online_pong.js').then(({ default: online_pong }) => {
+                //     this.currentGame = online_pong(canvas.id);
+                // });
+                const socket = new WebSocket('ws://localhost/ws/matchserver/');
                 break;
 			case 'tournament':
 				console.log("Tournament mode not yet implemented");

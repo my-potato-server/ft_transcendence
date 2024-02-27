@@ -66,7 +66,7 @@ json을 전송하는 것으로 메서드를 실행하자.
   "status": "OK", //해당하는 메서드가 없는 경우 오류 출력
   "identify" : "123456", //내용변경 없이 그대로 리턴해 준다.
   "return": {
-    "status": "Error", 
+    "status": "Error",
     "message": "Password must be a string or None"
     }
 }
