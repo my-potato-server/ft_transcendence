@@ -72,6 +72,10 @@ export default function RouterButton(currentLocation) {
 	const isActive = (path) => currentLocation === path ? 'active' : '';
 	const dodge = "'do not dodge me'";
 	console.log("currentLocation: ", currentLocation);
+	const info = sessionStorage.getItem('userinfo');
+	console.log ('test', info);
+	const image = JSON.parse(info).user.image;
+	// const image = info.image;
 	return `
 	<nav class="navbar navbar-expand-lg navbar-light bg-light" style="width:100%">
 		<div class="container-fluid">
@@ -104,7 +108,7 @@ export default function RouterButton(currentLocation) {
 					<img src="https://cdn-icons-png.flaticon.com/512/5035/5035563.png?downsize=40:40" style="height: 40px; width: 40px; cursor:pointer;">
 				</button>
 				<button onclick="navigateToProfile()" style="background:none;border:none;margin-left:0;">
-                    <img src="https://assets.gadgets360cdn.com/img/crypto/dogecoin-logo.jpg?downsize=40:40" style="height: 40px; width: 40px; cursor:pointer;">
+                    <img src="${image}" style="height: 40px; width: 40px; cursor:pointer;">
                 </button>
 			</div>
 		</div>
