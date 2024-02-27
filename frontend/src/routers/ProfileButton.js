@@ -30,6 +30,7 @@ export default function ProfileButton() {
 	injectProfileStyles();
 	const info = sessionStorage.getItem('userinfo');
 	const image = JSON.parse(info).user.image;
+	const name = JSON.parse(info).user.nickname;
 	console.log("image", image);
 	return `
 	<div class="profile-container">
@@ -38,7 +39,7 @@ export default function ProfileButton() {
 				<img src="${image}" style="height: 120px; width: 120px; alt="User Photo">
 			</div>
 			<div class="user-info">
-				<div class="name">Mr.Potato</div>
+				<div class="name">${name}</div>
 				<div class="level">Level: 999</div>
 				<div class="joined">가입일: 2022.07.04. D+583</div>
 			</div>
