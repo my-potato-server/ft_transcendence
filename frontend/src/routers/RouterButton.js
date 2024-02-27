@@ -73,8 +73,9 @@ export default function RouterButton(currentLocation) {
 	const dodge = "'do not dodge me'";
 	console.log("currentLocation: ", currentLocation);
 	const info = sessionStorage.getItem('userinfo');
-	const image = JSON.parse(info).image + "?downsize=40:40";
-	console.log ('test', image);
+	console.log ('test', info);
+	const image = JSON.parse(info).user.image;
+	// const image = info.image;
 	return `
 	<nav class="navbar navbar-expand-lg navbar-light bg-light" style="width:100%">
 		<div class="container-fluid">

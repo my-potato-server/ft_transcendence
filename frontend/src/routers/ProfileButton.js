@@ -29,7 +29,7 @@ export default function ProfileButton() {
 	console.log("ProfileButton");
 	injectProfileStyles();
 	const info = sessionStorage.getItem('userinfo');
-	const image = "https://localhost" + JSON.parse(info).image + "?downsize=120:120";
+	const image = JSON.parse(info).user.image;
 	console.log("image", image);
 	return `
 	<div class="profile-container">

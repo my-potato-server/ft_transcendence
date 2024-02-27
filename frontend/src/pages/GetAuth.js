@@ -65,8 +65,8 @@ export default class GetAuth extends Component {
             console.log("response", response);
             const infos = await response.json();
             console.log(infos);
-            this.$parent.userinfo = infos.user;
-            sessionStorage.setItem('userinfo', infos.user);
+            this.$parent.userinfo = JSON.stringify(infos);
+            sessionStorage.setItem('userinfo', JSON.stringify(infos));
             this.setState({ locate: '/src/pages/Main'});
         });
         // this.setState({ locate: '/src/pages/Main'});

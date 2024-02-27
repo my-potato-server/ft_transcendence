@@ -81,25 +81,26 @@ export default class Profile extends Component {
     //         this.buttoncheck.userinfo = true;
     //     }
     // }
-    userInfio() {
+    userInfo() {
         if (this.buttoncheck.userinfo) {
             this.buttoncheck.userinfo = false;
             const infoContainer = this.$parent.querySelector('#info');
             if (infoContainer) {
                 infoContainer.innerHTML = '';
-            } else {
-                const infoContainer = this.$parent.querySelector('#info');
-                infoContainer.innerHTML = `
-                <pre>
-                    <h3>유저 정보</h3>
-                    <div>id : ${this.$parent.userinfo.id}</div>
-                    <div>name : ${this.$parent.userinfo.name}</div>
-                    <div>nickname : ${this.$parent.userinfo.nickname}</div>
-                </pre>`;
-                infoContainer.style.display = 'block';
             }
-            this.buttoncheck.userinfo = true;
+        } else {
+            const infoContainer = this.$parent.querySelector('#info');
+            console.log("userInfo", this.$parent.userinfo);
+            infoContainer.innerHTML = `
+            <pre>
+                <h3>유저 정보</h3>
+                <div>id : ${this.$parent.userinfo.id}</div>
+                <div>name : ${this.$parent.userinfo.login}</div>
+                <div>nickname : ${this.$parent.userinfo.nickname}</div>
+            </pre>`;
+            infoContainer.style.display = 'block';
         }
+        this.buttoncheck.userinfo = true;
     }
 
     deleteid() {

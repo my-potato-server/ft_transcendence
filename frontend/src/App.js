@@ -18,9 +18,11 @@ class app {
 		if (auth) {
 			this.root.auth = true;
 			this.root.token = token;
+			this.root.userinfo = JSON.parse(userinfo).user;
 		} else {
 			this.root.auth = false;
 			this.root.token = '';
+			this.root.userinfo = {};
 		}
 		this.Login = new Login(ObjectForDI);
 
@@ -345,6 +347,7 @@ window.logout = function() {
 	myApp.root.token = '';
 	sessionStorage.removeItem('auth');
     sessionStorage.removeItem('token');
+	sessionStorage.removeItem('userinfo');
     myApp.setState({ locate: '/' });
 };
 
