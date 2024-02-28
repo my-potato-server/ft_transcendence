@@ -107,7 +107,7 @@ class MyConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        print("recived : " + text_data_json)
+        print("recived : " , text_data_json)
 
         method = text_data_json.get('method')
         parameters = text_data_json.get('parameters', {})
@@ -115,11 +115,11 @@ class MyConsumer(AsyncWebsocketConsumer):
 
 
         # 메서드 딕셔너리 (예시다. 아래에서 덮어쓴다.)
-        method_actions = {
-            'matchserver.make_room': capis.make_room,
-            'matchserver.delete_room': capis.delete_room,
-            # 'matchserver.delete_room': capis.delete_room,
-        }
+        # method_actions = {
+        #     'matchserver.make_room': capis.make_room,
+        #     'matchserver.delete_room': capis.delete_room,
+        #     # 'matchserver.delete_room': capis.delete_room,
+        # }
         # 원형은 위와 같다. 이는 connect에서 게산한 내용으로 덮어 쓰는 것
         method_actions = self.method_action
         
@@ -147,11 +147,13 @@ class MyConsumer(AsyncWebsocketConsumer):
             'identify': identify,
             'data': data or {}  # data가 None이면 빈 딕셔너리를 반환
         }
+        print("send : " , response)
         await self.send(text_data=json.dumps(response))
 
 
     # 메시지 전송
     async def send_message(self, event):
+        print("send_event : " , event)
         await self.send(text_data=json.dumps(event))
         # # event 딕셔너리에서 메시지 데이터 추출
         # method = event['method']

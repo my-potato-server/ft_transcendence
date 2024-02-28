@@ -11,6 +11,7 @@ from asgiref.sync import async_to_sync
 from .minigameserver import MiniGameServer
 
 from .models import Room, UserRoom
+from account.models import User
 
 
 @database_sync_to_async
@@ -21,7 +22,7 @@ def connect_to_server(user, password=None):
 
     user_room = UserRoom.objects.update_or_create(
             user=user,
-            defaults={'room': None}  # 사용자가 방에 들어가 있지 않음을 가정
+            #defaults={'room': None}  # 사용자가 방에 들어가 있지 않음을 가정
             )
     
     return user_room
@@ -88,21 +89,48 @@ def create_room(name, user_id, password=None):
 
     ###
     ### 유저는 방에 참여하고 있으면 안 됨.
+
     try:
+        # User 인스턴스를 가져옵니다.
+        chief = User.objects.get(id=user_id)
+        
         # 유저가 이미 방에 참여하고 있는지 확인
-        user_room = UserRoom.objects.filter(user__id=user_id, room__isnull=False).first()
+        user_room = UserRoom.objects.filter(user=chief, room__isnull=False).first()
         if user_room:
-            # 이미 다른 방에 참여 중이면 에러 메시지 반환
             return {'status': 'Error', 'message': 'User is already in a room.'}
         
-            # 데이터베이스 접근하여 방 생성 =====
-        room, created = Room.objects.get_or_create(name=name, cheif=user_id, defaults={'password': password})
+        # 데이터베이스 접근하여 방 생성
+        room, created = Room.objects.get_or_create(name=name, chief=chief, defaults={'password': password})
         if created:
+            send_message_to_room_that_room_was_updated(room.id)
             return {'status': 'OK', 'message': 'Room created', 'room_id': room.id}
         else:
             return {'status': 'Error', 'message': 'Room already exists'}
-    except :
-        return {'status': 'Error', 'message': 'Failed to create room due to an integrity error.'}   
+    except Exception as e:
+        print(f'Failed to create room: {e}')
+        return {'status': 'Error', 'message': 'Failed to create room due to an integrity error.'}
+
+    # try:
+    #     # 유저가 이미 방에 참여하고 있는지 확인
+    #     user_room = UserRoom.objects.filter(user__id=user_id, room__isnull=False).first()
+    #     if user_room:
+    #         # 이미 다른 방에 참여 중이면 에러 메시지 반환
+    #         return {'status': 'Error', 'message': 'User is already in a room.'}
+        
+    #         # 데이터베이스 접근하여 방 생성 =====
+    #     room, created = Room.objects.get_or_create(name=name, cheif=user_id, defaults={'password': password})
+    #     if created:
+    #         return {'status': 'OK', 'message': 'Room created', 'room_id': room.id}
+    #     else:
+    #         return {'status': 'Error', 'message': 'Room already exists'}
+    # except Exception as e:
+    #     # 예외 정보 로깅
+    #     print(f'Failed to create room: {e}')
+    #     return {'status': 'Error', 'message': 'Failed to create room due to an integrity error.'}
+
+    # except :
+        # return {'status': 'Error', 'message': 'Failed to create room due to an integrity error.'}   
+
         # # 유저가 참여하고 있지 않은 경우, 새로운 방 생성
         # with transaction.atomic():
         #     room = Room.objects.create(name=room_name)
@@ -128,7 +156,7 @@ def create_room(name, user_id, password=None):
 
 # 방 조회하기
 @database_sync_to_async
-def list_room():
+def list_room(**kwargs):
     rooms = Room.objects.all().values('id', 'name')  # id와 name 필드만 가져옴
     return list(rooms)
     pass
@@ -145,6 +173,7 @@ def enter_room(user_id, room_id, room_password=None):
             return {'status': 'Error', 'message': 'Wrong Room Password'}
         user_room.room = room
         user_room.save()
+        send_message_to_room_that_room_was_updated(room_id)
         return {'status': 'OK', 'message': 'Room entered'}
     except UserRoom.DoesNotExist:
         return {'status': 'Error', 'message': 'UserRoom does not exist'}
@@ -168,35 +197,30 @@ def exit_room(user_id):
 
 # 방 삭제 함수
 @database_sync_to_async
-def delete_room(room_id, user_id):
-    # 방 ID 유효성 검사
-    if not isinstance(room_id, int):
-        return {'status': 'Error', 'message': "Invalid room ID"}
-
+def delete_room(user_id):
     try:
-        room = Room.objects.get(id=room_id)
-    except:
+        user = User.objects.get(id=user_id)
+        room = Room.objects.get(chief=user)
+    except User.DoesNotExist:
+        return {'status': 'Error', 'message': "User does not exist"}
+    except Room.DoesNotExist:
         return {'status': 'Error', 'message': "Room does not exist"}
 
     # 권한 검사
-    if not room.chief == user_id:
-        return {'status': 'Error', 'message': "Only Room Cheif can delete room"}
+    if room.chief.id != user_id:
+        return {'status': 'Error', 'message': "Only Room Chief can delete the room"}
 
-
-    # 안전 확인 (예시 코드, 추가 로직 필요)
-    # if room.has_active_users():
-    #     return {'status': 'Error', 'message': "Room has active users"}
-
-
-    # 빙에 있는 인원 내보내기 ========
-    # send_message_to_room_that_room_was_updated(room_id)
-    send_message_to_room_that_room_was_deleted(room_id)
-    user_ids = get_user_ids_by_room_id()
+    # 방에 있는 인원 내보내기 및 방 삭제 로직
+    send_message_to_room_that_room_was_deleted(room.id)
+    user_ids = async_to_sync(get_user_ids_by_room_id)(room.id)  # room.id를 인자로 전달
+    print("user_ids in delete_room : ", user_ids)
+    userroom = UserRoom.objects.get(user=user)
+    userroom.room = None
+    userroom.save()
     for id in user_ids:
         exit_room(id)
 
-    # 방 삭제 로직
-    room.delete()
+    async_to_sync(room.delete())
     return {'status': 'OK', 'message': 'Room deleted'}
 
 @database_sync_to_async
@@ -220,7 +244,8 @@ def info_room(room_id):
         user_rooms = UserRoom.objects.filter(room=room)
         
         # 방 참여자 명단 추출
-        participants = [user_room.user.username for user_room in user_rooms]
+        # participants = [user_room.user.username for user_room in user_rooms]
+        participants = [user_room.user.nickname for user_room in user_rooms]
         
         room_info = {
             'name': room.name,
@@ -279,7 +304,7 @@ def get_user_ids_by_room_id(room_id):
 async def send_message_to_room(room_id, message):
     channel_layer = get_channel_layer()
     # 사용자별 고유 그룹 이름을 정의 (예: username을 그룹 이름으로 사용)
-    session_identifires = get_user_session_identifiers_by_room_id(room_id)
+    session_identifires = await get_user_session_identifiers_by_room_id(room_id)
     
     # 메시지 형식을 Channels가 인식할 수 있도록 구성
     message += {
@@ -297,6 +322,15 @@ async def send_message_to_room_that_room_was_deleted(room_id):
     #send_message_to_room()
     pass
 async def send_message_to_room_that_room_was_updated(room_id):
+    message = {
+        'type': 'send_message',  # Consumer 내에서 정의해야 할 메서드 이름
+        'method': "client.room_was_update",
+        'status': "OK",
+        'identify': "from_server",
+        'data': {}
+    }
+    await send_message_to_room(room_id, message)
+
     pass
 
 @database_sync_to_async
