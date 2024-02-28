@@ -119,7 +119,8 @@ class PongGameAsync:
         
     def start_game(self):
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.game_loop())
+        loop.create_task(self.game_loop())  # game_loop를 비동기 태스크로 실행
+        # 여기에서 start_game 메서드는 game_loop의 완료를 기다리지 않고 바로 리턴함
 
 # 테스트용 게임루프
 async def game_loop(game):
