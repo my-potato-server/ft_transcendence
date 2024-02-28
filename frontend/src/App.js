@@ -263,11 +263,13 @@ window.navigateToProfile = async function() {
 			`;
 
 			// 5초마다 친구의 온라인 상태 업데이트
-			friendListUpdateInterval = setInterval(async () => {
-				const updatedFriendList = await fetchFriendList();
-				const updatedFriendListHtml = updatedFriendList.map(friend => `<li>${friend.name} - ${friend.isOnline ? 'Online' : 'Offline'}</li>`).join('');
-				friendListContainer.innerHTML = `<ul>${updatedFriendListHtml}</ul>`;
-			}, 5000);
+			// 그냥 유저가 열때의 상태만 알려주면 되지 않을까?? 일단 비활성화
+			//
+			// friendListUpdateInterval = setInterval(async () => {
+			// 	const updatedFriendList = await fetchFriendList();
+			// 	const updatedFriendListHtml = updatedFriendList.map(friend => `<li>${friend.name} - ${friend.isOnline ? 'Online' : 'Offline'}</li>`).join('');
+			// 	friendListContainer.innerHTML = `<ul>${updatedFriendListHtml}</ul>`;
+			// }, 5000);
 
 			isFriendListVisible = true;
 		} catch (error) {
