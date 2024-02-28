@@ -42,24 +42,24 @@ class MiniGameServer:
     def create_tornament(self, game_type, participants):
         pass
 
-    def create_game(self, game_type, players, *args, **kwargs):
+    # def create_game(self, game_type, players, *args, **kwargs):
         
-        # game = {players:user_id_list, gametype:game_type, instance = gameInstance }
-        game = {}
-        # 게임 인스턴스 생성 및 저장
-        if game_type == "pong":
-            self.games[game_id] = PongGameAsync(*args, **kwargs)
-        else :
+    #     # game = {players:user_id_list, gametype:game_type, instance = gameInstance }
+    #     game = {}
+    #     # 게임 인스턴스 생성 및 저장
+    #     if game_type == "pong":
+    #         self.games[game_id] = PongGameAsync(*args, **kwargs)
+    #     else :
             
-        # 다른 게임 타입에 대한 처리
-        # ...
+    #     # 다른 게임 타입에 대한 처리
+    #     # ...
         
-        game = {players:user_id_list, gametype:game_type, instance = gameInstance }
+    #     game = {players:user_id_list, gametype:game_type, instance = gameInstance }
 
-        game_id = self.get_new_id()
-        self.game_id2game[game_id] = {}
+    #     game_id = self.get_new_id()
+    #     self.game_id2game[game_id] = {}
 
-        return game_id
+    #     return game_id
 
     def control(self, user_id, cmd, **kwargs):
 
