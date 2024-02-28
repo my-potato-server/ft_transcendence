@@ -15,6 +15,10 @@ class MiniGameServer:
         self.user_id2game_id = {}
         self.game_id2game = {}
         self.lastid = 0
+
+        self.user_id2tornament_id = {}
+        self.tornament_id_id2tornament = {}
+
         pass
 
     def get_new_id(self):
