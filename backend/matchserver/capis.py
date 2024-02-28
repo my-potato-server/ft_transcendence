@@ -47,7 +47,7 @@ def disconnect_to_server(user, password=None):
 
 
 @database_sync_to_async
-def create_room(name, password=None):
+def create_room(name, user_id, password=None):
     #입력 유효성 검사.================
     ###
     ### 이름은 string 이여야 함
@@ -96,7 +96,7 @@ def create_room(name, password=None):
             return {'status': 'Error', 'message': 'User is already in a room.'}
         
             # 데이터베이스 접근하여 방 생성 =====
-        room, created = Room.objects.get_or_create(name=name, defaults={'password': password})
+        room, created = Room.objects.get_or_create(name=name, cheif=user_id, defaults={'password': password})
         if created:
             return {'status': 'OK', 'message': 'Room created', 'room_id': room.id}
         else:
@@ -157,6 +157,8 @@ def enter_room(user_id, room_id, room_password=None):
 def exit_room(user_id):
     try:
         user_room = UserRoom.objects.get(user__id=user_id)
+        if (user_room.room.chief == user_id):
+            return {'status': 'Error', 'message': 'RoomCheif cannot exit room'}
         user_room.room = None
         user_room.save()
         return {'status': 'OK', 'message': 'Room exited'}
@@ -166,7 +168,7 @@ def exit_room(user_id):
 
 # 방 삭제 함수
 @database_sync_to_async
-def delete_room(room_id):
+def delete_room(room_id, user_id):
     # 방 ID 유효성 검사
     if not isinstance(room_id, int):
         return {'status': 'Error', 'message': "Invalid room ID"}
@@ -176,9 +178,10 @@ def delete_room(room_id):
     except:
         return {'status': 'Error', 'message': "Room does not exist"}
 
-    # 권한 검사 (예시 코드, 실제 구현에는 사용자 인증 로직 필요)
-    # if not user_has_permission(request.user, room):
-    #     return {'status': 'Error', 'message': "No permission to delete this room"}
+    # 권한 검사
+    if not room.chief == user_id:
+        return {'status': 'Error', 'message': "Only Room Cheif can delete room"}
+
 
     # 안전 확인 (예시 코드, 추가 로직 필요)
     # if room.has_active_users():
@@ -186,7 +189,8 @@ def delete_room(room_id):
 
 
     # 빙에 있는 인원 내보내기 ========
-    send_message_to_room_that_room_was_updated(room_id)
+    # send_message_to_room_that_room_was_updated(room_id)
+    send_message_to_room_that_room_was_deleted(room_id)
     user_ids = get_user_ids_by_room_id()
     for id in user_ids:
         exit_room(id)
@@ -194,6 +198,14 @@ def delete_room(room_id):
     # 방 삭제 로직
     room.delete()
     return {'status': 'OK', 'message': 'Room deleted'}
+
+@database_sync_to_async
+def start_room(room_id, user_id):
+    # 토너먼트 게임을 시작.
+    user_room = UserRoom.objects.get(user__id=user_id)
+    if (user_room.room.chief == user_id):
+        return {'status': 'Error', 'message': 'Only RoomCheif can start game'}
+    pass
 
 
 # 방의 정보를 요청
@@ -289,13 +301,20 @@ async def send_message_to_room_that_room_was_updated(room_id):
 
 @database_sync_to_async
 def enter_game(game_id):
+    pass
 
 @database_sync_to_async
 def exit_game(game_id):
-
+    pass
 
 async def control_game(cmd):
 
+    # 대진표 받아오기
+    # 게임 조작하기
+    # 일시정지하기
+    # 일시정지 풀기
+
     if (cmd == ""):
         pass
+    pass
 

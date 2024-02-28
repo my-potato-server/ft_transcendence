@@ -8,6 +8,7 @@ class Room(models.Model):
     # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, unique=True)
     password = models.CharField(max_length=100, blank=True, null=True)
+    chief = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
