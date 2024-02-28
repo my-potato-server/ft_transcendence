@@ -19,6 +19,9 @@ class MiniGameServer:
         self.user_id2tornament_id = {}
         self.tornament_id_id2tornament = {}
 
+        self.user_id2room_id = {}
+        self.room_id2room = {}
+
         pass
 
     def get_new_id(self):
@@ -41,6 +44,8 @@ class MiniGameServer:
 
     def create_tornament(self, game_type, participants):
         pass
+    
+    def create_room(self):pass
 
     # def create_game(self, game_type, players, *args, **kwargs):
         

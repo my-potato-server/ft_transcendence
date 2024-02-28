@@ -38,7 +38,8 @@ def disconnect_to_server(user, password=None):
     try:
         user_room = UserRoom.objects.get(user=user)
         user_room.left_at = timezone.now()
-        user_room.save()
+        user_room.delete()
+        # user_room.save()
     except UserRoom.DoesNotExist:
         # 사용자에 대한 UserRoom 레코드가 없는 경우, 필요한 처리 수행
         pass
@@ -215,12 +216,13 @@ def delete_room(user_id):
     user_ids = async_to_sync(get_user_ids_by_room_id)(room.id)  # room.id를 인자로 전달
     print("user_ids in delete_room : ", user_ids)
     userroom = UserRoom.objects.get(user=user)
-    userroom.room = None
-    userroom.save()
     for id in user_ids:
         exit_room(id)
 
     async_to_sync(room.delete())
+    userroom.room = None
+    userroom.save()
+
     return {'status': 'OK', 'message': 'Room deleted'}
 
 @database_sync_to_async
@@ -364,3 +366,11 @@ def exit_game(game_id):
 #         pass
 #     pass
 
+
+# def create_room2(name, user_id, password=None):
+#     MiniGameServer.create_room()
+
+# def enter_room2(name, user_id, password=None):
+# def exit_room2(name, user_id, password=None):
+# def delete_room2(name, user_id, password=None):
+# def delete_room2(name, user_id, password=None):
