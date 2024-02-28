@@ -34,3 +34,9 @@ class UserMatchRecord(models.Model):
 	)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
+
+
+class Tournament(models.Model):
+	id = models.BigAutoField(primary_key=True)
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now=True)
