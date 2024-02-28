@@ -7,7 +7,7 @@ from .managers import UserManager
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.BigAutoField(primary_key=True)
     login = models.CharField(max_length=20, unique=True)
-    nickname = models.CharField(max_length=20)
+    nickname = models.CharField(max_length=20, unique=True)
     image = models.ImageField(upload_to='profile/', default='default.png')
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
