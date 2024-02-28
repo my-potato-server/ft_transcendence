@@ -228,55 +228,59 @@ export default class Profile extends Component {
         } else {
             console.log("matchHistory");
             // 서버에 매치 히스토리 요청
-            alert("매치 히스토리를 요청합니다.");
-            const infos = this.info();
-            fetch('/matchHistory', {
-                method: 'POST',
+            // alert("매치 히스토리를 요청합니다.");
+            // const infos = this.infos;
+            fetch('/match/history/me', {
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
+                    'authorization': 'Bearer ' + sessionStorage.getItem('token'),
                 },
-                body: JSON.stringify({
-                    id : infos.id
-                }),
             })
             .then(response => {
                 if (response.ok) {
-                    console.log("matchhistory 요청 성공");
-                    alert("matchhistory 요청 성공");
-                    // 서버에서 받은 정보를 출력
-                    const matchHistoryContainer = this.$parent.querySelector('#matchHistory');
-                    if (matchHistoryContainer) {
-                        const matchHistory = response.json();
-                        if (!matchHistory) {
-                            console.log("matchhistory 에러");
-                            alert("matchhistory 요청 실패");
-                            matchHistory = {
-                                match : []
-                            };
+                    response.json().then(matchHistory => {
+                        console.log("매치 히스토리 요청 성공");
+                        const matchHistoryContainer = this.$parent.querySelector('#matchHistory');
+                        if (!matchHistory || matchHistory.length === 0) {
+                            console.log("매치 히스토리 데이터 없음");
+                            matchHistoryContainer.innerHTML = "<p>매치 히스토리가 없습니다.</p>";
+                            return;
                         }
-                        matchHistoryContainer.innerHTML = `
-                        <pre>
-                            <h3>매치 히스토리</h3>
-                            <div>${matchHistory.match}</div>
-                        </pre>
-                        `;
-                    }
+                        let htmlContent = '<h3>매치 히스토리</h3>';
+                        matchHistory.forEach(match => {
+                            const winnerNickname = match.win_user.nickname;
+                            const loserNickname = match.lose_user ? match.lose_user.nickname : "부전승";
+                            const winnerScore = match.winner_score;
+                            const loserScore = match.loser_score;
+                            const createdAt = new Date(match.created_at).toLocaleDateString();
+                            htmlContent += `
+                            <div style="border: 1px solid black; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                                <div style="flex: 1; background-color: ${match.is_walkover ? 'white' : 'blue'}; color: white; padding: 10px;">
+                                    <p>${winnerNickname}</p>
+                                    <img src="${match.win_user.image}" alt="유저 사진" style="width: 50px; height: 50px;">
+                                    <p>${winnerScore}</p>
+                                </div>
+                                <div style="flex: 1; text-align: right; background-color: ${match.is_walkover ? 'white' : 'red'}; color: white; padding: 10px;">
+                                    <p>${loserNickname}</p>
+                                    <img src="${match.lose_user ? match.lose_user.image : ''}" alt="유저 사진" style="width: 50px; height: 50px;">
+                                    <p>${loserScore}</p>
+                                </div>
+                            </div>
+                            <div style="border-bottom: 1px solid black; padding: 5px;">
+                                <p>매치 생성일: ${createdAt}</p>
+                            </div>
+                            `;
+                        });
+                        matchHistoryContainer.innerHTML = htmlContent;
+                        matchHistoryContainer.style.display = 'block';
+                    });
                 } else {
-                    console.log("matchhistory 요청 실패");
-                    alert("matchhistory 요청 실패");
-                    //이하 테스트용. 매치 히스토리 요청 정상 동작시 삭제
-                    const matchHistoryContainer = this.$parent.querySelector('#matchHistory');
-                    matchHistoryContainer.innerHTML = `
-                        <pre>
-                            <h3>매치 히스토리(테스트용)</h3>
-                        </pre>
-                        `;
-                    matchHistoryContainer.style.display = 'block';
-                    this.buttoncheck.matchHistory = true;
+                    console.log("매치 히스토리 요청 실패");
                 }
             })
             .catch(error => {
-                console.log("matchhistory 요청 실패..", error);
+                console.log("매치 히스토리 요청 중 오류 발생", error);
             });
         }
     }
