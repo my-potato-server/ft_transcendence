@@ -1,3 +1,5 @@
+from .game import PongGameAsync
+
 class MiniGameServer:
     _instance = None
 
@@ -11,7 +13,7 @@ class MiniGameServer:
     def create_game(self, game_id, game_type, *args, **kwargs):
         # 게임 인스턴스 생성 및 저장
         if game_type == "pong":
-            self.games[game_id] = PongGame(*args, **kwargs)
+            self.games[game_id] = PongGameAsync(*args, **kwargs)
         # 다른 게임 타입에 대한 처리
         # ...
 
