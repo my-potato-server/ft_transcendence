@@ -21,6 +21,12 @@ def get_rank(request):
 	return 200, data
 
 
+@match_api.get("/rank/me", auth=AuthBearer(), response={200: UserMatchRecordResponse})
+def get_my_rank(request):
+	data, _ = UserMatchRecord.objects.get_or_create(user=request.user)
+	return 200, data
+
+
 @match_api.get("/history/me", auth=AuthBearer(), response={200: List[MatchHistoryResponse]})
 def get_my_match_history(request):
 	user = request.user
