@@ -6,6 +6,8 @@ from urllib.parse import parse_qs
 
 from matchserver import capis
 from inspect import isfunction, getmembers
+from account.models import User
+from channels.db import database_sync_to_async
 
 def get_method_actions(prefix, module):
     method_actions = {}
@@ -37,7 +39,9 @@ def decode_jwt_get_user_id(token):
     # user_id를 추출하여 반환합니다.
     return payload_data.get('user_id')  # 'user_id'는 실제 키 이름에 따라 변경해야 할 수 있습니다.
 
-
+@database_sync_to_async
+def get_user_id(user_room):
+    return user_room.user.id
 
 class MyConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -51,16 +55,22 @@ class MyConsumer(AsyncWebsocketConsumer):
         params = parse_qs(query_string)
         token = params.get('token', [None])[0]
 
-        User = get_user_model()
+        # User = get_user_model()
         user_id = decode_jwt_get_user_id(token)
         
-        self.user = User.objects.get(id=user_id)
+        self.user = await database_sync_to_async(User.objects.get)(id=user_id)
         
         if True:#임시조치
             await self.accept()
-            self.user_room  = await capis.connect_to_server(self.user)  # 사용자 인스턴스 전달
-            self.user_session_identify = f'user_session_{self.user_room.user.id}'
-            self.user_id = self.user_room.user.id
+            self.user_room, created  = await capis.connect_to_server(self.user)  # 사용자 인스턴스 전달
+            # if not created : 
+            #     print("cannot make user_room row in table, close connection")
+            #     await self.close()
+            #     return
+            # self.user_session_identify = f'user_session_{self.user_room.user.id}'
+            self.user_id = user_id
+            self.user_session_identify = f'user_session_{self.user_id}'
+            # self.user_id = self.user_room.user.id
 
             await self.channel_layer.group_add(     # 사용자별 그룹에 가입
                 self.user_session_identify,

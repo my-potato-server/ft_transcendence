@@ -290,6 +290,7 @@ window.navigateToProfile = async function() {
 };
 
 async function fetchFriendList() {
+	console.log("fetchFriendList");
     try {
         const response = await fetch('/friend/list', {
             method: 'POST',
