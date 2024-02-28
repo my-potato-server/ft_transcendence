@@ -27,13 +27,13 @@ export default function GameButton() {
 	<div class="game-selection-buttons text-center mt-5" style="margin-left: 20px; margin-right: 20px;">
 		<div class="row">
 			<div class="col">
-				<button id="offline" class="btn btn-primary btn-lg game-button" style="height: 300px; width: 100%;">Offline</button>
+				<button id="offline" class="btn btn-primary btn-lg game-button" style="height: 300px; width: 100%;opacity:0.6;border-radius:50%;">Offline</button>
 			</div>
 			<div class="col">
-				<button id="online" class="btn btn-primary btn-lg game-button" style="height: 300px; width: 100%;">Online</button>
+				<button id="online" class="btn btn-primary btn-lg game-button" style="height: 300px; width: 100%;opacity:0.6;border-radius:50%;">Online</button>
 			</div>
 			<div class="col">
-				<button id="tournament" class="btn btn-primary btn-lg game-button" style="height: 300px; width: 100%;">Tournament</button>
+				<button id="tournament" class="btn btn-primary btn-lg game-button" style="height: 300px; width: 100%;opacity:0.6;border-radius:50%;">Tournament</button>
 			</div>
 		</div>
 	</div>

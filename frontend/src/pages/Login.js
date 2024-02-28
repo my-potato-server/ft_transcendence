@@ -133,7 +133,7 @@ export function LoginButton() {
 				<div class="col-md-6">
 					<div class="card">
 						<div class="card-body">
-							<button class="btn btn-lg btn-info btn-block mt-2 ftLogin" type="button">42 Login</button>
+							<button class="btn btn-lg btn-info btn-block mt-2 ftLogin" type="button" style="opacity: 1;">42 Login</button>
 						</div>
 					</div>
 				</div>
