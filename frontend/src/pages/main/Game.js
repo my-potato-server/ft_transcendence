@@ -54,6 +54,9 @@ export default class Game extends Component {
                 });
                 break;
             case 'online':
+                import('../../apps/online2.js').then(({ default: online }) => {
+                    this.currentGame = online(canvas.id);
+                });
                 // 이곳에 matchserver 관련 js호출
                 break;
 			case 'tournament':

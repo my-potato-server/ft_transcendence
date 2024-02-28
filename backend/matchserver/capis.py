@@ -307,26 +307,26 @@ def enter_game(game_id):
 def exit_game(game_id):
     pass
 
-async def control_game(cmd, **kwargs):
+# async def control_game(cmd, **kwargs):
 
-    # 대진표 받아오기
-        if cmd == "get_tournament_bracket":
-            pass
+#     # 대진표 받아오기
+#         if cmd == "get_tournament_bracket":
+#             pass
 
-    # 게임 조작하기
-        if cmd == "game_control":
-            pass
+#     # 게임 조작하기
+#         if cmd == "game_control":
+#             pass
 
-    # 일시정지하기
-        if cmd == "game_pause":
-            pass
+#     # 일시정지하기
+#         if cmd == "game_pause":
+#             pass
 
-    # 일시정지 풀기
-        if cmd == "game_resume":
-            pass
+#     # 일시정지 풀기
+#         if cmd == "game_resume":
+#             pass
         
 
-    if (cmd == ""):
-        pass
-    pass
+#     if (cmd == ""):
+#         pass
+#     pass
 

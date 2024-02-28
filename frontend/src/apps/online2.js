@@ -7,7 +7,7 @@ export default function OnlinePong(canvasID) {
     let socket; // Define WebSocket globally within the function scope
 
     function initializeWebSocket() {
-        socket = new WebSocket("ws://yourserveraddress/game");
+        socket = new WebSocket("wss://localhost/ws/");
 
         socket.onopen = function(e) {
             console.log("Connection established");

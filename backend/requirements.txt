@@ -8,4 +8,4 @@ requests==2.31.0
 pyjwt==2.8.0
 Pillow==10.2.0
 numpy==1.26
-websocket-client#웹소켓 테스터 실행용
+websocket-client
