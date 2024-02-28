@@ -1,3 +1,9 @@
+try:
+    from . import game, minigameserver  # 미완성 파일 예시
+except ImportError as e:
+    print(f"ImportError: {e}. Some modules are not available.")
+
+
 # class TournamentLobby:
 #     def __init__(self, id, name):
 #         self.id = id

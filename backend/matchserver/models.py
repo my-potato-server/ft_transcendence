@@ -8,6 +8,7 @@ class Room(models.Model):
     # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, unique=True)
     password = models.CharField(max_length=100, blank=True, null=True)
+    chief = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -26,4 +27,6 @@ class UserRoom(models.Model):
     joined_at = models.DateTimeField(auto_now_add=True)
     # 게임서버와 연결이 끊어진 시각 (재접속용 기록)
     left_at = models.DateTimeField(null=True, blank=True)
-    
+
+    #현재 참여하고 있는 게임
+    game_id = models.CharField(max_length=100, blank=True, null=True)
