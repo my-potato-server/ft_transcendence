@@ -33,7 +33,7 @@ def on_open(ws):
 
 if __name__ == "__main__":
     websocket.enableTrace(True)
-    ws = websocket.WebSocketApp("wss://your-websocket-server-url",
+    ws = websocket.WebSocketApp("wss://nginx/ws/",
                               on_message=on_message,
                               on_error=on_error,
                               on_close=on_close)
