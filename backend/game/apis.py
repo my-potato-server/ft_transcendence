@@ -1,5 +1,5 @@
 from typing import List
-from ninja import NinjaAPI
+from ninja import NinjaAPI, Router
 from ninja.orm import create_schema
 from django.db.models import Q
 
@@ -12,7 +12,7 @@ from account.auth import AuthBearer
 from account.models import User
 
 
-match_api = NinjaAPI(urls_namespace="match")
+match_api = Router(tags=["match"])
 
 
 @match_api.get("/rank", response={200: List[UserMatchRecordResponse]})

@@ -1,5 +1,5 @@
 from typing import List
-from ninja import NinjaAPI, File
+from ninja import NinjaAPI, File, Router
 from ninja.files import UploadedFile
 from django.contrib.auth import authenticate
 from django.conf import settings
@@ -16,8 +16,8 @@ from .auth import AuthBearer
 from main.responses import ErrorResponse
 from main.jwt import create_token
 
-account_api = NinjaAPI(urls_namespace="account")
-friend_api = NinjaAPI(urls_namespace="friend")
+account_api = Router(tags=["account"])
+friend_api = Router(tags=["friend"])
 
 
 @account_api.post("/login", response={200: LoginResponse, 400: ErrorResponse})
