@@ -39,10 +39,10 @@ export default class Profile extends Component {
         if (userInfo) {
             userInfo.onclick = () => this.userInfo();
         }
-        const deleteid = this.$parent.querySelector('button[class="DeleteID"]');
-        if (deleteid) {
-            deleteid.onclick = () => this.deleteid();
-        }
+        // const deleteid = this.$parent.querySelector('button[class="DeleteID"]');
+        // if (deleteid) {
+        //     deleteid.onclick = () => this.deleteid();
+        // }
         // const status = this.$parent.querySelector('button[class="Status"]');
         // if (status) {
         //     status.onclick = () => this.status();

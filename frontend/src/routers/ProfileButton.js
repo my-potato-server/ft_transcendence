@@ -53,11 +53,9 @@ export default function ProfileButton() {
 		<div class="buttons">
 			<button type="button" class="UserInfo">Info</button>
 			<button type="button" class="MatchHistory">Match History</button>
-			<button type="button" class="DeleteID">Delete Account</button>
 		</div>
 		<div class="dropdown-content" id="info"></div>
 		<div class="dropdown-content" id="matchHistory"></div>
-		<div class="dropdown-content" id="delete"></div>
 	</div>
 	`
 }
