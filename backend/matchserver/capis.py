@@ -287,6 +287,13 @@ async def send_message_to_room_that_room_was_deleted(room_id):
 async def send_message_to_room_that_room_was_updated(room_id):
     pass
 
+@database_sync_to_async
+def enter_game(game_id):
+
+@database_sync_to_async
+def exit_game(game_id):
+
+
 async def control_game(cmd):
 
     if (cmd == ""):
