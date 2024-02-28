@@ -9,14 +9,14 @@ def create_match_history(
 		tournament_id: int,
 		level: int,
 		win_user_id: int,
-		lose_user_id: int,
+		lose_user_id: int = None,
 		winner_score: int = None,
 		loser_score: int = None,
 		is_walkover: bool = False,
 ):
 	tournament = Tournament.objects.get(id=tournament_id)
 	win_user = tournament.users.filter(id=win_user_id).first()
-	lose_user = tournament.users.filter(id=lose_user_id).first()
+	lose_user = tournament.users.filter(id=lose_user_id).first() if lose_user_id is not None else None
 
 	tournament.users.add(win_user)
 	win_user_record = UserMatchRecord.objects.get_or_create(user=win_user)
