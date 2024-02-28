@@ -1,20 +1,9 @@
 from django.db import models
 from django.db.models import F
 
-from .managers import MatchManager
+from .managers import MatchHistoryManager
 
 from account.models import User
-
-
-class Match(models.Model):
-	id = models.BigAutoField(primary_key=True)
-	user = models.ManyToManyField(User, related_name='matches')
-	win_user = models.ForeignKey(User, on_delete=models.PROTECT, related_name='win_matches')
-	lose_user = models.ManyToManyField(User, related_name='lose_matches')
-	created_at = models.DateTimeField(auto_now_add=True)
-	updated_at = models.DateTimeField(auto_now=True)
-
-	objects = MatchManager()
 
 
 class UserMatchRecord(models.Model):
@@ -38,5 +27,21 @@ class UserMatchRecord(models.Model):
 
 class Tournament(models.Model):
 	id = models.BigAutoField(primary_key=True)
+	users = models.ManyToManyField(User, related_name='tournaments')
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
+
+
+class MatchHistory(models.Model):
+	id = models.BigAutoField(primary_key=True)
+	tournament = models.ForeignKey(Tournament, on_delete=models.PROTECT, related_name='matche_histories')
+	level = models.PositiveIntegerField(default=0)
+	win_user = models.ForeignKey(User, on_delete=models.PROTECT, related_name='win_match_histories')
+	winner_score = models.PositiveIntegerField(default=0)
+	lose_user = models.ForeignKey(User, on_delete=models.PROTECT, related_name='lose_match_histories', null=True)
+	loser_score = models.PositiveIntegerField(default=0)
+	is_walkover = models.BooleanField(default=False)
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now=True)
+
+	objects = MatchHistoryManager()
