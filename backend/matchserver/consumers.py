@@ -1,6 +1,8 @@
 # chat/consumers.py
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
+import base64
+from urllib.parse import parse_qs
 
 from matchserver import capis
 from inspect import isfunction, getmembers
@@ -21,11 +23,37 @@ method_actions = get_method_actions(prefix, capis)
 # 사용 예시
 print(method_actions)
 
+def decode_jwt_get_user_id(token):
+    # JWT 토큰을 '.'을 기준으로 분리합니다.
+    header, payload, signature = token.split('.')
+    
+    # Base64로 인코딩된 페이로드를 디코딩합니다.
+    payload += '=' * (-len(payload) % 4)  # 패딩 문제 수정
+    decoded_payload = base64.urlsafe_b64decode(payload).decode('utf-8')
+    
+    # JSON 문자열을 파싱하여 딕셔너리로 변환합니다.
+    payload_data = json.loads(decoded_payload)
+    
+    # user_id를 추출하여 반환합니다.
+    return payload_data.get('user_id')  # 'user_id'는 실제 키 이름에 따라 변경해야 할 수 있습니다.
+
+
 
 class MyConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.user = self.scope["user"]
+        # self.user = self.scope["user"]
         # if self.user.is_authenticated:
+
+
+        # ws://yourserver/ws/?token=<your_token>
+        # 쿼리 파라미터에서 토큰을 가져옵니다.
+        query_string = self.scope['query_string'].decode()
+        params = parse_qs(query_string)
+        token = params.get('token', [None])[0]
+
+
+        self.user = decode_jwt_get_user_id(token)
+
         if True:#임시조치
             await self.accept()
             self.user_room  = await capis.connect_to_server(self.user)  # 사용자 인스턴스 전달
