@@ -6,5 +6,13 @@ class LoginRequest(Schema):
 	redirect_uri: str
 
 
+class MakeTestUserRequest(Schema):
+	login: str
+
+
 class EditNicknameRequest(Schema):
 	nickname: str
+
+
+class FriendRequestByLoginRequest(Schema):
+	login: str

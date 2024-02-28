@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate
 from django.conf import settings
 from django.db.models import Q
 
-from .requests import LoginRequest, EditNicknameRequest
+from .requests import LoginRequest, EditNicknameRequest, MakeTestUserRequest, FriendRequestByLoginRequest
 from .responses import LoginResponse, UserResponse, FriendshipResponse
 from .ft_auth import FtAuth
 from .models import User, Friendship
@@ -27,6 +27,14 @@ def login(request, data: LoginRequest):
 	user = authenticate(request=request, login=login_name)
 	if not user:
 		user = User.objects.create_user(login=login_name)
+	return 200, {"token": create_token(user)}
+
+
+@account_api.post("/make-test-user", response={200: LoginResponse, 400: ErrorResponse})
+def make_test_user(request, body: MakeTestUserRequest):
+	user = authenticate(request=request, login=body.login)
+	if not user:
+		user = User.objects.create_user(login=body.login)
 	return 200, {"token": create_token(user)}
 
 
@@ -74,7 +82,7 @@ def list_friends(request):
 		UserResponse(user=f.from_user if f.to_user == request.user else f.to_user)
 		for f in friends
 	]
-	return 200, {"friends": friends_list}
+	return 200, friends_list
 
 
 @friend_api.get("/requests", auth=AuthBearer(), response={200: List[FriendshipResponse]})
@@ -102,9 +110,9 @@ def request_friend(request, user_id: int):
 	return 200, {"message": "Friend request sent"}
 
 
-@friend_api.post("/request-by-login/{login}", auth=AuthBearer())
-def request_by_login(request, login: str):
-	user = User.objects.get(login=login)
+@friend_api.post("/request-by-login", auth=AuthBearer())
+def request_by_login(request, body: FriendRequestByLoginRequest):
+	user = User.objects.get(login=body.login)
 	if user == request.user:
 		return 400, {"message": "You can't add yourself"}
 	if Friendship.objects \

@@ -256,8 +256,11 @@ window.navigateToProfile = async function() {
     if (!isFriendListVisible) {
 		try {
 			const friendList = await fetchFriendList();
-            const friendListHtml = friendList.map(friend => `<li>${friend.name} - ${friend.isOnline ? 'Online' : 'Offline'}</li>`).join('');
-            friendListContainer.innerHTML = `<ul>${friendListHtml}</ul>`;
+            const friendListHtml = friendList.map(friend => `<li>${friend.user.nickname} - ${friend.isOnline ? 'Online' : 'Offline'}</li>`).join('');
+            friendListContainer.innerHTML = `
+				<p>친구 목록</p>
+				<ul>${friendListHtml}</ul>
+			`;
 
 			// 5초마다 친구의 온라인 상태 업데이트
 			friendListUpdateInterval = setInterval(async () => {
@@ -286,17 +289,14 @@ window.navigateToProfile = async function() {
 
 async function fetchFriendList() {
     try {
-        const response = await fetch('/friendList', {
+        const response = await fetch('/friend/list', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+				'authorization': 'Bearer ' + sessionStorage.getItem('token'),
             },
-            body: JSON.stringify({ id: myApp.root.userinfo.id }),
         });
-        if (!response.ok) {
-            throw new Error('친구 목록을 불러오지 못했습니다');
-        }
-        return await response.json();
+		return await response.json();
     } catch (error) {
         console.error('친구 목록을 불러오지 못했습니다', error);
         throw error;
@@ -315,14 +315,14 @@ window.addFriend = async function() {
 
     try {
         // 서버에 친구 추가 요청 보내기
-        const response = await fetch('/addFriend', {
+        const response = await fetch('/friend/request-by-login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+				'authorization': 'Bearer ' + sessionStorage.getItem('token'),
             },
             body: JSON.stringify({
-                userId: myApp.root.userinfo.id, // 현재 사용자 아이디
-                friendId: friendId, // 추가할 친구의 아이디
+                login: friendId, // 추가할 친구의 아이디
             }),
         });
 

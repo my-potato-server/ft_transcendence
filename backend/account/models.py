@@ -28,7 +28,7 @@ class Friendship(models.Model):
     from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='friendship_from_user')
     to_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='friendship_to_user')
     requested_by = models.OneToOneField(User, on_delete=models.CASCADE)
-    accepted = models.BooleanField(default=False)
+    accepted = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
