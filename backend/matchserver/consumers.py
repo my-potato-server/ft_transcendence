@@ -103,6 +103,7 @@ class MyConsumer(AsyncWebsocketConsumer):
                 self.user_session_identify,
                 self.channel_name
             )
+        await self.close()
 
 
     async def receive(self, text_data):
