@@ -1,35 +1,44 @@
-// src/apps/online.js
+// src/apps/online2.js
+
+let socket; // Define WebSocket globally within the function scope
 
 export default function OnlinePong(canvasID) {
     const canvas = document.getElementById(canvasID);
     const ctx = canvas.getContext('2d');
 
-    let socket; // Define WebSocket globally within the function scope
     const userinfo = JSON.parse(sessionStorage.getItem("userinfo"));
 
     function initializeWebSocket() {
+        // 웹소켓이 이미 존재하고 열려있는 상태인지 확인
+        if (socket) {
+            console.log("Using existing WebSocket connection");
+            return; // 기존 연결을 재사용
+        }
+    
+        // 새로운 웹소켓 연결 생성
         socket = new WebSocket("wss://localhost/ws/?token=" + sessionStorage.getItem("token"));
         console.log("Connecting to WebSocket", "wss://localhost/ws/?token=" + sessionStorage.getItem("token"));
+    
         socket.onopen = function(e) {
             console.log("Connection established");
-            // Perform initial setup here
+            // 초기 설정 수행
         };
-
+    
         socket.onmessage = function(event) {
             const data = JSON.parse(event.data);
-            // Handle messages received from the server
+            // 서버로부터 받은 메시지 처리
             handleServerMessage(data);
         };
-
+    
         socket.onclose = function(event) {
             if (event.wasClean) {
                 console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
             } else {
-                // e.g., process killed or network down
+                // 예: 프로세스 종료 또는 네트워크 다운
                 console.log('[close] Connection died');
             }
         };
-
+    
         socket.onerror = function(error) {
             console.log(`[error] ${error.message}`);
         };
