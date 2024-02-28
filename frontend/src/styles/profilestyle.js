@@ -60,14 +60,15 @@ export default function injectProfileStyles() {
         background-color: #fff;
         border: 1px solid #000;
         border-radius: 50%;
+        padding: 0;
     }
 
     .ProfilePhoto img {
-        width: 120%; /* 이미지를 부모 요소에 맞게 확장 */
-        height: 120%; /* 이미지의 세로 비율 유지 */
+        width: 100%; /* 이미지를 부모 요소에 맞게 확장 */
+        height: 100%; /* 이미지의 세로 비율 유지 */
         border-radius: 50%; /* 이미지를 원형으로 자르기 */
         overflow: hidden; /* 이미지를 래핑하는 부모 요소에 overflow: hidden; 적용 */
-        margin: -10px; /* 이미지를 부모 요소에 맞게 확장하기 위해 마진을 음수로 설정 */
+        margin: 0px; /* 이미지를 부모 요소에 맞게 확장하기 위해 마진을 음수로 설정 */
     }
 
     .Nickname {
