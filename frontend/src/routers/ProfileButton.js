@@ -37,7 +37,7 @@ export default function ProfileButton() {
 		<div class="user-details">
 			<div class="user-photo">
 				<button type="buttona" class="ProfilePhoto">
-					<img src="${image}" style="height: 120px; width: 120px;" alt="User Photo">
+						<img src="${image}" alt="User Photo">
 				</button>
 			</div>
 			<div class="user-info">

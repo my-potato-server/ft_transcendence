@@ -327,7 +327,8 @@ export default class Profile extends Component {
         if (nicknameButton) {
             nicknameButton.textContent = newNickname; // 변경된 닉네임으로 텍스트 업데이트
         }
-        if (this.buttoncheck.userinfo = true) {
+        console.log(this.buttoncheck.userinfo, "button true?");
+        if (this.buttoncheck.userinfo === true) {
             const infoContainer = this.$parent.querySelector('#info');
             if (infoContainer) {
                 infoContainer.querySelector('div:nth-child(4)').textContent = 'nickname : ' + newNickname; // 변경된 닉네임으로 텍스트 업데이트
@@ -387,8 +388,13 @@ export default class Profile extends Component {
 
     updateProfilePhotoUI(imageUrl) {
         const profilePhotoButton = document.querySelector('.ProfilePhoto');
+        console.log("imageUrl", imageUrl);
         if (profilePhotoButton) {
             profilePhotoButton.querySelector('img').src = imageUrl; // 변경된 이미지 URL로 프로필 사진 업데이트
+        }
+        const navPhoto = document.querySelector('.navPhoto');
+        if (navPhoto) {
+            navPhoto.querySelector('img').src = imageUrl; // 변경된 이미지 URL로 프로필 사진 업데이트
         }
     }
 }
