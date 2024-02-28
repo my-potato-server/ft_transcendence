@@ -76,13 +76,13 @@ def edit_nickname(request, body: EditNicknameRequest):
 # 	return 200, {"message": "Image changed"}
 @account_api.post("/edit-image", auth=AuthBearer())
 def edit_image(request):
-    if request.method == 'POST' and request.FILES.get('profileImage'):
-        profile_image = request.FILES['profileImage']
-        request.user.image = profile_image
-        request.user.save()
-        return JsonResponse({'message': 'Image changed'}, status=200)
-    else:
-        return JsonResponse({'error': 'No image provided'}, status=400)
+	if request.method == 'POST' and request.FILES.get('profileImage'):
+		profile_image = request.FILES['profileImage']
+		request.user.image = profile_image
+		request.user.save()
+		return JsonResponse({'message': 'Image changed'}, status=200)
+	else:
+		return JsonResponse({'error': 'No image provided'}, status=400)
 
 
 @friend_api.post("/list", auth=AuthBearer(), response={200: List[UserResponse]})
