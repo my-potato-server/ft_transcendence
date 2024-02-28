@@ -358,19 +358,25 @@ export default class Profile extends Component {
             })
             .then(response => {
                 if (response.ok) {
-                    return response.json();
+                    return fetch('/account/me', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'authorization': 'Bearer ' + sessionStorage.getItem('token'),
+                        }});
                 } else {
                     throw new Error('이미지 업로드 실패');
                 }
             })
-            .then(data => {
-                console.log('이미지 업로드 성공', data);
-                const tempuserinfo = JSON.parse(sessionStorage.getItem('userinfo'));
-                tempuserinfo.user.image = data.imageUrl; // 변경된 이미지 URL로 업데이트
+            .then(async response => {
+                const tempuserinfo = await response.json();
                 sessionStorage.setItem('userinfo', JSON.stringify(tempuserinfo));
+                console.log('이미지 업로드 성공', response);
+                const infos = JSON.parse(sessionStorage.getItem('userinfo'));
+                const imageUrl = infos.user.image // 변경된 이미지 URL로 업데이트
                 this.$parent.userinfo = tempuserinfo;
                 this.infos = tempuserinfo.user;
-                this.updateProfilePhotoUI(data.imageUrl); // UI 업데이트 함수 호출
+                this.updateProfilePhotoUI(imageUrl); // UI 업데이트 함수 호출
             })
             .catch(error => {
                 console.error('이미지 업로드 실패', error);
