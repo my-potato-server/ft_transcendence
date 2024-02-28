@@ -35,6 +35,7 @@ class MiniGameServer:
             del self.games[game_id]
 
 # 사용 예시
-mini_game_server = MiniGameServer()
-mini_game_server.create_game("game123", "pong", player1="Alice", player2="Bob")
-game_instance = mini_game_server.get_game("game123")
+if __name__ == "__main__":
+    mini_game_server = MiniGameServer()
+    mini_game_server.create_game("game123", "pong", player1="Alice", player2="Bob")
+    game_instance = mini_game_server.get_game("game123")
