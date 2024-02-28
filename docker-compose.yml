@@ -3,6 +3,7 @@ version: "3"
 volumes:
   db_data: {}
   frontend: {}
+  backend_media: {}
 
 services:
   nginx:
@@ -41,5 +42,7 @@ services:
     build: ./backend
     ports:
       - "8000:8000"
+    volumes:
+      - backend_media:/app/media
     depends_on:
       - db
