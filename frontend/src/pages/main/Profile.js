@@ -307,13 +307,26 @@ export default class Profile extends Component {
         .then(response => {
             if (response.ok) {
                 console.log("닉네임 변경 성공");
-                // 서버 응답에 따른 처리 추가
-                // 성공 시 닉네임 변경
-                
+                const tempuserinfo = JSON.parse(sessionStorage.getItem('userinfo'));
+                // this.$parent.userinfo.nickname = newNickname;
+                tempuserinfo.user.nickname = newNickname;
+                console.log("tempuserinfo", tempuserinfo);
+                sessionStorage.setItem('userinfo', JSON.stringify(tempuserinfo));
+                this.$parent.userinfo = tempuserinfo;
+                console.log("this.$parent.userinfo", this.$parent.userinfo);
+                this.updateNicknameUI(newNickname);
             } else {
                 console.error("닉네임 변경 실패");
                 // 실패한 경우에 대한 처리 추가
             }
         })
     }
+
+    updateNicknameUI(newNickname) {
+        const nicknameButton = document.querySelector('.Nickname');
+        if (nicknameButton) {
+            nicknameButton.textContent = newNickname; // 변경된 닉네임으로 텍스트 업데이트
+        }
+    }
 }
+

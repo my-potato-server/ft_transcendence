@@ -13,6 +13,7 @@ export default class Mainpage extends Component {
 		this.$parent.auth = auth;
 		this.$parent.token = token;
 		this.$parent.userinfo = JSON.parse(userinfo).user;
+		console.log("Mainpage", this.$parent.auth, this.$parent.token, this.$parent.userinfo);
 	}
 
 	template() {
