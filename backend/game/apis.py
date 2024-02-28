@@ -1,8 +1,12 @@
 from typing import List
 from ninja import NinjaAPI
+from ninja.orm import create_schema
+from django.db.models import Q
 
 from .models import UserMatchRecord, MatchHistory, Tournament
 from .utils import create_tournament_id, create_match_history
+from .schemas import MatchHistorySchema
+from .responses import MatchHistoryResponse, UserMatchRecordResponse
 
 from account.auth import AuthBearer
 from account.models import User
@@ -11,23 +15,23 @@ from account.models import User
 match_api = NinjaAPI(urls_namespace="match")
 
 
-@match_api.get("/rank")
+@match_api.get("/rank", response={200: List[UserMatchRecordResponse]})
 def get_rank(request):
 	data = UserMatchRecord.objects.order_by('-win_rate')
-	return 200, {"data": data}
+	return 200, data
 
 
-@match_api.get("/history/me", auth=AuthBearer())
+@match_api.get("/history/me", auth=AuthBearer(), response={200: List[MatchHistoryResponse]})
 def get_my_match_history(request):
 	user = request.user
 	data = MatchHistory.objects.filter(Q(win_user=user) | Q(lose_user=user)).order_by('-created_at')
-	return 200, {"data": data}
+	return 200, data
 
 
-@match_api.get("/history/{tournament_id}")
+@match_api.get("/history/{tournament_id}", response={200: List[MatchHistorySchema]})
 def get_match_history(request, tournament_id: int):
 	data = MatchHistory.objects.filter(tournament_id=tournament_id).order_by('-created_at')
-	return 200, {"data": data}
+	return 200, data
 
 
 @match_api.post("/test/make-win-tournament", auth=AuthBearer(), summary="user가 4강 토너먼트 전부 승리한 케이스")
@@ -61,7 +65,7 @@ def test_make_lose_tournament(request):
 @match_api.post(
 	"/test/make-win-walkover-tournament",
 	auth=AuthBearer(),
-    summary="user가 4강 토너먼트 부전승으로 진출 후 승리한 케이스"
+	summary="user가 4강 토너먼트 부전승으로 진출 후 승리한 케이스"
 )
 def test_make_win_walkover_tournament(request):
 	user = request.user

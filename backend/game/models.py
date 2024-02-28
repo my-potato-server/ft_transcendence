@@ -1,5 +1,8 @@
+from decimal import Decimal
+
 from django.db import models
-from django.db.models import F
+from django.db.models import F, Case, When, Value
+from django.db.models.functions import Cast
 
 from .managers import MatchHistoryManager
 
@@ -17,7 +20,19 @@ class UserMatchRecord(models.Model):
 		db_persist=True,
 	)
 	win_rate = models.GeneratedField(
-		expression=F('win_count') / (F('win_count') + F('lose_count')) * 100,
+		expression=Case(
+			When(win_count=0, lose_count=0, then=Value(
+				0.0, output_field=models.DecimalField(max_digits=6, decimal_places=3, default=0.0))
+			),
+			When(win_count=0, then=Value(
+				0.0, output_field=models.DecimalField(max_digits=6, decimal_places=3, default=0.0))
+			),
+			When(lose_count=0, then=Value(
+				100.0, output_field=models.DecimalField(max_digits=6, decimal_places=3, default=0.0))
+			),
+			default=F('win_count') * 100 / (F('win_count') + F('lose_count')),
+			output_field=models.DecimalField(max_digits=6, decimal_places=3, default=0.0),
+		),
 		output_field=models.DecimalField(max_digits=6, decimal_places=3, default=0.0),
 		db_persist=True,
 	)
