@@ -51,9 +51,11 @@ class MyConsumer(AsyncWebsocketConsumer):
         params = parse_qs(query_string)
         token = params.get('token', [None])[0]
 
-
-        self.user = decode_jwt_get_user_id(token)
-
+        User = get_user_model()
+        user_id = decode_jwt_get_user_id(token)
+        
+        self.user = User.objects.get(id=user_id)
+        
         if True:#임시조치
             await self.accept()
             self.user_room  = await capis.connect_to_server(self.user)  # 사용자 인스턴스 전달
