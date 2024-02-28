@@ -10,12 +10,13 @@ class app {
 
 		const ObjectForDI = {$parent:this.root, setState : this.setState.bind(this), state : this.state};
 
+		//아래 부분 초기상태에 항상 null이므로, getAuth이후 다시 갱신해서 로그찍도록 해줘야함. 초기에는 아무것도 없는 상태일때가 있음!!
 		const auth = sessionStorage.getItem('auth') === 'true'; // 문자열 "true"를 boolean으로 변환
 		const token = sessionStorage.getItem('token');
 		const userinfo = sessionStorage.getItem('userinfo');
 		console.log("userinfo", userinfo);
 		console.log("new app");
-		if (auth) {
+		if (auth && token && userinfo) {
 			this.root.auth = true;
 			this.root.token = token;
 			this.root.userinfo = JSON.parse(userinfo).user;

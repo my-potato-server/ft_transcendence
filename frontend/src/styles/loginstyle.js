@@ -29,9 +29,9 @@ export default function injectLoginStyles() {
     }
 
     .card {
-        background-color: rgba(255, 255, 255, 0.3); /* 카드 배경색과 투명도 조정 */
+        background-color: rgba(255, 255, 255, 0.2); /* 카드 배경색과 투명도 조정 */
         border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
     }
 
     .card-body {
@@ -40,7 +40,7 @@ export default function injectLoginStyles() {
 
     input[type="text"],
     input[type="password"] {
-        background-color: rgba(255, 255, 255, 0.5); /* 입력 필드 배경색과 투명도 조정 */
+        background-color: rgba(255, 255, 255, 0.2); /* 입력 필드 배경색과 투명도 조정 */
         border: none;
         border-radius: 4px;
         padding: 10px;

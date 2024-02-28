@@ -281,15 +281,121 @@ export default class Profile extends Component {
         }
     }
 
-    profilePhoto() {
-        console.log("profilePhoto");
-        // 서버에 프로필 사진 변경 요청
-        // alert("프로필 사진을 변경합니다.");
-    }
+    // profilePhoto() {
+    //     console.log("profilePhoto");
+    //     // 서버에 프로필 사진 변경 요청
+    // }
 
     nickname() {
         console.log("nickname");
         // 서버에 닉네임 변경 요청
         // alert("닉네임을 변경합니다.");
+        console.log('token?', sessionStorage.getItem('token'));
+        console.log('tokken?', this.$parent.token);
+        const newNickname = prompt("새로운 닉네임을 입력하세요:");
+        fetch('/account/edit-nickname', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': 'Bearer ' + sessionStorage.getItem('token')
+            },
+            body: JSON.stringify({
+                nickname : newNickname
+            }),
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log("닉네임 변경 성공");
+                const tempuserinfo = JSON.parse(sessionStorage.getItem('userinfo'));
+                // this.$parent.userinfo.nickname = newNickname;
+                tempuserinfo.user.nickname = newNickname;
+                console.log("tempuserinfo", tempuserinfo);
+                sessionStorage.setItem('userinfo', JSON.stringify(tempuserinfo));
+                this.$parent.userinfo = tempuserinfo;
+                this.infos = tempuserinfo.user;
+                console.log("this.$parent.userinfo", this.$parent.userinfo);
+                this.updateNicknameUI(newNickname);
+            } else {
+                console.error("닉네임 변경 실패");
+                // 실패한 경우에 대한 처리 추가
+            }
+        })
+    }
+
+    updateNicknameUI(newNickname) {
+        const nicknameButton = document.querySelector('.Nickname');
+        if (nicknameButton) {
+            nicknameButton.textContent = newNickname; // 변경된 닉네임으로 텍스트 업데이트
+        }
+        console.log(this.buttoncheck.userinfo, "button true?");
+        if (this.buttoncheck.userinfo === true) {
+            const infoContainer = this.$parent.querySelector('#info');
+            if (infoContainer) {
+                infoContainer.querySelector('div:nth-child(4)').textContent = 'nickname : ' + newNickname; // 변경된 닉네임으로 텍스트 업데이트
+            }
+        }
+    }
+
+    profilePhoto() {
+        console.log("profilePhoto");
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        fileInput.click();
+
+        fileInput.addEventListener('change', () => {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('profileImage', file);
+
+            fetch('/account/edit-image', {
+                method: 'POST',
+                headers: {
+                    'authorization': 'Bearer ' + sessionStorage.getItem('token')
+                },
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    return fetch('/account/me', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'authorization': 'Bearer ' + sessionStorage.getItem('token'),
+                        }});
+                } else {
+                    throw new Error('이미지 업로드 실패');
+                }
+            })
+            .then(async response => {
+                const tempuserinfo = await response.json();
+                sessionStorage.setItem('userinfo', JSON.stringify(tempuserinfo));
+                console.log('이미지 업로드 성공', response);
+                const infos = JSON.parse(sessionStorage.getItem('userinfo'));
+                const imageUrl = infos.user.image // 변경된 이미지 URL로 업데이트
+                this.$parent.userinfo = tempuserinfo;
+                this.infos = tempuserinfo.user;
+                this.updateProfilePhotoUI(imageUrl); // UI 업데이트 함수 호출
+            })
+            .catch(error => {
+                console.error('이미지 업로드 실패', error);
+                // 실패한 경우에 대한 처리 추가
+            });
+        });
+    }
+
+    updateProfilePhotoUI(imageUrl) {
+        const profilePhotoButton = document.querySelector('.ProfilePhoto');
+        console.log("imageUrl", imageUrl);
+        if (profilePhotoButton) {
+            profilePhotoButton.querySelector('img').src = imageUrl; // 변경된 이미지 URL로 프로필 사진 업데이트
+        }
+        const navPhoto = document.querySelector('.navPhoto');
+        if (navPhoto) {
+            navPhoto.querySelector('img').src = imageUrl; // 변경된 이미지 URL로 프로필 사진 업데이트
+        }
     }
 }
+

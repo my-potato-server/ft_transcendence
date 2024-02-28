@@ -107,8 +107,8 @@ export default function RouterButton(currentLocation) {
 				<button onclick="navigateToSubscribe()" style="background:none;border:none;margin-left:auto;">
 					<img src="https://cdn-icons-png.flaticon.com/512/5035/5035563.png?downsize=40:40" style="height: 40px; width: 40px; cursor:pointer;">
 				</button>
-				<button onclick="navigateToProfile()" style="background:none;border:none;margin-left:0;">
-                    <img src="${image}" style="height: 40px; width: 40px; cursor:pointer;">
+				<button onclick="navigateToProfile()" style="height: 40px; width:40px; background:none;border:0.5px solid #000;border-radius: 50%;margin-left:0;padding:0;" class="navPhoto">
+                    <img src="${image}" style="border-radius:50%;height: 100%; width: 100%; margin: 0px; overflow: hidden;cursor:pointer;">
                 </button>
 			</div>
 		</div>

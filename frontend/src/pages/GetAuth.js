@@ -7,6 +7,9 @@ export default class GetAuth extends Component {
     constructor(ObjectForDI) {
         super(ObjectForDI.$parent, ObjectForDI.setState, ObjectForDI.state);
         const url = null;
+        const lauth = false;
+        const ltoken = null;
+        const luserinfo = null;
     }
 
     template() {
@@ -51,24 +54,31 @@ export default class GetAuth extends Component {
             console.log("token", token);
             this.$parent.auth = true;
             this.$parent.token = token;
-            sessionStorage.setItem('auth', 'true');
-            sessionStorage.setItem('token', token);
+            // sessionStorage.setItem('auth', 'true');
+            // sessionStorage.setItem('token', token);
             // this.setState({locate: '/src/pages/Main'});
+            this.lauth = true;
+            this.ltoken = token;
             return fetch('/account/me', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'authorization': 'Bearer ' + sessionStorage.getItem('token'),
+                    'authorization': 'Bearer ' + token,
             }})
         })
         .then(async response => {
             console.log("response", response);
             const infos = await response.json();
             console.log(infos);
+            this.luserinfo = JSON.stringify(infos);
             this.$parent.userinfo = JSON.stringify(infos);
             sessionStorage.setItem('userinfo', JSON.stringify(infos));
+            // this.setState({ locate: '/src/pages/Main'});
+            sessionStorage.setItem('auth', this.lauth);
+            sessionStorage.setItem('token', this.ltoken);
+            sessionStorage.setItem('userinfo', this.luserinfo);
+            console.log("logins", this.logins);
             this.setState({ locate: '/src/pages/Main'});
         });
-        // this.setState({ locate: '/src/pages/Main'});
     }
 }

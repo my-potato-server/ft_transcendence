@@ -7,6 +7,13 @@ export default class Mainpage extends Component {
 
 	constructor(ObjectForDI) {
 		super(ObjectForDI.$parent, ObjectForDI.setState, ObjectForDI.state);
+		const auth = sessionStorage.getItem('auth') === 'true'; // 문자열 "true"를 boolean으로 변환
+		const token = sessionStorage.getItem('token');
+		const userinfo = sessionStorage.getItem('userinfo');
+		this.$parent.auth = auth;
+		this.$parent.token = token;
+		this.$parent.userinfo = JSON.parse(userinfo).user;
+		console.log("Mainpage", this.$parent.auth, this.$parent.token, this.$parent.userinfo);
 	}
 
 	template() {
