@@ -25,7 +25,8 @@ print(method_actions)
 class MyConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user = self.scope["user"]
-        if self.user.is_authenticated:
+        # if self.user.is_authenticated:
+        if True:#임시조치
             await self.accept()
             self.user_room  = await capis.connect_to_server(self.user)  # 사용자 인스턴스 전달
             self.user_session_identify = f'user_session_{self.user_room.user.id}'
