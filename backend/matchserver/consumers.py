@@ -9,14 +9,26 @@ from inspect import isfunction, getmembers
 from account.models import User
 from channels.db import database_sync_to_async
 
+from inspect import getmembers, isroutine
+
 def get_method_actions(prefix, module):
     method_actions = {}
     # getmembers 함수를 사용하여 모듈 내의 모든 멤버를 조회
-    for name, func in getmembers(module, isfunction):
-        if name.startswith(prefix):  # 특정 접두사로 시작하는 함수 이름을 필터링
+    for name, obj in getmembers(module):
+        # 특정 접두사로 시작하는 이름을 필터링하고, 일반 함수 또는 데코레이터가 적용된 객체를 대상으로 함
+        if name.startswith(prefix) and (isroutine(obj) or hasattr(obj, '__call__')):
             action_name = f"matchserver.{name}"
-            method_actions[action_name] = func
+            method_actions[action_name] = obj
     return method_actions
+
+# def get_method_actions(prefix, module):
+#     method_actions = {}
+#     # getmembers 함수를 사용하여 모듈 내의 모든 멤버를 조회
+#     for name, func in getmembers(module, isfunction):
+#         if name.startswith(prefix):  # 특정 접두사로 시작하는 함수 이름을 필터링
+#             action_name = f"matchserver.{name}"
+#             method_actions[action_name] = func
+#     return method_actions
 
 # 'capis' 모듈에서 'prefix'로 시작하는 모든 함수를 method_actions 딕셔너리에 추가
 prefix = ""  # 필요한 경우 특정 접두사를 설정할 수 있습니다.
@@ -95,6 +107,8 @@ class MyConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
+        print("recived : " + text_data_json)
+
         method = text_data_json.get('method')
         parameters = text_data_json.get('parameters', {})
         identify = text_data_json.get('identify')

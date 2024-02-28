@@ -25,21 +25,40 @@ class MiniGameServer:
         self.lastid += 1
         return str(self.lastid)
     
+    # def get_new_id(self):
+    #     self.lastid += 1
+    #     return str(self.lastid)
+    
+    #유저를 게임과 연결
     def connect_user2game(self, user_id, game_id):
         self.user_id2game_id[user_id] = game_id
         pass
 
+    #유저를 게임과 연결 해제
     def disconnect_user2game(self, user_id):
         del self.user_id2game_id[user_id]
         pass
 
-    def create_game(self, game_type, *args, **kwargs):
+    def create_tornament(self, game_type, participants):
+        pass
+
+    def create_game(self, game_type, players, *args, **kwargs):
+        
+        # game = {players:user_id_list, gametype:game_type, instance = gameInstance }
+        game = {}
         # 게임 인스턴스 생성 및 저장
         if game_type == "pong":
             self.games[game_id] = PongGameAsync(*args, **kwargs)
+        else :
+            
         # 다른 게임 타입에 대한 처리
         # ...
-            
+        
+        game = {players:user_id_list, gametype:game_type, instance = gameInstance }
+
+        game_id = self.get_new_id()
+        self.game_id2game[game_id] = {}
+
         return game_id
 
     def control(self, user_id, cmd, **kwargs):
