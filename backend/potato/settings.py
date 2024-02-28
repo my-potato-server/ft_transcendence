@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-_g#qjxda8#a@a$x0o3avpk8ea^@#3&hb!sa!vc_9e7#v8w7+c1'
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -89,11 +89,11 @@ ASGI_APPLICATION = 'potato.asgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'HOST': 'db',
-        'PORT': 5432,
-        'NAME': 'db',
-        'USER': 'user',
-        'PASSWORD': 'password',
+        'HOST': os.environ.get("DJANGO_DB_HOST"),
+        'PORT': os.environ.get("DJANGO_DB_PORT"),
+        'NAME': os.environ.get("DJANGO_DB_NAME"),
+        'USER': os.environ.get("DJANGO_DB_USER"),
+        'PASSWORD': os.environ.get("DJANGO_DB_PASSWORD"),
     }
 }
 
@@ -158,8 +158,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = "account.User"
 
 # 42 API Key
-FT_UID_KEY = "u-s4t2ud-716b5af4c08f00ee95664b04bbd3d3ef9f758df59a4b61afd547ccc62a760b52"
-FT_SECRET_KEY = "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"
+FT_UID_KEY = os.environ.get("FT_UID_KEY")
+FT_SECRET_KEY = os.environ.get("FT_SECRET_KEY")
 
 
 # Channel Layers for Websocket
