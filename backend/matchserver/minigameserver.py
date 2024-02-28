@@ -22,6 +22,7 @@ class MiniGameServer:
         # 게임 일시 정지
         # 게임 일시정지 해제
         # 패들 움직임
+        # 게임 정보 요청
         pass
 
     def get_game(self, game_id):

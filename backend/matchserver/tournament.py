@@ -1,29 +1,3 @@
-# class Tournament:
-#     def __init__(self, participants):
-#         self.level = 0
-#         while 2 ** (self.level) < len(participants):
-#             self.level += 1
-#         self.matches = [None] * (2 ** (self.level + 1))
-#         self.index = 2 ** (self.level - 1) - 1
-#         for participant in participants:
-#             self.index += 1
-#             self.matches[self.index] = participant
-
-#     async def next_match(self):
-#         for i in range(2 ** (self.level - 1) - 1, 2 ** self.level - 1):
-#             if self.matches[i] is None:
-#                 left = self.matches[2 * i + 1]
-#                 right = self.matches[2 * i + 2]
-#                 if left is not None and right is not None:
-#                     return (left, right), (self.level, i, self.matches)
-#         return None, (self.level, self.index, self.matches)
-
-#     async def put_result(self, winner):
-#         _, match_index, _ = await self.next_match()[1]
-#         self.matches[match_index // 2] = winner
-#         if match_index // 2 == 1:
-#             self.level -= 1
-
 
 class Tournament:
     def __init__(self, participants):
@@ -81,10 +55,14 @@ if __name__ == "__main__":
     import asyncio
 
     async def test_tournament():
-        participants = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+        # participants = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+        # results = ['A', 'C', 'E', 'A', 'E', 'A']  # 예정된 각 경기의 승자
+
+        participants = ['A', 'B', 'C', 'D', 'E', 'F']
+        results = ['A', 'C', 'E', 'A', 'A']  # 예정된 각 경기의 승자
+
         tournament = Tournament(participants)
 
-        results = ['A', 'C', 'E', 'A', 'E', 'A']  # 예정된 각 경기의 승자
 
         for result in results:
             print(tournament.matches)
