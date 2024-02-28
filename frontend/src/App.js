@@ -10,12 +10,13 @@ class app {
 
 		const ObjectForDI = {$parent:this.root, setState : this.setState.bind(this), state : this.state};
 
+		//아래 부분 초기상태에 항상 null이므로, getAuth이후 다시 갱신해서 로그찍도록 해줘야함. 초기에는 아무것도 없는 상태일때가 있음!!
 		const auth = sessionStorage.getItem('auth') === 'true'; // 문자열 "true"를 boolean으로 변환
 		const token = sessionStorage.getItem('token');
 		const userinfo = sessionStorage.getItem('userinfo');
 		console.log("userinfo", userinfo);
 		console.log("new app");
-		if (auth) {
+		if (auth && token && userinfo) {
 			this.root.auth = true;
 			this.root.token = token;
 			this.root.userinfo = JSON.parse(userinfo).user;
@@ -256,20 +257,15 @@ window.navigateToProfile = async function() {
     if (!isFriendListVisible) {
 		try {
 			const friendList = await fetchFriendList();
-            const friendListHtml = friendList.map(friend => `<li>${friend.user.nickname} - ${friend.isOnline ? 'Online' : 'Offline'}</li>`).join('');
-            friendListContainer.innerHTML = `
-				<p>친구 목록</p>
-				<ul>${friendListHtml}</ul>
-			`;
+            const friendListHtml = friendList.map(friend => `<li>${friend.name} - ${friend.isOnline ? 'Online' : 'Offline'}</li>`).join('');
+            friendListContainer.innerHTML = `<ul>${friendListHtml}</ul>`;
 
 			// 5초마다 친구의 온라인 상태 업데이트
-			// 그냥 유저가 열때의 상태만 알려주면 되지 않을까?? 일단 비활성화
-			//
-			// friendListUpdateInterval = setInterval(async () => {
-			// 	const updatedFriendList = await fetchFriendList();
-			// 	const updatedFriendListHtml = updatedFriendList.map(friend => `<li>${friend.name} - ${friend.isOnline ? 'Online' : 'Offline'}</li>`).join('');
-			// 	friendListContainer.innerHTML = `<ul>${updatedFriendListHtml}</ul>`;
-			// }, 5000);
+			friendListUpdateInterval = setInterval(async () => {
+				const updatedFriendList = await fetchFriendList();
+				const updatedFriendListHtml = updatedFriendList.map(friend => `<li>${friend.name} - ${friend.isOnline ? 'Online' : 'Offline'}</li>`).join('');
+				friendListContainer.innerHTML = `<ul>${updatedFriendListHtml}</ul>`;
+			}, 5000);
 
 			isFriendListVisible = true;
 		} catch (error) {
@@ -291,14 +287,17 @@ window.navigateToProfile = async function() {
 
 async function fetchFriendList() {
     try {
-        const response = await fetch('/friend/list', {
+        const response = await fetch('/friendList', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-				'authorization': 'Bearer ' + sessionStorage.getItem('token'),
             },
+            body: JSON.stringify({ id: myApp.root.userinfo.id }),
         });
-		return await response.json();
+        if (!response.ok) {
+            throw new Error('친구 목록을 불러오지 못했습니다');
+        }
+        return await response.json();
     } catch (error) {
         console.error('친구 목록을 불러오지 못했습니다', error);
         throw error;
@@ -317,14 +316,14 @@ window.addFriend = async function() {
 
     try {
         // 서버에 친구 추가 요청 보내기
-        const response = await fetch('/friend/request-by-login', {
+        const response = await fetch('/addFriend', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-				'authorization': 'Bearer ' + sessionStorage.getItem('token'),
             },
             body: JSON.stringify({
-                login: friendId, // 추가할 친구의 아이디
+                userId: myApp.root.userinfo.id, // 현재 사용자 아이디
+                friendId: friendId, // 추가할 친구의 아이디
             }),
         });
 
