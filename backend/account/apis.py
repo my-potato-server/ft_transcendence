@@ -3,6 +3,7 @@ from ninja import NinjaAPI, File
 from ninja.files import UploadedFile
 from django.contrib.auth import authenticate
 from django.conf import settings
+from django.db import IntegrityError
 from django.db.models import Q
 from django.http import JsonResponse
 
@@ -64,8 +65,11 @@ def me(request):
 
 @account_api.post("/edit-nickname", auth=AuthBearer())
 def edit_nickname(request, body: EditNicknameRequest):
-	request.user.nickname = body.nickname
-	request.user.save()
+	try:
+		request.user.nickname = body.nickname
+		request.user.save()
+	except IntegrityError:
+		return 400, {"message": "Nickname already taken"}
 	return 200, {"message": "Nickname changed"}
 
 

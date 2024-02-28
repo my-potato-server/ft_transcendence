@@ -15,6 +15,12 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+    def get_or_create_user(self, login):
+        user = self.filter(login=login).first()
+        if user:
+            return user
+        return self.create_user(login)
+
     def create_superuser(self, login, password):
         user = self.model(login=login)
         user.set_password(password)
