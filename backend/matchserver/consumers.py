@@ -138,7 +138,7 @@ class MyConsumer(AsyncWebsocketConsumer):
             response = await method_actions[method](**parameters)
             await self.send_response(method=method, status="OK", identify=identify, data=response)
         else:
-            await self.send_response(method=method, status="ERROR - Invalid method name", identify=identify, data=response)
+            await self.send_response(method=method, status="ERROR - Invalid method name", identify=identify, data=None)
 
 
     async def send_response(self, method, status, identify, data=None):
