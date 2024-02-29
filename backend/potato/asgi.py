@@ -15,7 +15,7 @@ from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 import matchserver.routing
-
+import onevsonepong.routing
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'potato.settings')
 asgi_application = get_asgi_application()
 
@@ -23,7 +23,8 @@ application = ProtocolTypeRouter({
     "http": asgi_application,
     "websocket": AuthMiddlewareStack(
         URLRouter(
-            matchserver.routing.websocket_urlpatterns
+            # matchserver.routing.websocket_urlpatterns
+            onevsonepong.routing.websocket_urlpatterns
         )
     ),
 })

@@ -54,8 +54,8 @@ export default class Game extends Component {
                 });
                 break;
             case 'online':
-                import('../../apps/online2.js').then(({ default: online }) => {
-                    this.currentGame = online(canvas.id);
+                import('../../apps/online_pong.js').then(({ default: online_pong }) => {
+                    this.currentGame = online_pong(canvas.id);
                 });
                 // 이곳에 matchserver 관련 js호출
                 break;

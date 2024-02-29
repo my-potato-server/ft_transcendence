@@ -26,7 +26,6 @@ export default function OnlinePong(canvasID) {
         }
     };
 
-    let thisPlayer = 0;
     let gameover = false;
     let winner = 0;
     const paddleHeight = 60;
@@ -37,7 +36,7 @@ export default function OnlinePong(canvasID) {
 
     let keysPressed = {};
 
-    const socket = new WebSocket('wss://localhost/ws/ovopong/');
+    const socket = new WebSocket('wss://localhost/ws/');
 
     socket.onopen = function (e) {
         console.log('Connection established!');
@@ -52,38 +51,16 @@ export default function OnlinePong(canvasID) {
 
     socket.onerror = function(error) {
         console.error('WebSocket Error:', error);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        setTimeout(function() {
-            socket = new WebSocket('wss://localhost:443/ws/ovopong/');
-
-            socket.onopen = function (e) {
-                console.log('Connection re-established!');
-            };
-
-            socket.onmessage = function (event) {
-                const data = JSON.parse(event.data);
-                if (data) {
-                    updateGameScreen(data);
-                }
-            };
-
-            socket.onerror = function(error) {
-                console.error('WebSocket Error:', error);
-            };
-        }, 1000); // 1초마다 재시도
     };
 
-    const keydownHandler = (event) => {
-        if (["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(event.key)) {
-            event.preventDefault(); // 화살표 키에 대한 기본 동작을 방지
-        }
+    document.addEventListener('keydown', (event) => {
         // keysPressed[event.key] = true;
 
         if (['ArrowUp', 'ArrowDown'].includes(event.key)) {
             socket.send(JSON.stringify({
                 action: 'move_paddle',
                 key: event.key,
-                player: thisPlayer,
+                player: '1',
                 left_paddle_y: leftPaddleY,
                 right_paddle_y: rightPaddleY,
                 ball_position: {
@@ -96,27 +73,25 @@ export default function OnlinePong(canvasID) {
                 winner: winner
             }));
         }
-    };
+    });
 
-    document.addEventListener('keydown', keydownHandler);
-
-    function sendloop() {
-        socket.send(JSON.stringify({
-            action: 'none',
-            key: 'none',
-            player: thisPlayer,
-            left_paddle_y: leftPaddleY,
-            right_paddle_y: rightPaddleY,
-            ball_position: {
-                x: ball.x,
-                y: ball.y
-            },
-            left_player_score: ball.scoreLeft,
-            right_player_score: ball.scoreRight,
-            game_over: gameover,
-            winner: winner
-        }));
-    }
+    // function sendloop() {
+    //     socket.send(JSON.stringify({
+    //         action: 'none',
+    //         key: 'none',
+    //         player: '0',
+    //         left_paddle_y: leftPaddleY,
+    //         right_paddle_y: rightPaddleY,
+    //         ball_position: {
+    //             x: ball.x,
+    //             y: ball.y
+    //         },
+    //         left_player_score: ball.scoreLeft,
+    //         right_player_score: ball.scoreRight,
+    //         game_over: gameover,
+    //         winner: winner
+    //     }));
+    // }
 
     function drawBall() {
         ctx.beginPath();
@@ -164,30 +139,15 @@ export default function OnlinePong(canvasID) {
     }
 
     function updateGameScreen(data) {
-        console.log(data);
-        if (data.game_status ==  'start') {
-            leftPaddleY = data.left_paddle_y;
-            rightPaddleY = data.right_paddle_y;
-            ball.x = data.ball_position.x;
-            ball.y = data.ball_position.y;
-            ball.scoreLeft = data.left_player_score;
-            ball.scoreRight = data.right_player_score;
-            gameover = data.game_over;
-            winner = data.winner;
-            draw();
-        } else if (data.game_status == 'waiting') {
-            thisPlayer = data.player;
-            setInterval(sendloop, 1000 / 60);
-        } else {
-            console.log('error');
-        }
+        // console.log(data);
+        leftPaddleY = data.left_paddle_y;
+        rightPaddleY = data.right_paddle_y;
+        ball.x = data.ball_position.x;
+        ball.y = data.ball_position.y;
+        ball.scoreLeft = data.left_player_score;
+        ball.scoreRight = data.right_player_score;
+        gameover = data.game_over;
+        winner = data.winner;
+        draw();
     };
-
-    function stop() {
-        socket.close();
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        document.removeEventListener('keydown', keydownHandler);
-    }
-
-    return stop;
 }
