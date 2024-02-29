@@ -241,10 +241,25 @@ function renderAddFriendForm() {
 
 window.navigateToSubscribe = async function() {
 	alert("구독");
-	// 유저 정보 먼저 요청,
-	// 구독 양식 팝업박스 생성
-	// 구독 제출
-	// modal 사용, 사진 있음
+	const email = prompt("구독할 이메일을 입력하세요");
+	fetch('/api/subscribe', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			email: email,
+		}),
+	})
+	.then(response => {
+		if (response.ok) {
+			alert('구독 신청이 완료되었습니다');
+			console.log(response);
+		} else {
+			alert('구독 신청에 실패했습니다');
+			console.log(response);
+		}
+	})
 }
 
 window.navigateToProfile = async function() {

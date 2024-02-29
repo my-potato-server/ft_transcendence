@@ -59,9 +59,6 @@ export default class Game extends Component {
                 });
                 // 이곳에 matchserver 관련 js호출
                 break;
-			case 'tournament':
-				console.log("Tournament mode not yet implemented");
-				break;
 			default:
 				console.error(`Unknown game mode: ${mode}`);
         }
