@@ -103,6 +103,8 @@ def create_room(name, user_id, password=None):
         # 데이터베이스 접근하여 방 생성
         room, created = Room.objects.get_or_create(name=name, chief=chief, defaults={'password': password})
         if created:
+            room, created = Room.objects.get_or_create(name=name, chief=chief, defaults={'password': password})
+            UserRoom.objects.get(user=chief).room = room
             send_message_to_room_that_room_was_updated(room.id)
             return {'status': 'OK', 'message': 'Room created', 'room_id': room.id}
         else:
