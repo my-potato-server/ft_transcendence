@@ -14,12 +14,25 @@ class PongGameAsync:
         self.paddle_max_speed = 0.05  # 패들의 최대 속도
         self.score1 = 0  # 플레이어 1의 점수
         self.score2 = 0  # 플레이어 2의 점수
+        self.game_start = False # 게임 시작 상태
         self.game_over = False  # 게임 종료 상태
         self.is_paused = False  # 게임이 일시정지 상태인지 나타내는 플래그
+        self.ready = [False, False]
+        self.fps = 60
+
+    def ready_play(self, playerindex):
+        if playerindex < 0 or 1 < playerindex :
+            return "player index out of range error"
+        else :
+            self.ready[playerindex] = True
+
+        if all(self.ready) == True : self.game_start = True
+
+        pass
 
     def update_ball(self):
         # 공 위치 업데이트 (1초에 60번 업데이트를 가정하여 속도 조정)
-        self.ball_position += self.ball_velocity / 60
+        self.ball_position += self.ball_velocity / self.fps
         
         # 경계 조건 검사 및 공 반사
         if not (0 <= self.ball_position[1] <= self.arena_bounds[1]):
@@ -32,6 +45,14 @@ class PongGameAsync:
         elif self.ball_position[0] > self.arena_bounds[0]:
             self.score2 += 1
             self.reset_ball()
+
+        # 패들 1 위치이동
+        new_position = self.paddle1_position + self.paddle1_velocity / self.fps
+        self.paddle1_position = self.clip_position(new_position)
+
+        # 패들 2 위치이동
+        new_position = self.paddle2_position + self.paddle2_velocity / self.fps
+        self.paddle2_position = self.clip_position(new_position)
 
         #공이 패들에 부딧혔을떄, 패들의 중심점부터 공의 위치까지의 벡터를 노멀 벡터로 사용해서 공을 반사.
         # 패들1 충돌 검사
@@ -75,16 +96,13 @@ class PongGameAsync:
         direction = np.array(direction)
         if np.linalg.norm(direction) > 0:
             normalized_direction = direction / np.linalg.norm(direction)
-            velocity = normalized_direction * self.paddle_max_speed / 60
+            velocity = normalized_direction * self.paddle_max_speed / self.fps
         else:
             velocity = np.array([0.0, 0.0])
 
-        if paddle == 1:
-            new_position = self.paddle1_position + velocity / 60
-            self.paddle1_position = self.clip_position(new_position)
-        elif paddle == 2:
-            new_position = self.paddle2_position + velocity / 60
-            self.paddle2_position = self.clip_position(new_position)
+        if paddle == 1: self.paddle1_velocity = velocity
+        if paddle == 2: self.paddle2_velocity = velocity
+
 
     def clip_position(self, position):
         clipped_position = np.clip(position, -self.arena_bounds + self.paddle_size / 2, self.arena_bounds - self.paddle_size / 2)
@@ -105,11 +123,14 @@ class PongGameAsync:
         }
 
     async def game_loop(self):
+        while not self.game_start:
+            await asyncio.sleep(1/2) # 게임이 시작되기를 기다림
+        await asyncio.sleep(1) # 약간의 딜레이
         while not self.game_over:
             if not self.is_paused:  # 게임이 일시정지 상태가 아닐 때만 업데이트
                 await self.update_ball()
                 # 패들 업데이트는 외부에서 호출됩니다.
-            await asyncio.sleep(1/60)  # 초당 60회 업데이트, 일시정지 상태에서도 체크
+            await asyncio.sleep(1/self.fps)  # 초당 60회 업데이트, 일시정지 상태에서도 체크
 
     def pause_game(self):
         self.is_paused = True

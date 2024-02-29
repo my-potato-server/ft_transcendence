@@ -47,24 +47,21 @@ class MiniGameServer:
     
     def create_room(self):pass
 
-    # def create_game(self, game_type, players, *args, **kwargs):
-        
-    #     # game = {players:user_id_list, gametype:game_type, instance = gameInstance }
-    #     game = {}
-    #     # 게임 인스턴스 생성 및 저장
-    #     if game_type == "pong":
-    #         self.games[game_id] = PongGameAsync(*args, **kwargs)
-    #     else :
+    def create_game(self, game_type, players, *args, **kwargs):
+        # game = {players:user_id_list, gametype:game_type, instance = gameInstance }
+        game = {"players": players, "gametype": game_type}
+        # 게임 인스턴스 생성 및 저장
+        if game_type == "pong":
+            game["inscance"] = PongGameAsync(*args, **kwargs)
+        else : return "error"
             
-    #     # 다른 게임 타입에 대한 처리
-    #     # ...
+        # 다른 게임 타입에 대한 처리
+        # ...
         
-    #     game = {players:user_id_list, gametype:game_type, instance = gameInstance }
+        game_id = self.get_new_id()
+        self.game_id2game[game_id] = game
 
-    #     game_id = self.get_new_id()
-    #     self.game_id2game[game_id] = {}
-
-    #     return game_id
+        return game_id
 
     def control(self, user_id, cmd, **kwargs):
 
@@ -79,7 +76,7 @@ class MiniGameServer:
 
             gameInstance = game.get("instance")
             if "player" in game and user_id in game["player"]:
-                playernum = game["player"].index(user_id) + 1
+                playernum = game.get("player").index(user_id) + 1
             else:
                 # 적절한 오류 처리나 대체 로직
                 print("Player ID not found in game players list.")
@@ -92,13 +89,23 @@ class MiniGameServer:
 
 
         # 게임에 참여 : 클라이언트가 완전히 게임을 시작할 준비가 되었을때
-        if cmd=="ready to play" : pass
+        if cmd=="ready to play" :
+            gameInstance.ready_play(game.get("players").index(user_id) + 1)
         # 게임 일시 정지
-        if cmd=="puase": pass
+        if cmd=="puase":
+            # gameInstance.pause_game(game["players"].index(user_id) + 1)
+            pass
         # 게임 일시정지 해제
-        if cmd=="resume": pass
+        if cmd=="resume": 
+            # gameInstance.resume_game(game["players"].index(user_id) + 1)
+            pass
+
         # 패들 움직임
-        if cmd=="movepaddle" : pass
+        if cmd=="movepaddle_up":
+            gameInstance.update_paddle(game.get("players").index(user_id) + 1, [0, 1]) 
+        if cmd=="movepaddle_down":
+            gameInstance.update_paddle(game.get("players").index(user_id) + 1, [0, -1]) 
+
         # 게임 정보 요청
         if cmd=="gameinfo" :pass
 
