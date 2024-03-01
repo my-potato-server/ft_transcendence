@@ -43,6 +43,7 @@ export default function OnlinePong(canvasID) {
         socket.onerror = function(error) {
             console.log(`[error] ${error.message}`);
         };
+
     }
 
     function handleServerMessage(data) {
@@ -199,6 +200,7 @@ export default function OnlinePong(canvasID) {
         });
     }
 
+
     async function ready_to_start_game() {
         console.log('Ready to start game');
         const readyResponse = await sendCommandToServer('matchserver.game_info');
@@ -233,12 +235,12 @@ export default function OnlinePong(canvasID) {
         const createRoomResponse = await sendCommandToServer('matchserver.create_room', {name: roomName, password});
         if (createRoomResponse.status === 'OK') {
             console.log('Room created successfully', createRoomResponse);
-            const enterRoomResponse = await sendCommandToServer('matchserver.enter_room', {room_id: createRoomResponse.data.room_id});
-            if (enterRoomResponse.status === 'OK') {
-                console.log('Entered the room successfully', enterRoomResponse);
-            } else {
-                console.error('Error entering room', enterRoomResponse);
-            }
+            // const enterRoomResponse = await sendCommandToServer('matchserver.enter_room', {room_id: createRoomResponse.data.room_id});
+            // if (enterRoomResponse.status === 'OK') {
+            //     console.log('Entered the room successfully', enterRoomResponse);
+            // } else {
+            //     console.error('Error entering room', enterRoomResponse);
+            // }
         } else {
             console.error('Error creating room', createRoomResponse);
         }
@@ -269,6 +271,23 @@ export default function OnlinePong(canvasID) {
 
     // Initialize WebSocket connection
     initializeWebSocket();
+
+    async function check_room_info() {
+        const roomcheck = await sendCommandToServer('matchserver.get_user_state');
+        console.log('roomcheck', roomcheck);
+        if (roomcheck.status === 'OK') {
+            console.log('roomcheck', roomcheck);
+            if (roomcheck.data.room_id !== null) {
+                const roomInfo = await sendCommandToServer('matchserver.info_room', {room_id: roomcheck.data.room_id});
+                if (roomInfo.status === 'OK') {
+                    console.log('roomInfo', roomInfo);
+                    drawRoomInfo(roomInfo.data);
+                }
+            }
+        }
+    }
+
+    check_room_info();
 
     // Add event listener for keyboard input
     document.addEventListener('keydown', (event) => {
@@ -424,6 +443,7 @@ export default function OnlinePong(canvasID) {
         ctx.fillStyle = 'black'; // 검은색으로 설정
         ctx.fillRect(0, 0, canvas.width, canvas.height); // 캔버스 전체를 검은색으로 칠함
     }
+
 }
 
 
