@@ -149,6 +149,7 @@ class MyConsumer(AsyncWebsocketConsumer):
             'method': method,
             'status': status,
             'identify': identify,
+            'user_id': self.user_id,
             'data': data or {}  # data가 None이면 빈 딕셔너리를 반환
         }
         print("send : " , response)
