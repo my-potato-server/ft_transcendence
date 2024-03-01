@@ -15,10 +15,13 @@ COMPOSEYML=-f ./docker-compose.yml
 
 all: $(NAME) 
 
-$(NAME) : up
+$(NAME) : up2
 
 up : #check_all prepare_volume
 	sudo docker-compose $(COMPOSEYML) up --build -d
+
+up2 : #check_all prepare_volume
+	docker-compose $(COMPOSEYML) up --build -
 
 down : clean
 
