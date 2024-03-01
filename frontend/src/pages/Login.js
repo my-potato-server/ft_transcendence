@@ -134,6 +134,13 @@ export default class Login extends Component {
             sessionStorage.setItem('token', this.ltoken);
             sessionStorage.setItem('userinfo', this.luserinfo);
             console.log("templogins", this.logins);
+
+			this.$parent.onlineSocket = new WebSocket('wss://localhost/ws/account/online/');
+            this.$parent.onlineSocket.onopen = (event) => {
+                const payload = JSON.stringify({ token: sessionStorage.getItem('token') });
+                this.$parent.onlineSocket.send(payload);
+            };
+
             this.setState({ locate: '/src/pages/Main'});
 		})
 		// sessionStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozNCwibG9naW4iOiJzdHJpbmciLCJuaWNrbmFtZSI6InN0cmluZyIsImV4cCI6MTcxMTkwMjQyOH0.WjVhrYweWouO6y5jvZuBnHwbziNliq2p3OH7sJIcvks');

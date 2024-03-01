@@ -59,6 +59,7 @@ export default function OnlinePong(canvasID) {
                     console.log('Matched with opponent', data.data);
                     ready_to_start_game();
                 }
+                break;
             case 'error':
                 console.error(data.message);
                 break;
@@ -93,33 +94,74 @@ export default function OnlinePong(canvasID) {
     }
 
     async function sendCommandToServer(method, parameters = {}) {
+        // return new Promise((resolve, reject) => {
+        //     // 응답 ID 생성
+        //     const responseId = userinfo.user.id;
+        //     const message = { method, parameters, responseId };
+
+        //     // 응답 대기
+        //     const responseHandler = (event) => {
+        //         const data = JSON.parse(event.data);
+        //         if (data.responseId === responseId) {
+        //             socket.removeEventListener('message', responseHandler); // 이 핸들러 제거
+        //             resolve(data); // 응답 데이터로 프로미스 해결
+        //         }
+        //     };
+        //     socket.addEventListener('message', responseHandler);
+        //     // 메시지 전송
+        //     socket.send(JSON.stringify(message));
+        // });
         return new Promise((resolve, reject) => {
             // 응답 ID 생성
             const responseId = userinfo.user.id;
             const message = { method, parameters, responseId };
-
+        
             // 응답 대기
             const responseHandler = (event) => {
-                const data = JSON.parse(event.data);
-                if (data.responseId === responseId) {
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.responseId === responseId) {
+                        socket.removeEventListener('message', responseHandler); // 이 핸들러 제거
+                        resolve(data); // 응답 데이터로 프로미스 해결
+                    }
+                } catch (error) {
                     socket.removeEventListener('message', responseHandler); // 이 핸들러 제거
-                    resolve(data); // 응답 데이터로 프로미스 해결
+                    reject(new Error('응답 파싱 중 오류 발생')); // 파싱 에러 처리
                 }
             };
             socket.addEventListener('message', responseHandler);
-
+        
             // 메시지 전송
             socket.send(JSON.stringify(message));
+        
+            // 응답 타임아웃 처리
+            const timeout = 10000; // 10초 후 타임아웃
+            setTimeout(() => {
+                socket.removeEventListener('message', responseHandler);
+                reject(new Error('응답 시간 초과')); // 타임아웃 에러 처리
+            }, timeout);
         });
     }
 
     async function ready_to_start_game() {
+        console.log('Ready to start game');
         const readyResponse = await sendCommandToServer('matchserver.game_info');
+        console.log('Ready to start game recieve', readyResponse);
         if (readyResponse.status === 'OK') {
             console.log('Ready to start game', readyResponse);
             clearCanvasBlack();
+            start_game();
         } else {
             console.error('Error ready to start game', readyResponse);
+        }
+    }
+
+    async function start_game() {
+        const startGame = await sendCommandToServer('matchserver.control_game', "ready_to_play");
+        if (startGame.status === 'OK') {
+            console.log('Game started', startGame);
+        } else {
+            console.error('Error starting game', startGame);
         }
     }
 
@@ -224,7 +266,42 @@ export default function OnlinePong(canvasID) {
 
     drawUI(); // UI 초기 그리기
 
-    canvas.addEventListener('click', function(event) {
+    // canvas.addEventListener('click', function(event) {
+    //     // 캔버스 내 클릭 위치 확인
+    //     const rect = canvas.getBoundingClientRect();
+    //     const x = event.clientX - rect.left;
+    //     const y = event.clientY - rect.top;
+
+    //     // 랜덤한 수 하나 생성
+    //     const randomNum = Math.floor(Math.random() * 100);
+    //     // '방 생성' 버튼 클릭 확인
+    //     if (x >= 10 && x <= 110 && y >= canvas.height - 50 && y <= canvas.height - 10) {
+    //         createAndEnterRoom('temproom' + randomNum, null); // 여기서 '새 방'은 예시 이름, 실제 구현에서는 사용자 입력을 받아야 함
+    //         clearCanvasWhite();
+    //     }
+
+    //     // '방 입장' 버튼 클릭 확인
+    //     if (x >= 120 && x <= 220 && y >= canvas.height - 50 && y <= canvas.height - 10) {
+    //         listRooms().then(rooms => {
+    //             // 방 목록 처리 로직 (예: 팝업 또는 새 UI 영역에 방 목록 표시)
+    //             console.log('방 목록:', rooms);
+    //         });
+    //     }
+
+    //     // '방 삭제' 버튼 클릭 확인
+    //     if (x >= 230 && x <= 330 && y >= canvas.height - 50 && y <= canvas.height - 10) {
+    //         deleteRoom();
+    //     }
+
+    //     // '빠른 대전' 버튼 클릭 확인
+    //     if (x >= 340 && x <= 440 && y >= canvas.height - 50 && y <= canvas.height - 10) {
+    //         quickmatch();
+    //         clearCanvasWhite();
+    //     }
+    // });
+    let previousClickHandler;
+
+    const clickEventHandler = (event) => {
         // 캔버스 내 클릭 위치 확인
         const rect = canvas.getBoundingClientRect();
         const x = event.clientX - rect.left;
@@ -256,7 +333,11 @@ export default function OnlinePong(canvasID) {
             quickmatch();
             clearCanvasWhite();
         }
-    });
+    }
+    canvas.removeEventListener('click', previousClickHandler); // Remove previous click handler if exists
+    canvas.addEventListener('click', clickEventHandler);
+    previousClickHandler = clickEventHandler;
+    // document.addEventListener('click', clickEventHandler);
 
     function drawRoomInfo(roomInfo) {
         // 캔버스를 흰색으로 초기화

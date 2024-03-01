@@ -9,3 +9,4 @@ pyjwt==2.8.0
 Pillow==10.2.0
 numpy==1.26
 websocket-client
+pydantic[email]
