@@ -49,11 +49,16 @@ export default function OnlinePong(canvasID) {
             case 'gameState':
                 updateGameState(data.gameState);
                 break;
-            case 'matchserver.info_room':
+            case 'client.room_was_update':
                 if (data.status === 'OK') {
                     drawRoomInfo(data.data); // 방 정보 그리기 함수 호출
                 }
                 break;
+            case 'fast_match_matched':
+                if (data.status === 'OK') {
+                    console.log('Matched with opponent', data.data);
+                    ready_to_start_game();
+                }
             case 'error':
                 console.error(data.message);
                 break;
@@ -87,11 +92,6 @@ export default function OnlinePong(canvasID) {
         }
     }
 
-    // async function sendCommandToServer(method, parameters = {}) {
-    //     const message = {method, parameters};
-    //     socket.send(JSON.stringify(message));
-    //     // Add logic to wait for and process the response from the server
-    // }
     async function sendCommandToServer(method, parameters = {}) {
         return new Promise((resolve, reject) => {
             // 응답 ID 생성
@@ -111,6 +111,24 @@ export default function OnlinePong(canvasID) {
             // 메시지 전송
             socket.send(JSON.stringify(message));
         });
+    }
+
+    async function ready_to_start_game() {
+        const readyResponse = await sendCommandToServer('matchserver.game_info');
+        if (readyResponse.status === 'OK') {
+            console.log('Ready to start game', readyResponse);
+            clearCanvasBlack();
+        } else {
+            console.error('Error ready to start game', readyResponse);
+        }
+    }
+
+    async function quickmatch() {
+        const quickmatchResponse = await sendCommandToServer('matchserver.fast_match_add_queue', {user_id: userinfo.user.id});
+        if (quickmatchResponse.status === 'OK') {
+            console.log('Quickmatch added to queue successfully', quickmatchResponse);
+        }
+        console.log(quickmatchResponse);
     }
 
     async function createAndEnterRoom(roomName, password = null) {
@@ -173,6 +191,8 @@ export default function OnlinePong(canvasID) {
 
 
     function drawUI() {
+        ctx.fillStyle = 'White';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         // UI 배경 그리기
         ctx.fillStyle = '#DDD'; // UI 배경색
         ctx.fillRect(0, canvas.height - 60, canvas.width, 60);
@@ -195,6 +215,11 @@ export default function OnlinePong(canvasID) {
         ctx.fillRect(230, canvas.height - 50, 100, 40);
         ctx.fillStyle = '#FFF'; // 텍스트색
         ctx.fillText('방 삭제', 240, canvas.height - 20);
+
+        ctx.fillStyle = '#AA0';
+        ctx.fillRect(340, canvas.height - 50, 100, 40);
+        ctx.fillStyle = '#FFF';
+        ctx.fillText('빠른 대전', 350, canvas.height - 20);
     }
 
     drawUI(); // UI 초기 그리기
@@ -225,6 +250,12 @@ export default function OnlinePong(canvasID) {
         if (x >= 230 && x <= 330 && y >= canvas.height - 50 && y <= canvas.height - 10) {
             deleteRoom();
         }
+
+        // '빠른 대전' 버튼 클릭 확인
+        if (x >= 340 && x <= 440 && y >= canvas.height - 50 && y <= canvas.height - 10) {
+            quickmatch();
+            clearCanvasWhite();
+        }
     });
 
     function drawRoomInfo(roomInfo) {
@@ -240,14 +271,21 @@ export default function OnlinePong(canvasID) {
     
         // 접속 중인 유저 목록 아래에 표시
         ctx.font = '20px Arial';
-        roomInfo.participants.forEach((participant, index) => {
-            ctx.fillText(participant, canvas.width / 2, 60 + (index * 30));
+        let index = 0;
+        roomInfo.participants.forEach((participants) => {
+            ctx.fillText(participants, canvas.width / 2, 60 + (index * 30));
+            index++;
         });
     }
     
     function clearCanvasWhite() {
         ctx.fillStyle = 'white'; // 흰색으로 설정
         ctx.fillRect(0, 0, canvas.width, canvas.height); // 캔버스 전체를 흰색으로 칠함
+    }
+
+    function clearCanvasBlack() {
+        ctx.fillStyle = 'black'; // 검은색으로 설정
+        ctx.fillRect(0, 0, canvas.width, canvas.height); // 캔버스 전체를 검은색으로 칠함
     }
 }
 

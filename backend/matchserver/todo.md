@@ -71,3 +71,9 @@ json을 전송하는 것으로 메서드를 실행하자.
     }
 }
 ```
+
+
+
+1. minigameserver 의 remove_game에서 게임 결과 전송 ()
+2. 서버가 클라이언트에게 보내는 메시가 전달되도록 수정 ✅
+3. minigameserver의    def get_new_id(self): 메서드를 수정해서 hhan님의 생성기를 사용하도록 하기.

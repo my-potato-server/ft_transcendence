@@ -25,10 +25,10 @@ export default class Login extends Component {
 		// if (SignupButton) {
 		// 	SignupButton.onclick = () => this.signup();
 		// }
-		// const temploginButton = this.$parent.querySelector('.templogin');
-		// if (temploginButton) {
-		// 	temploginButton.onclick = () => this.templogin();
-		// }
+		const temploginButton = this.$parent.querySelector('.templogin');
+		if (temploginButton) {
+			temploginButton.onclick = () => this.templogin();
+		}
 		const _42loginButton = this.$parent.querySelector('.ftLogin');
 		if (_42loginButton) {
 			_42loginButton.onclick = () => this._42login();
@@ -89,19 +89,65 @@ export default class Login extends Component {
 		this.setState({locate: '/src/pages/Signup'});
 	}
 
-	// templogin() {
-	// 	console.log("templogin");
-	// 	if (this.$parent.auth === false) {
-	// 		console.log("no auth");
-	// 		alert("로그인이 필요합니다.");
-	// 		return;
-	// 	}
-	// 	else {
-	// 		// alert("로그인 되었습니다.");
-	// 		console.log(this.$parent.userinfo);
-	// 		this.setState({locate: '/src/pages/Main'});
-	// 	}
-	// }
+	templogin() {
+		console.log("templogin");
+		sessionStorage.setItem('auth', true);
+		fetch('/api/account/make-test-user', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ login: 'temp' })
+		})
+		.then(response => {
+			if (response.ok) {
+				console.log("templogin 성공");
+				return response.json();
+			} else {
+				console.log("templogin 실패");
+				alert("templogin 실패");
+			}
+		})
+		.then(data => {
+			const token = data.token;
+			console.log("token", token);
+			this.$parent.auth = true;
+            this.$parent.token = token;
+            this.lauth = true;
+            this.ltoken = token;
+            return fetch('/account/me', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'authorization': 'Bearer ' + token,
+            }})
+		})
+		.then(async response => {
+			console.log("response", response);
+            const infos = await response.json();
+            console.log(infos);
+            this.luserinfo = JSON.stringify(infos);
+            this.$parent.userinfo = JSON.stringify(infos);
+            sessionStorage.setItem('userinfo', JSON.stringify(infos));
+            // this.setState({ locate: '/src/pages/Main'});
+            sessionStorage.setItem('auth', this.lauth);
+            sessionStorage.setItem('token', this.ltoken);
+            sessionStorage.setItem('userinfo', this.luserinfo);
+            console.log("templogins", this.logins);
+            this.setState({ locate: '/src/pages/Main'});
+		})
+		// sessionStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozNCwibG9naW4iOiJzdHJpbmciLCJuaWNrbmFtZSI6InN0cmluZyIsImV4cCI6MTcxMTkwMjQyOH0.WjVhrYweWouO6y5jvZuBnHwbziNliq2p3OH7sJIcvks');
+		// sessionStorage.setItem('userinfo', JSON.stringify({user:{
+		// 	id : 34,
+		// 	login : 'string',
+		// 	nickname : 'string',
+		// 	image : '/media/default.png',
+		// }}));
+		// this.$parent.auth = true;
+		// this.$parent.userinfo = JSON.stringify(sessionStorage.getItem('userinfo'));
+		// this.$parent.token = sessionStorage.getItem('token');
+		// this.setState({locate: '/src/pages/Main'});
+	}
 
 	// getAuth() {
 	// 	console.log("getAuth");
@@ -134,6 +180,7 @@ export function LoginButton() {
 					<div class="card">
 						<div class="card-body">
 							<button class="btn btn-lg btn-info btn-block mt-2 ftLogin" type="button" style="opacity: 1;">42 Login</button>
+							<button class="btn btn-lg btn-info btn-block mt-2 templogin" type="button">templogin</button>
 						</div>
 					</div>
 				</div>

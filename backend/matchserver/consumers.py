@@ -69,9 +69,12 @@ class MyConsumer(AsyncWebsocketConsumer):
 
         # User = get_user_model()
         user_id = decode_jwt_get_user_id(token)
-        
-        self.user = await database_sync_to_async(User.objects.get)(id=user_id)
-        
+        try:
+            self.user = await database_sync_to_async(User.objects.get)(id=user_id)
+        except:
+            await self.close()
+
+
         if True:#임시조치
             await self.accept()
             self.user_room, created  = await capis.connect_to_server(self.user)  # 사용자 인스턴스 전달
@@ -103,6 +106,7 @@ class MyConsumer(AsyncWebsocketConsumer):
                 self.user_session_identify,
                 self.channel_name
             )
+        await self.close()
 
 
     async def receive(self, text_data):
@@ -137,7 +141,7 @@ class MyConsumer(AsyncWebsocketConsumer):
             response = await method_actions[method](**parameters)
             await self.send_response(method=method, status="OK", identify=identify, data=response)
         else:
-            await self.send_response(method=method, status="ERROR - Invalid method name", identify=identify, data=response)
+            await self.send_response(method=method, status="ERROR - Invalid method name", identify=identify, data=None)
 
 
     async def send_response(self, method, status, identify, data=None):

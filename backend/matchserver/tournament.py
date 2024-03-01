@@ -51,6 +51,15 @@ class Tournament:
             self.now_level -= 1
             self.now_index = 0
 
+    async def get_tournament_state(self):
+        state = {
+            "bracket" : self.matches,
+            "tournamet_level" : self.level,
+            "now_level" : self.now_level, # 2^now_level강
+            "now_index" : self.now_index, # 2^now_level강전의 now_index 번쨰 매치
+            "now_match" : self.next_match()
+        }
+
 if __name__ == "__main__":
     import asyncio
 
