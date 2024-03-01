@@ -66,7 +66,7 @@ class PongGameAsync:
 
         #공이 패들에 부딧혔을떄, 패들의 중심점부터 공의 위치까지의 벡터를 노멀 벡터로 사용해서 공을 반사.
         # 패들1 충돌 검사
-        if all(self.ball_position - self.paddle1_position < self.paddle_size):
+        if (self.ball_position - self.paddle1_position < self.paddle_size).all():
             
             # 입사 벡터 I와 정규화된 법선 벡터 N 정의
             I = self.ball_velocity # 입사 벡터
