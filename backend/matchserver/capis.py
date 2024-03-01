@@ -399,6 +399,11 @@ async def send_message_to_room_that_room_was_updated(room_id):
 # def exit_game(game_id):
 #     pass
 
+async def fast_match_add_queue(user_id):
+    return MiniGameServer().add_fast_match(user_id)
+    pass
+
+
 async def control_game(user_id, cmd, move=None, **kwargs):
 
     # 대진표 받아오기
