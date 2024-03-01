@@ -78,6 +78,7 @@ export default function OnlinePong(canvasID) {
             case 'server.game':
                 if (data.status === 'OK') {
                     console.log('Game started', data.data);
+                    gamestatus = true;
                     drawGame(data.data.realtime_gamestate);
                 }
                 break;
@@ -85,53 +86,6 @@ export default function OnlinePong(canvasID) {
                 console.error(data.message);
                 break;
             // Handle other message types
-        }
-    }
-
-    function drawGame(state) {
-        if (state.game_over) {
-            console.log('Game Over');
-            // Handle game over
-        }
-        // if (gamestatus === false) {
-        //     console.log('Game not initialized');
-        //     return ;
-        // }
-        // 화면 초기화
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-        // 배경 설정
-        ctx.fillStyle = 'BLACK';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-        // 공 그리기
-        const ballX = state.ball_position[0] * canvas.width / 2 + canvas.width / 2; // 공의 x 좌표 계산
-        const ballY = state.ball_position[1] * canvas.height / 2 + canvas.height / 2; // 공의 y 좌표 계산
-        ctx.fillStyle = 'WHITE';
-        ctx.beginPath();
-        ctx.arc(ballX, ballY, 10, 0, Math.PI * 2, true); // 공의 반지름을 10으로 설정
-        ctx.fill();
-    
-        // 패들 그리기
-        const paddle1Y = state.paddle1_position[1] * canvas.height / 2 + canvas.height / 2;
-        const paddle2Y = state.paddle2_position[1] * canvas.height / 2 + canvas.height / 2;
-        const paddleHeight = 100; // 패들의 높이
-        const paddleWidth = 10; // 패들의 너비
-        ctx.fillStyle = 'WHITE';
-        // 패들1 그리기
-        ctx.fillRect(20, paddle1Y - paddleHeight / 2, paddleWidth, paddleHeight);
-        // 패들2 그리기
-        ctx.fillRect(canvas.width - 30, paddle2Y - paddleHeight / 2, paddleWidth, paddleHeight);
-    
-        // 점수 그리기
-        ctx.font = '32px Arial';
-        ctx.fillText(`${state.score1} - ${state.score2}`, canvas.width / 2 - 50, 50);
-    
-        // 게임 오버 상태 처리
-        if (state.game_over) {
-            ctx.fillStyle = 'RED';
-            ctx.font = '48px Arial';
-            ctx.fillText('Game Over', canvas.width / 2 - 140, canvas.height / 2);
         }
     }
 
@@ -460,6 +414,119 @@ export default function OnlinePong(canvasID) {
         ctx.fillRect(0, 0, canvas.width, canvas.height); // 캔버스 전체를 검은색으로 칠함
     }
 
+
+
+
+
+    // game logic
+    const keydownHandler = (event) => {
+        if (["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(event.key)) {
+            event.preventDefault(); // 화살표 키에 대한 기본 동작을 방지
+        }
+        // keysPressed[event.key] = true;
+
+        if (['ArrowUp', 'ArrowDown'].includes(event.key)) {
+            socket.send(JSON.stringify({
+                action: 'move_paddle',
+                key: event.key,
+                player: thisPlayer,
+                left_paddle_y: leftPaddleY,
+                right_paddle_y: rightPaddleY,
+                ball_position: {
+                    x: ball.x,
+                    y: ball.y
+                },
+                left_player_score: ball.scoreLeft,
+                right_player_score: ball.scoreRight,
+                game_over: gameover,
+                winner: winner
+            }));
+        }
+    };
+    document.addEventListener('keydown', keydownHandler);
+
+    function sendloop() {
+        socket.send(JSON.stringify({
+            action: 'none',
+            key: 'none',
+            player: thisPlayer,
+            left_paddle_y: leftPaddleY,
+            right_paddle_y: rightPaddleY,
+            ball_position: {
+                x: ball.x,
+                y: ball.y
+            },
+            left_player_score: ball.scoreLeft,
+            right_player_score: ball.scoreRight,
+            game_over: gameover,
+            winner: winner
+        }));
+    }
+
+    function drawBall() {
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2, false);
+        ctx.fillStyle = ball.color;
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    function draw() {
+        if (gameover == true) {
+            if (winner == 1) {
+                ctx.fillStyle = 'WHITE';
+                ctx.font = '48px serif';
+                ctx.fillText('Player 1 Win!', canvas.width / 2 - 100, canvas.height / 2);
+            }
+            else if (winner == 2) {
+                ctx.fillStyle = 'WHITE';
+                ctx.font = '48px serif';
+                ctx.fillText('Player 2 Win!', canvas.width / 2 - 100, canvas.height / 2);
+            }
+            return;
+        }
+
+        ctx.fillStyle = 'BLACK';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.setLineDash([5, 15]);
+        ctx.beginPath();
+        ctx.moveTo(canvas.width / 2, 0);
+        ctx.lineTo(canvas.width / 2, canvas.height);
+        ctx.strokeStyle = 'WHITE';
+        ctx.lineWidth = 5;
+        ctx.stroke();
+
+        drawBall();
+
+        ctx.font = '48px serif';
+        ctx.fillText(ball.scoreLeft, canvas.width / 2 - 30, 50);
+        ctx.fillText(ball.scoreRight, canvas.width / 2 + 30, 50);
+
+        ctx.fillStyle = 'WHITE';
+        ctx.fillRect(0, leftPaddleY, paddleWidth, paddleHeight);
+        ctx.fillRect(canvas.width - paddleWidth, rightPaddleY, paddleWidth, paddleHeight);
+    }
+
+    function updateGameScreen(data) {
+        console.log(data);
+        if (data.game_status ==  'start') {
+            leftPaddleY = data.left_paddle_y;
+            rightPaddleY = data.right_paddle_y;
+            ball.x = data.ball_position.x;
+            ball.y = data.ball_position.y;
+            ball.scoreLeft = data.left_player_score;
+            ball.scoreRight = data.right_player_score;
+            gameover = data.game_over;
+            winner = data.winner;
+            draw();
+        } else if (data.game_status == 'waiting') {
+            thisPlayer = data.player;
+            setInterval(sendloop, 1000 / 60);
+        } else {
+            console.log('error');
+        }
+    };
 }
 
 
