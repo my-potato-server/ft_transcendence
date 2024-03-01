@@ -1,8 +1,9 @@
 // src/apps/online2.js
 
 let socket; // Define WebSocket globally within the function scope
-let order = 0;
+
 export default function OnlinePong(canvasID) {
+    let gamestatus = false;
     const canvas = document.getElementById(canvasID);
     const ctx = canvas.getContext('2d');
 
@@ -60,10 +61,63 @@ export default function OnlinePong(canvasID) {
                     ready_to_start_game();
                 }
                 break;
+            case 'server.game':
+                if (data.status === 'OK') {
+                    console.log('Game started', data.data);
+                    drawGame(data.data.realtime_gamestate);
+                }
+                break;
             case 'error':
                 console.error(data.message);
                 break;
             // Handle other message types
+        }
+    }
+
+    function drawGame(state) {
+        if (state.game_over) {
+            console.log('Game Over');
+            // Handle game over
+        }
+        // if (gamestatus === false) {
+        //     console.log('Game not initialized');
+        //     return ;
+        // }
+        // 화면 초기화
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+        // 배경 설정
+        ctx.fillStyle = 'BLACK';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+        // 공 그리기
+        const ballX = state.ball_position[0] * canvas.width / 2 + canvas.width / 2; // 공의 x 좌표 계산
+        const ballY = state.ball_position[1] * canvas.height / 2 + canvas.height / 2; // 공의 y 좌표 계산
+        ctx.fillStyle = 'WHITE';
+        ctx.beginPath();
+        ctx.arc(ballX, ballY, 10, 0, Math.PI * 2, true); // 공의 반지름을 10으로 설정
+        ctx.fill();
+    
+        // 패들 그리기
+        const paddle1Y = state.paddle1_position[1] * canvas.height / 2 + canvas.height / 2;
+        const paddle2Y = state.paddle2_position[1] * canvas.height / 2 + canvas.height / 2;
+        const paddleHeight = 100; // 패들의 높이
+        const paddleWidth = 10; // 패들의 너비
+        ctx.fillStyle = 'WHITE';
+        // 패들1 그리기
+        ctx.fillRect(20, paddle1Y - paddleHeight / 2, paddleWidth, paddleHeight);
+        // 패들2 그리기
+        ctx.fillRect(canvas.width - 30, paddle2Y - paddleHeight / 2, paddleWidth, paddleHeight);
+    
+        // 점수 그리기
+        ctx.font = '32px Arial';
+        ctx.fillText(`${state.score1} - ${state.score2}`, canvas.width / 2 - 50, 50);
+    
+        // 게임 오버 상태 처리
+        if (state.game_over) {
+            ctx.fillStyle = 'RED';
+            ctx.font = '48px Arial';
+            ctx.fillText('Game Over', canvas.width / 2 - 140, canvas.height / 2);
         }
     }
 
