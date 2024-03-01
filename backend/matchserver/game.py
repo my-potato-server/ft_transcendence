@@ -25,22 +25,25 @@ class PongGameAsync:
         self.result_callback = result_callback
         self.callback_indetify = callback_indetify
         self.start_game()
-        
+
 
     def ready_play(self, playerindex):
-        if playerindex < 0 or 1 < playerindex :
+        player = playerindex - 1
+        print("ready play", player)
+        if player < 0 or 1 < player :
             return "player index out of range error"
         else :
-            self.ready[playerindex] = True
-
-        if all(self.ready) == True : self.game_start = True
-
+            self.ready[player] = True
+            print("ready play true", player)
+        if all(self.ready) == True :
+            self.game_start = True
+            print("game start")
         pass
 
     def update_ball(self):
         # 공 위치 업데이트 (1초에 60번 업데이트를 가정하여 속도 조정)
         self.ball_position += self.ball_velocity / self.fps
-        
+
         # 경계 조건 검사 및 공 반사
         if not (0 <= self.ball_position[1] <= self.arena_bounds[1]):
             self.ball_velocity[1] = -self.ball_velocity[1]
