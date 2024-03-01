@@ -159,7 +159,7 @@ export default function OnlinePong(canvasID) {
     }
 
     async function start_game() {
-        const startGame = await sendCommandToServer('matchserver.control_game', "ready_to_play");
+        const startGame = await sendCommandToServer('matchserver.control_game', {cmd : "ready_to_play"});
         if (startGame.status === 'OK') {
             console.log('Game started', startGame);
         } else {
