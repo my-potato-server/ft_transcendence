@@ -127,13 +127,24 @@ class MiniGameServer:
         pass
 
     def tournament_loop(self, tournament_id=None, call_indentify = None, call_return = None):
-        if not call_indentify == None:
+        if not (call_indentify == None and call_return == None): # 진행중인 토너먼트에서 불린 경우 
             tournament_id = call_indentify["tournament_id"]
 
         if tournament_id == None : return "error"     
         
+        #토너먼트 ID 확보 완료
+
         tournament = self.tournament_id2tournament.get(tournament_id)        
         if tournament == None : return "error"
+
+        # 토너먼트 딕셔너리 확보 완료
+
+        participants = tournament.get("players")
+        game_type = tournament.get("gametype")
+        instance = tournament.get("instance")
+
+        if not (participants and game_type and instance): return "error"
+
 
         # 여기서 승자 판별을 하자
             # 만약에 call_indentify 에서 들어온 경우에는 승자를 판별해야 하고

@@ -15,7 +15,7 @@ COMPOSEYML=-f ./docker-compose.yml
 
 all: $(NAME) 
 
-$(NAME) : up2
+$(NAME) : up
 
 up : #check_all prepare_volume
 	sudo docker-compose $(COMPOSEYML) up --build -d
@@ -86,7 +86,7 @@ re :
 			iclean
 
 log :
-	sudo docker-compose $(COMPOSEYML) logs
+	sudo docker-compose $(COMPOSEYML) logs -f
 
 ps :
 	sudo docker-compose $(COMPOSEYML) ps
