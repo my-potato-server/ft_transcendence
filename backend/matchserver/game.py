@@ -147,6 +147,7 @@ class PongGameAsync:
         while not self.game_over:
             if not self.is_paused:  # 게임이 일시정지 상태가 아닐 때만 업데이트
                 await self.update_ball()
+            await MiniGameServer().broadcast_realtime_gamestate2user(self.game_id)
             await asyncio.sleep(1/self.fps)  # 초당 60회 업데이트, 일시정지 상태에서도 체크
         MiniGameServer().remove_game()
 

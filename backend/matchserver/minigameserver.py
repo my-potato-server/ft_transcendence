@@ -267,9 +267,10 @@ class MiniGameServer:
         }
 
 
-    def broadcast_realtime_gamestate2user(self, game_id):
+    async def broadcast_realtime_gamestate2user(self, game_id):
         # 사용자가 속한 게임 리턴
         # game_id = self.user_id2game_id.get(user_id)
+        from .capis import send_message_to
 
         if game_id is None: return None
 
@@ -277,10 +278,20 @@ class MiniGameServer:
 
         if game is None: return None
 
-        return {
-            "gametype": game.get("gametype"),
-            "realtime_gamestate": game.get("instance").get_realtime_state()
+        message = {
+            'method': "fast_match_matched",
+            'status': "OK",
+            'data': {
+                "gametype": game.get("gametype"),
+                "realtime_gamestate": game.get("instance").get_realtime_state()
+            }
         }
+        players = game.get("players")
+
+        for user_id in players:
+            await send_message_to(user_id, message)
+
+        return 
 
 # 사용 예시
 if __name__ == "__main__":
