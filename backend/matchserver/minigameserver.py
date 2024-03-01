@@ -3,8 +3,11 @@ from .game import PongGameAsync
 from .tournament import Tournament
 from asgiref.sync import async_to_sync
 
+debug = True
+
 class MiniGameServer:
     _instance = None
+
 
     def __new__(cls):
         if cls._instance is None:
@@ -29,6 +32,7 @@ class MiniGameServer:
 
 
     async def fast_match_matched(self, players, gametype):
+        print("now on fast_match_matched")
         from .capis import send_message_to
         
         # 게임 만들기
@@ -65,6 +69,7 @@ class MiniGameServer:
 
 
     async def fast_matching(self, gametype):
+        print("now on fast_matching")
         while len(self.fast_match_pool[gametype]) > 2:
             players = []
             players.append(self.fast_match_pool[gametype].pop(0))
@@ -72,7 +77,7 @@ class MiniGameServer:
             await self.fast_match_matched(players, gametype)
 
     def add_fast_match(self, user_id, gametype="pong"):
-        
+        print("now on add_fast_match")
         #지금은 퐁 게임 뿐
         gametype = "pong"
 
