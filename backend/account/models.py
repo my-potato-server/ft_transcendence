@@ -10,6 +10,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     nickname = models.CharField(max_length=20, unique=True)
     image = models.ImageField(upload_to='profile/', default='default.png')
     is_active = models.BooleanField(default=True)
+    is_online = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
