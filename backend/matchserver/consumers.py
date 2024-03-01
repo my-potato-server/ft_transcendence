@@ -127,6 +127,10 @@ class MyConsumer(AsyncWebsocketConsumer):
         # 원형은 위와 같다. 이는 connect에서 게산한 내용으로 덮어 쓰는 것
         method_actions = self.method_action
         
+        if not isinstance(parameters, dict):
+            await self.send_response(method=method, status="ERROR - Parameter Should be Dict type", identify=identify, data=None)
+            return
+        
         # 파라미터에서 user_id는 덮어쓰기
         parameters['user_id'] = self.user_id
 
@@ -149,6 +153,7 @@ class MyConsumer(AsyncWebsocketConsumer):
             'method': method,
             'status': status,
             'identify': identify,
+            'responseId': self.user_id,
             'data': data or {}  # data가 None이면 빈 딕셔너리를 반환
         }
         print("send : " , response)

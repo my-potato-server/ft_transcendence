@@ -3,8 +3,8 @@ import asyncio
 
 
 class PongGameAsync:
-    def __init__(self, game_id):
-        self.arena_bounds = np.array([1.0, 0.5])  # 경기장의 경계 (가로, 세로)
+    def __init__(self, game_id, result_callback = None, callback_indetify = None):
+        self.arena_bounds = np.array([16.0, 9.0])  # 경기장의 경계 (가로, 세로)
         self.ball_position = np.array([0.0, 0.0])  # 공의 초기 위치
         self.ball_velocity = np.array([0.03, 0.01])  # 공의 초기 속도
         self.ball_maxspeed = 0.2
@@ -22,22 +22,28 @@ class PongGameAsync:
         self.ready = [False, False]
         self.fps = 60
         self.game_id = game_id
+        self.result_callback = result_callback
+        self.callback_indetify = callback_indetify
         self.start_game()
 
+
     def ready_play(self, playerindex):
-        if playerindex < 0 or 1 < playerindex :
+        player = playerindex - 1
+        print("ready play", player)
+        if player < 0 or 1 < player :
             return "player index out of range error"
         else :
-            self.ready[playerindex] = True
-
-        if all(self.ready) == True : self.game_start = True
-
+            self.ready[player] = True
+            print("ready play true", player)
+        if all(self.ready) == True :
+            self.game_start = True
+            print("game start")
         pass
 
     def update_ball(self):
         # 공 위치 업데이트 (1초에 60번 업데이트를 가정하여 속도 조정)
         self.ball_position += self.ball_velocity / self.fps
-        
+
         # 경계 조건 검사 및 공 반사
         if not (0 <= self.ball_position[1] <= self.arena_bounds[1]):
             self.ball_velocity[1] = -self.ball_velocity[1]
@@ -60,7 +66,7 @@ class PongGameAsync:
 
         #공이 패들에 부딧혔을떄, 패들의 중심점부터 공의 위치까지의 벡터를 노멀 벡터로 사용해서 공을 반사.
         # 패들1 충돌 검사
-        if self.ball_position - self.paddle1_position < self.paddle_size:
+        if (self.ball_position - self.paddle1_position < self.paddle_size).all():
             
             # 입사 벡터 I와 정규화된 법선 벡터 N 정의
             I = self.ball_velocity # 입사 벡터
@@ -77,7 +83,7 @@ class PongGameAsync:
             self.ball_velocity = R * self.ball_maxspeed
             
         # 패들2 충돌 검사
-        if self.ball_position - self.paddle2_position < self.paddle_size:
+        if (self.ball_position - self.paddle2_position < self.paddle_size).all():
             
             # 입사 벡터 I와 정규화된 법선 벡터 N 정의
             I = self.ball_velocity # 입사 벡터
@@ -128,7 +134,7 @@ class PongGameAsync:
             "gmae_start": self.game_start
         }
     
-    def get_game_state(self):
+    def get_realtime_state(self):
         return {
             "ball_position": self.ball_position.tolist(),
             "paddle1_position": self.paddle1_position.tolist(),
@@ -146,9 +152,10 @@ class PongGameAsync:
         await asyncio.sleep(1) # 약간의 딜레이
         while not self.game_over:
             if not self.is_paused:  # 게임이 일시정지 상태가 아닐 때만 업데이트
-                await self.update_ball()
+                self.update_ball()
             await MiniGameServer().broadcast_realtime_gamestate2user(self.game_id)
             await asyncio.sleep(1/self.fps)  # 초당 60회 업데이트, 일시정지 상태에서도 체크
+        self.result_callback(call_return=self.get_game_state(), call_indetify=self.callback_indetify)
         MiniGameServer().remove_game()
 
     def pause_game(self):

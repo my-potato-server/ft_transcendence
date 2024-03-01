@@ -16,7 +16,7 @@ class Tournament:
     async def next_match(self):
 
         # 최종 인원이 1명 남았다면 그 혼자만 리턴
-        if self.now_level < 1 : return self.matches[1]
+        if self.now_level < 1 : return (self.matches[1])
 
         winner_index = 2 ** (self.now_level - 1) + self.now_index
         left  = self.matches[2 ** self.now_level + 2 * self.now_index + 0]

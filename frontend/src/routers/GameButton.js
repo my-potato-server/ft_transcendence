@@ -36,9 +36,6 @@ export default function GameButton() {
 	</div>
 	<div class="game-canvas-container d-none justify-content-center align-items-center" style="height: 100vh; display: flex; flex-direction: column;">
 		<div>
-		<canvas id="gameCanvas" width="1280" height="720" style="border: 2px solid #000;"></canvas>
-		</div>
-		<div>
 			<button id="back" class="btn btn-secondary mt-3">Back</button>
 		</div>
 	</div>
