@@ -27,13 +27,13 @@ class MiniGameServer:
         self.fast_match_pool = {"pong" : []}
 
 
-    def fast_match_matched(players, gametype):
+    async def fast_match_matched(players, gametype):
         # 게임 만들기
 
         game_id = create_game(game_type=gametype, players=players)
 
         if game_id == "error" :
-            # error_massage = {'status': "error", 'message' : "매칭에 실패했습니다. 매칭을 다시 시도해 주세요." }
+            # message = {'status': "error", 'message' : "매칭에 실패했습니다. 매칭을 다시 시도해 주세요." }
             message = {
                 'method': "fast_match_matched",
                 'status': "error",
@@ -46,7 +46,7 @@ class MiniGameServer:
                 await send_message_to(user_id, message)
         
         else : 
-            # massage = {'status': "OK", 'message' : "매칭에 실패했습니다. 매칭을 다시 시도해 주세요." }
+            # message = {'status': "OK", 'message' : "매칭에 실패했습니다. 매칭을 다시 시도해 주세요." }
             message = {
                 'method': "fast_match_matched",
                 'status': "OK",
@@ -55,14 +55,21 @@ class MiniGameServer:
                 'data': None
             }
             for user_id in players:
-                await send_message_to(user_id, massage)
+                await send_message_to(user_id, message)
 
         # 플레이어에게 알림 보내기
             # 게임이 만들어졌으면 OK
             # 게임 만들기에 실패하면 error
 
 
-    def add_fast_match(user_id, gametype):
+    async def fast_matching(self):
+        while len(self.fast_match_pool[gametype]) > 2:
+            players = []
+            players.append(self.fast_match_pool[gametype].pop(0))
+            players.append(self.fast_match_pool[gametype].pop(0))
+            await fast_match_matched(players, gametype)
+
+    def add_fast_match(user_id, gametype="pong"):
         
         #지금은 퐁 게임 뿐
         gametype = "pong"
@@ -71,11 +78,12 @@ class MiniGameServer:
         self.fast_match_pool[gametype].append(user_id)
 
         # 유저가 추가될 떄 매칭로직 실행
-        while self.fast_match_pool.size > 2
-            players = []
-            players.append(self.fast_match_pool[gametype].pop(0))
-            players.append(self.fast_match_pool[gametype].pop(0))
-            fast_match_matched(players, gametype)
+        if len(self.fast_match_pool[gametype]) > 2:
+            # loop = asyncio.get_event_loop()
+            # loop.create_task(self.fast_matching()) 
+            # self.fast_matching()
+            asyncio.create_task(self.fast_matching(gametype))
+
         return {'status': "OK", 'message' : "user added at fast match queue"}
         
 
@@ -109,7 +117,7 @@ class MiniGameServer:
         game_id = self.get_new_id()
         # 게임 인스턴스 생성 및 저장
         if game_type == "pong":
-            game["inscance"] = PongGameAsync(game_id=game_id *args, **kwargs)
+            game["instance"] = PongGameAsync(game_id=game_id, *args, **kwargs)
         else : return "error"
             
         # 다른 게임 타입에 대한 처리
@@ -127,18 +135,18 @@ class MiniGameServer:
         
         if not game_id in self.game_id2game: return "error - that game-id not exist"
 
-        players = game_id2game[game_id]["players"]
-        inscance = game_id2game[game_id]["instance"]
-        gametype = game_id2game[game_id]["gametype"]
+        players = self.game_id2game[game_id]["players"]
+        inscance = self.game_id2game[game_id]["instance"]
+        gametype = self.game_id2game[game_id]["gametype"]
 
         # 플레이어와 게임 사이의 연결 제거
         for user_id in players:
-            del user_id2game_id[user_id]
+            del self.user_id2game_id[user_id]
 
         # 게임 결과 서버에 전송
         # await... 서버 api 호출
 
-        del game_id2game[game_id]
+        del self.game_id2game[game_id]
 
         return game_id
 
