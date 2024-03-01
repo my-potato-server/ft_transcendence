@@ -46,6 +46,25 @@ def disconnect_to_server(user, password=None):
     pass
 
 
+@database_sync_to_async
+def get_user_state(user_id):
+    try:
+        # user_id를 사용하여 UserRoom 객체를 조회합니다.
+        user_room = UserRoom.objects.get(user__id=user_id)
+        
+        # 조회된 UserRoom 객체에서 필요한 정보를 추출합니다.
+        room_id = user_room.room_id if user_room.room else None
+        # game_id = user_room.game_id
+        
+        # 필요한 정보를 딕셔너리 형태로 반환합니다.
+        return {
+            'status': 'OK',
+            'room_id': room_id,
+            'game_id': game_id
+        }
+    except UserRoom.DoesNotExist:
+        # UserRoom 객체를 찾을 수 없는 경우, 에러 메시지를 반환합니다.
+        return {'status': 'Error', 'message': "User not found. reconnect web socket"} # 재접속 해야 함
 
 
 @database_sync_to_async
@@ -315,9 +334,9 @@ async def send_message_to_room(room_id, message):
         'type': 'send_message',  # Consumer 내에서 정의해야 할 메서드 이름
     }
 
-    for id in session_identifires:
+    for session_id in session_identifires:
         await channel_layer.group_send(
-            id,
+            session_id,
             message
         )    
     
@@ -337,13 +356,13 @@ async def send_message_to_room_that_room_was_updated(room_id):
 
     pass
 
-@database_sync_to_async
-def enter_game(game_id):
-    pass
+# @database_sync_to_async
+# def enter_game(game_id):
+#     pass
 
-@database_sync_to_async
-def exit_game(game_id):
-    pass
+# @database_sync_to_async
+# def exit_game(game_id):
+#     pass
 
 # async def control_game(cmd, **kwargs):
 

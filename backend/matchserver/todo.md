@@ -71,3 +71,7 @@ json을 전송하는 것으로 메서드를 실행하자.
     }
 }
 ```
+
+
+
+1. minigameserver 의 remove_game에서 게임 결과 전송 ()
