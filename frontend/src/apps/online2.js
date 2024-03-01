@@ -113,6 +113,14 @@ export default function OnlinePong(canvasID) {
         });
     }
 
+    async function quickmatch() {
+        const quickmatchResponse = await sendCommandToServer('matchserver.fast_match_add_queue', {user_id: userinfo.user.id});
+        if (quickmatchResponse.status === 'OK') {
+            console.log('Quickmatch added to queue successfully', quickmatchResponse);
+        }
+        console.log(quickmatchResponse);
+    }
+
     async function createAndEnterRoom(roomName, password = null) {
         const createRoomResponse = await sendCommandToServer('matchserver.create_room', {name: roomName, password});
         if (createRoomResponse.status === 'OK') {
@@ -197,6 +205,11 @@ export default function OnlinePong(canvasID) {
         ctx.fillRect(230, canvas.height - 50, 100, 40);
         ctx.fillStyle = '#FFF'; // 텍스트색
         ctx.fillText('방 삭제', 240, canvas.height - 20);
+
+        ctx.fillStyle = '#AA0';
+        ctx.fillRect(340, canvas.height - 50, 100, 40);
+        ctx.fillStyle = '#FFF';
+        ctx.fillText('빠른 대전', 350, canvas.height - 20);
     }
 
     drawUI(); // UI 초기 그리기
@@ -226,6 +239,12 @@ export default function OnlinePong(canvasID) {
         // '방 삭제' 버튼 클릭 확인
         if (x >= 230 && x <= 330 && y >= canvas.height - 50 && y <= canvas.height - 10) {
             deleteRoom();
+        }
+
+        // '빠른 대전' 버튼 클릭 확인
+        if (x >= 340 && x <= 440 && y >= canvas.height - 50 && y <= canvas.height - 10) {
+            quickmatch();
+            clearCanvasWhite();
         }
     });
 
