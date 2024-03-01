@@ -311,6 +311,31 @@ async def send_message_to(user_session_identify, method, status, identify, data=
         message
     )
 
+
+# 클라이언트에게 웹 소켓으로 메시지를 보냄.
+async def send_message_to(user_id, message):
+    channel_layer = get_channel_layer()
+    # 사용자별 고유 그룹 이름을 정의 (예: username을 그룹 이름으로 사용)
+    group_name = f"user_session_{user_id}"
+    
+    message['type'] = 'send_message' # Consumer 내에서 정의해야 할 메서드 이름
+
+    # 메시지 형식을 Channels가 인식할 수 있도록 구성
+    # message = {
+    #     'type': 'send_message',  # Consumer 내에서 정의해야 할 메서드 이름
+    #     'method': method,
+    #     'status': status,
+    #     'identify': identify,
+    #     'data': data or {}
+    # }
+
+    # 비동기 함수를 동기 코드 내에서 호출
+    await channel_layer.group_send(
+        group_name,
+        message
+    )
+
+
 # 데이터베이스를 조회해서 특정 방에 있는 사람들의 모든 유저의 ID를 세션ID 형태로 리턴
 @database_sync_to_async
 def get_user_session_identifiers_by_room_id(room_id):
