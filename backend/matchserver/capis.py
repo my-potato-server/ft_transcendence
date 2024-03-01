@@ -112,29 +112,29 @@ def create_room(user_id, name, password=None):
     ###
     ### 유저는 방에 참여하고 있으면 안 됨.
 
-    # try:
-    # User 인스턴스를 가져옵니다.
-    chief = User.objects.get(id=user_id)
+    try:
+        # User 인스턴스를 가져옵니다.
+        chief = User.objects.get(id=user_id)
 
-    # 유저가 이미 방에 참여하고 있는지 확인
-    # user_room = UserRoom.objects.filter(user=chief, room__isnull=False).first()
-    user_room = UserRoom.objects.get(user=chief)
-    if user_room.room:
-        return {'status': 'Error', 'message': 'User is already in a room.'}
-
-    # 데이터베이스 접근하여 방 생성
-    room, created = Room.objects.get_or_create(name=name, chief=chief, defaults={'password': password})
-    if created:
+        # 유저가 이미 방에 참여하고 있는지 확인
+        # user_room = UserRoom.objects.filter(user=chief, room__isnull=False).first()
         user_room = UserRoom.objects.get(user=chief)
-        user_room.room = room
-        user_room.save()
-        async_to_sync(send_message_to_room_that_room_was_updated)(room.id)
-        return {'status': 'OK', 'message': 'Room created', 'room_id': room.id}
-    else:
-        return {'status': 'Error', 'message': 'Room already exists'}
-    # except Exception as e:
-    #     print(f'Failed to create room: {e}')
-    #     return {'status': 'Error', 'message': 'Failed to create room due to an integrity error.'}
+        if user_room.room:
+            return {'status': 'Error', 'message': 'User is already in a room.'}
+
+        # 데이터베이스 접근하여 방 생성
+        room, created = Room.objects.get_or_create(name=name, chief=chief, defaults={'password': password})
+        if created:
+            user_room = UserRoom.objects.get(user=chief)
+            user_room.room = room
+            user_room.save()
+            async_to_sync(send_message_to_room_that_room_was_updated)(room.id)
+            return {'status': 'OK', 'message': 'Room created', 'room_id': room.id}
+        else:
+            return {'status': 'Error', 'message': 'Room already exists'}
+    except Exception as e:
+        print(f'Failed to create room: {e}')
+        return {'status': 'Error', 'message': 'Failed to create room due to an integrity error.'}
 
     # try:
     #     # 유저가 이미 방에 참여하고 있는지 확인
