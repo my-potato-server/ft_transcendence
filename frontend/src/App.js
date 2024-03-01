@@ -255,6 +255,9 @@ window.navigateToSubscribe = async function() {
 		if (response.ok) {
 			alert('구독 신청이 완료되었습니다');
 			console.log(response);
+		} else if (response.status === 422) {
+			alert('잘못된 이메일 형식입니다');
+			console.log(response);
 		} else {
 			alert('구독 신청에 실패했습니다');
 			console.log(response);
