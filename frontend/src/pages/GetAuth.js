@@ -78,6 +78,13 @@ export default class GetAuth extends Component {
             sessionStorage.setItem('token', this.ltoken);
             sessionStorage.setItem('userinfo', this.luserinfo);
             console.log("logins", this.logins);
+
+            const socket = new WebSocket('wss://localhost/ws/account/online/');
+            socket.onopen = function(event) {
+                const payload = JSON.stringify({ token: sessionStorage.getItem('token') });
+                socket.send(payload);
+            };
+
             this.setState({ locate: '/src/pages/Main'});
         });
     }
