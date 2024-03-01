@@ -115,16 +115,19 @@ def create_room(name, user_id, password=None):
         chief = User.objects.get(id=user_id)
         
         # 유저가 이미 방에 참여하고 있는지 확인
-        user_room = UserRoom.objects.filter(user=chief, room__isnull=False).first()
-        if user_room:
+        # user_room = UserRoom.objects.filter(user=chief, room__isnull=False).first()
+        user_room = UserRoom.objects.get(user=chief)
+        if user_room.room:
             return {'status': 'Error', 'message': 'User is already in a room.'}
         
         # 데이터베이스 접근하여 방 생성
         room, created = Room.objects.get_or_create(name=name, chief=chief, defaults={'password': password})
         if created:
             room, created = Room.objects.get_or_create(name=name, chief=chief, defaults={'password': password})
-            UserRoom.objects.get(user=chief).room = room
-            send_message_to_room_that_room_was_updated(room.id)
+            user_room = UserRoom.objects.get(user=chief)
+            user_room.room = room
+            user_room.save()
+            async_to_sync(send_message_to_room_that_room_was_updated)(room.id)
             return {'status': 'OK', 'message': 'Room created', 'room_id': room.id}
         else:
             return {'status': 'Error', 'message': 'Room already exists'}
@@ -312,6 +315,7 @@ async def send_message_to(user_session_identify, method, status, identify, data=
 @database_sync_to_async
 def get_user_session_identifiers_by_room_id(room_id):
     user_rooms = UserRoom.objects.filter(room__id=room_id)
+    print ("user_rooms : ", user_rooms )
     session_identifiers = [f'user_session_{user_room.user.id}' for user_room in user_rooms]
     return session_identifiers
 
@@ -325,14 +329,16 @@ def get_user_ids_by_room_id(room_id):
 
 # 특정 방에 있는 모든 클라이언트에게 메시지를 보냄
 async def send_message_to_room(room_id, message):
+    print("call send_message_to_room_that_room_was_updated")
     channel_layer = get_channel_layer()
     # 사용자별 고유 그룹 이름을 정의 (예: username을 그룹 이름으로 사용)
     session_identifires = await get_user_session_identifiers_by_room_id(room_id)
     
+    print(" session_identifires :",session_identifires)
+
     # 메시지 형식을 Channels가 인식할 수 있도록 구성
-    message += {
-        'type': 'send_message',  # Consumer 내에서 정의해야 할 메서드 이름
-    }
+    message['type'] = 'send_message' # Consumer 내에서 정의해야 할 메서드 이름
+    
 
     for session_id in session_identifires:
         await channel_layer.group_send(
@@ -345,6 +351,7 @@ async def send_message_to_room_that_room_was_deleted(room_id):
     #send_message_to_room()
     pass
 async def send_message_to_room_that_room_was_updated(room_id):
+    print("call send_message_to_room_that_room_was_updated")
     message = {
         'type': 'send_message',  # Consumer 내에서 정의해야 할 메서드 이름
         'method': "client.room_was_update",
