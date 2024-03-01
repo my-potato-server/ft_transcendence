@@ -4,7 +4,7 @@ import asyncio
 
 class PongGameAsync:
     def __init__(self, game_id, result_callback = None, callback_indetify = None):
-        self.arena_bounds = np.array([1.0, 0.5])  # 경기장의 경계 (가로, 세로)
+        self.arena_bounds = np.array([16.0, 9.0])  # 경기장의 경계 (가로, 세로)
         self.ball_position = np.array([0.0, 0.0])  # 공의 초기 위치
         self.ball_velocity = np.array([0.03, 0.01])  # 공의 초기 속도
         self.ball_maxspeed = 0.2
