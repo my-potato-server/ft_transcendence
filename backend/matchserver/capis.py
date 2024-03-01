@@ -210,13 +210,14 @@ def enter_room(user_id, room_id, room_password=None):
 
 # 방 나가기
 @database_sync_to_async
-def exit_room(user_id):
+def exit_room(user_id, from_room_delete=False):
     try:
         user_room = UserRoom.objects.get(user__id=user_id)
         if (user_room.room.chief == user_id):
             return {'status': 'Error', 'message': 'RoomCheif cannot exit room'}
         user_room.room = None
         user_room.save()
+        if not from_room_delete: async_to_sync(send_message_to_room_that_room_was_updated)(room.id)
         return {'status': 'OK', 'message': 'Room exited'}
     except UserRoom.DoesNotExist:
         return {'status': 'Error', 'message': 'UserRoom does not exist'}
@@ -243,7 +244,7 @@ def delete_room(user_id):
     print("user_ids in delete_room : ", user_ids)
     userroom = UserRoom.objects.get(user=user)
     for id in user_ids:
-        exit_room(id)
+        exit_room(id, from_room_delete=True)
 
     async_to_sync(room.delete())
     userroom.room = None
@@ -384,7 +385,7 @@ async def send_message_to_room_that_room_was_updated(room_id):
         'method': "client.room_was_update",
         'status': "OK",
         'identify': "from_server",
-        'data': {}
+        'data': info_room(room_id)
     }
     await send_message_to_room(room_id, message)
 
