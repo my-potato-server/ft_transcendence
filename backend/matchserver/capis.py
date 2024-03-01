@@ -415,9 +415,9 @@ async def control_game(user_id, cmd, move=None, **kwargs):
 
     # 게임 조작하기
         if cmd == "game_control":
-            if move == "up" : MiniGameServer().control(user_id, "movepaddle_up")
-            if move == "down" : MiniGameServer().control(user_id, "movepaddle_down")
-            if move == "stop" : MiniGameServer().control(user_id, "movepaddle_stop")
+            if move == "up" : return MiniGameServer().control(user_id, "movepaddle_up")
+            if move == "down" : return MiniGameServer().control(user_id, "movepaddle_down")
+            if move == "stop" : return MiniGameServer().control(user_id, "movepaddle_stop")
 
 
     # 일시정지하기
@@ -428,6 +428,7 @@ async def control_game(user_id, cmd, move=None, **kwargs):
         if cmd == "game_resume":
             pass
         
+        return ({})
 @database_sync_to_async
 def user_id2user_nickname(user_id):
     try:

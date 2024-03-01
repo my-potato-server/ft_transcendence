@@ -244,13 +244,17 @@ class MiniGameServer:
                 playernum = game.get("players").index(user_id) + 1
             else:
                 # 적절한 오류 처리나 대체 로직
-                print("Player ID not found in game players list.")
+                return {'status': 'Error', 'message': 'Player ID not found in game players list.'}
+                # print("Player ID not found in game players list.")
         except KeyError as e:
             # 키가 없을 경우의 오류 처리
             print(f"Wrong game_id, - KeyError: {e}")
+            return {'status': 'Error', 'message': f"Wrong game_id, - KeyError: {e}"}
+
         except ValueError as e:
             # 리스트에서 값 찾기 실패
             print(f"User not in game, ValueError: {e}")
+            return {'status': 'Error', 'message': f"User not in game, ValueError: {e}"}
 
 
         # 게임에 참여 : 클라이언트가 완전히 게임을 시작할 준비가 되었을때
@@ -268,10 +272,13 @@ class MiniGameServer:
         # 패들 움직임
         if cmd=="movepaddle_up":
             gameInstance.update_paddle(playernum, [0, 1]) 
+            return {'status': 'OK', 'message': 'paddle moved'}
         if cmd=="movepaddle_down":
             gameInstance.update_paddle(playernum, [0, -1]) 
+            return {'status': 'OK', 'message': 'paddle moved'}
         if cmd=="movepaddle_stop":
             gameInstance.update_paddle(playernum, [0, 0]) 
+            return {'status': 'OK', 'message': 'paddle moved'}
 
         # 게임 정보 요청
         if cmd=="gameinfo" :pass
@@ -349,7 +356,7 @@ class MiniGameServer:
         if game is None: return None
 
         message = {
-            'method': "fast_match_matched",
+            'method': "server.game",
             'status': "OK",
             'data': {
                 "gametype": game.get("gametype"),
