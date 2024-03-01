@@ -234,9 +234,12 @@ class MiniGameServer:
 
         if game is None: return None
 
-        return 
-        {
+        if "player" in game and user_id in game["player"]:
+            playerindex = game.get("player").index(user_id)
+
+        return {
             "players": game.get("players"), 
+            "playerindex": playerindex,
             "gametype": game.get("gametype"),
             "gamestate": game.get["instance"].get_game_state()
         }

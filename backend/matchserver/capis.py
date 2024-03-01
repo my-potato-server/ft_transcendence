@@ -428,7 +428,23 @@ async def control_game(user_id, cmd, move=None, **kwargs):
         if cmd == "game_resume":
             pass
         
+@database_sync_to_async
+def user_id2user_nickname(user_id):
+    try:
+        # User 모델에서 주어진 ID에 해당하는 사용자 객체를 조회
+        user = User.objects.get(id=user_id)
+        # 사용자 객체에서 닉네임 필드의 값을 반환
+        return user.nickname  # 'nickname'은 사용자 모델에 정의된 닉네임 필드명이어야 합니다.
+    except User.DoesNotExist:
+        # 해당 ID의 사용자가 존재하지 않는 경우, 적절한 예외 처리나 기본값 반환
+        return "Unknown"  # 또는 'Unknown User', 'Guest' 등의 기본 닉네임 반환
+    
 
+@database_sync_to_async
+def game_info(user_id):
+    result = MiniGameServer(user_id)
+    result["players_nickname"] = [user_id2user_nickname(user_id) for user_id in result["players"]]
+    return result
 
 # def create_room2(name, user_id, password=None):
 #     MiniGameServer.create_room()
