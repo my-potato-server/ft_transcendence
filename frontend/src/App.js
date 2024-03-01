@@ -14,6 +14,7 @@ class app {
 		const auth = sessionStorage.getItem('auth') === 'true'; // 문자열 "true"를 boolean으로 변환
 		const token = sessionStorage.getItem('token');
 		const userinfo = sessionStorage.getItem('userinfo');
+		let onlineSocket;
 		console.log("userinfo", userinfo);
 		console.log("new app");
 		if (auth && token && userinfo) {
@@ -369,6 +370,8 @@ window.logout = function() {
 	sessionStorage.removeItem('auth');
     sessionStorage.removeItem('token');
 	sessionStorage.removeItem('userinfo');
+	// this.root.onlineSocket.close();
+	myApp.root.onlineSocket.close();
     myApp.setState({ locate: '/' });
 };
 
