@@ -26,7 +26,6 @@ class app {
 			this.root.userinfo = {};
 		}
 		this.Login = new Login(ObjectForDI);
-
 		this.render();
 		this.setDummyEvent();
 	}
