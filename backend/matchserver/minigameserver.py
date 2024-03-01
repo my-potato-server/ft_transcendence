@@ -1,5 +1,6 @@
 from .game import PongGameAsync
 from .tournament import Tournament
+from .capis import send_message_to
 
 class MiniGameServer:
     _instance = None
@@ -22,6 +23,61 @@ class MiniGameServer:
 
         self.user_id2room_id = {}
         self.room_id2room = {}
+
+        self.fast_match_pool = {"pong" : []}
+
+
+    def fast_match_matched(players, gametype):
+        # 게임 만들기
+
+        game_id = create_game(game_type=gametype, players=players)
+
+        if game_id == "error" :
+            # error_massage = {'status': "error", 'message' : "매칭에 실패했습니다. 매칭을 다시 시도해 주세요." }
+            message = {
+                'method': "fast_match_matched",
+                'status': "error",
+                'identify': "server",
+                'message' : "매칭에 실패했습니다. 매칭을 다시 시도해 주세요.",
+                'data': None
+            }
+
+            for user_id in players:
+                await send_message_to(user_id, message)
+        
+        else : 
+            # massage = {'status': "OK", 'message' : "매칭에 실패했습니다. 매칭을 다시 시도해 주세요." }
+            message = {
+                'method': "fast_match_matched",
+                'status': "OK",
+                'identify': "server",
+                'message' : "매칭되었습니다. 곧 게임을 시작합니다.", #클라이언트는 게임 화면을 띄우고, capis에 command를 통해 game_start를 보내야 함
+                'data': None
+            }
+            for user_id in players:
+                await send_message_to(user_id, massage)
+
+        # 플레이어에게 알림 보내기
+            # 게임이 만들어졌으면 OK
+            # 게임 만들기에 실패하면 error
+
+
+    def add_fast_match(user_id, gametype):
+        
+        #지금은 퐁 게임 뿐
+        gametype = "pong"
+
+        # 대기열에 추가
+        self.fast_match_pool[gametype].append(user_id)
+
+        # 유저가 추가될 떄 매칭로직 실행
+        while self.fast_match_pool.size > 2
+            players = []
+            players.append(self.fast_match_pool[gametype].pop(0))
+            players.append(self.fast_match_pool[gametype].pop(0))
+            fast_match_matched(players, gametype)
+        return {'status': "OK", 'message' : "user added at fast match queue"}
+        
 
 
     def get_new_id(self):

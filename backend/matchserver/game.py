@@ -119,7 +119,9 @@ class PongGameAsync:
             "paddle2_position": self.paddle2_position.tolist(),
             "score1": self.score1,
             "score2": self.score2,
-            "game_over": self.game_over
+            "game_over": self.game_over,
+            "game_pause": self.is_paused,
+            "gmae_start": self.game_start
         }
 
     async def game_loop(self):
