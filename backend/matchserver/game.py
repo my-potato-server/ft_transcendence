@@ -1,4 +1,6 @@
 import numpy as np
+import asyncio
+
 
 class PongGameAsync:
     def __init__(self, game_id):
