@@ -49,7 +49,7 @@ export default function OnlinePong(canvasID) {
             case 'gameState':
                 updateGameState(data.gameState);
                 break;
-            case 'matchserver.info_room':
+            case 'client.room_was_update':
                 if (data.status === 'OK') {
                     drawRoomInfo(data.data); // 방 정보 그리기 함수 호출
                 }
@@ -173,6 +173,8 @@ export default function OnlinePong(canvasID) {
 
 
     function drawUI() {
+        ctx.fillStyle = 'White';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         // UI 배경 그리기
         ctx.fillStyle = '#DDD'; // UI 배경색
         ctx.fillRect(0, canvas.height - 60, canvas.width, 60);
@@ -240,8 +242,10 @@ export default function OnlinePong(canvasID) {
     
         // 접속 중인 유저 목록 아래에 표시
         ctx.font = '20px Arial';
-        roomInfo.participants.forEach((participant, index) => {
-            ctx.fillText(participant, canvas.width / 2, 60 + (index * 30));
+        let index = 0;
+        roomInfo.participants.forEach((participants) => {
+            ctx.fillText(participants, canvas.width / 2, 60 + (index * 30));
+            index++;
         });
     }
     
