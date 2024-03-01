@@ -69,9 +69,12 @@ class MyConsumer(AsyncWebsocketConsumer):
 
         # User = get_user_model()
         user_id = decode_jwt_get_user_id(token)
-        
-        self.user = await database_sync_to_async(User.objects.get)(id=user_id)
-        
+        try:
+            self.user = await database_sync_to_async(User.objects.get)(id=user_id)
+        except:
+            await self.close()
+
+
         if True:#임시조치
             await self.accept()
             self.user_room, created  = await capis.connect_to_server(self.user)  # 사용자 인스턴스 전달
