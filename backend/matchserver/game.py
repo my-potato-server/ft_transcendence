@@ -83,7 +83,7 @@ class PongGameAsync:
             self.ball_velocity = R * self.ball_maxspeed
             
         # 패들2 충돌 검사
-        if self.ball_position - self.paddle2_position < self.paddle_size:
+        if (self.ball_position - self.paddle2_position < self.paddle_size).all():
             
             # 입사 벡터 I와 정규화된 법선 벡터 N 정의
             I = self.ball_velocity # 입사 벡터
@@ -134,7 +134,7 @@ class PongGameAsync:
             "gmae_start": self.game_start
         }
     
-    def get_game_state(self):
+    def get_realtime_state(self):
         return {
             "ball_position": self.ball_position.tolist(),
             "paddle1_position": self.paddle1_position.tolist(),
@@ -152,7 +152,7 @@ class PongGameAsync:
         await asyncio.sleep(1) # 약간의 딜레이
         while not self.game_over:
             if not self.is_paused:  # 게임이 일시정지 상태가 아닐 때만 업데이트
-                await self.update_ball()
+                self.update_ball()
             await MiniGameServer().broadcast_realtime_gamestate2user(self.game_id)
             await asyncio.sleep(1/self.fps)  # 초당 60회 업데이트, 일시정지 상태에서도 체크
         self.result_callback(call_return=self.get_game_state(), call_indetify=self.callback_indetify)
