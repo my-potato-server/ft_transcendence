@@ -114,8 +114,37 @@ class MiniGameServer:
     #     pass
 
     def create_tornament(self, game_type, participants):
+        
+        tournament = {"participants": participants, "gametype": game_type}
+        tournament["instance"] = Tournament(participants=participants)
+        tournament_id = self.get_new_id()
+        for user_id in participants:
+            self.user_id2tournament_id[user_id] = tournament_id
+        
+        self.tournament_id2tournament[tournament_id] = tournament
+
+        return tournament_id
         pass
-    
+
+    def remove_tournament(self, tournament_id):
+        if not tournament_id in self.tournament_id2tournament: return "error - that tournament_id not exist"
+
+        players = self.game_id2game[game_id]["players"]
+        inscance = self.game_id2game[game_id]["instance"]
+        gametype = self.game_id2game[game_id]["gametype"]
+
+        # 플레이어와 게임 사이의 연결 제거
+        for user_id in players:
+            del self.user_id2game_id[user_id]
+
+        # 게임 결과 서버에 전송
+        # await... 서버 api 호출
+
+        del self.game_id2game[game_id]
+
+        return game_id
+
+
     def create_room(self):pass
 
     def create_game(self, game_type, players, *args, **kwargs):

@@ -15,7 +15,10 @@ def subscribe(request, body: SubscribeRequest):
 	try:
 		Subscription.objects.create(email=body.email)
 	except IntegrityError:
+		print("IntegrityError")
 		return 400, {"message": "Email already exists"}
 	except ValidationError:
+		print("ValidationError")
 		return 400, {"message": "Invalid email address"}
+	print("Subscribed successfully")
 	return 200, {"message": "Subscribed successfully"}

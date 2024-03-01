@@ -14,6 +14,7 @@ class app {
 		const auth = sessionStorage.getItem('auth') === 'true'; // 문자열 "true"를 boolean으로 변환
 		const token = sessionStorage.getItem('token');
 		const userinfo = sessionStorage.getItem('userinfo');
+		let onlineSocket;
 		console.log("userinfo", userinfo);
 		console.log("new app");
 		if (auth && token && userinfo) {
@@ -254,6 +255,9 @@ window.navigateToSubscribe = async function() {
 		if (response.ok) {
 			alert('구독 신청이 완료되었습니다');
 			console.log(response);
+		} else if (response.status === 422) {
+			alert('잘못된 이메일 형식입니다');
+			console.log(response);
 		} else {
 			alert('구독 신청에 실패했습니다');
 			console.log(response);
@@ -271,7 +275,7 @@ window.navigateToProfile = async function() {
     if (!isFriendListVisible) {
 		try {
 			const friendList = await fetchFriendList();
-            const friendListHtml = friendList.map(friend => `<li>${friend.user.nickname} - ${friend.isOnline ? 'Online' : 'Offline'}</li>`).join('');
+            const friendListHtml = friendList.map(friend => `<li>${friend.user.nickname} - ${friend.user.is_online ? 'Online' : 'Offline'}</li>`).join('');
             friendListContainer.innerHTML = `
 				<p>친구 목록</p>
 				<ul>${friendListHtml}</ul>
@@ -365,6 +369,8 @@ window.logout = function() {
 	sessionStorage.removeItem('auth');
     sessionStorage.removeItem('token');
 	sessionStorage.removeItem('userinfo');
+	// this.root.onlineSocket.close();
+	myApp.root.onlineSocket.close();
     myApp.setState({ locate: '/' });
 };
 
