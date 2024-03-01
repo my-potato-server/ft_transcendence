@@ -121,6 +121,7 @@ export default function OnlinePong(canvasID) {
                 try {
                     const data = JSON.parse(event.data);
                     if (data.responseId === responseId) {
+                        console.log('Got it');
                         socket.removeEventListener('message', responseHandler); // 이 핸들러 제거
                         resolve(data); // 응답 데이터로 프로미스 해결
                     }
@@ -140,6 +141,7 @@ export default function OnlinePong(canvasID) {
                 socket.removeEventListener('message', responseHandler);
                 reject(new Error('응답 시간 초과')); // 타임아웃 에러 처리
             }, timeout);
+
         });
     }
 
@@ -157,7 +159,7 @@ export default function OnlinePong(canvasID) {
     }
 
     async function start_game() {
-        const startGame = await sendCommandToServer('matchserver.control_game', "ready_to_play");
+        const startGame = await sendCommandToServer('matchserver.control_game', {cmd : "ready_to_play"});
         if (startGame.status === 'OK') {
             console.log('Game started', startGame);
         } else {
