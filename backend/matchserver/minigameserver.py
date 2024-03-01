@@ -234,8 +234,8 @@ class MiniGameServer:
 
         if game is None: return None
 
-        if "player" in game and user_id in game["player"]:
-            playerindex = game.get("player").index(user_id)
+        if "players" in game and user_id in game["players"]:
+            playerindex = game.get("players").index(user_id)
 
         return {
             "players": game.get("players"), 
@@ -266,6 +266,21 @@ class MiniGameServer:
             "gamestate": game.get["instance"].get_game_state()
         }
 
+
+    def broadcast_realtime_gamestate2user(self, game_id):
+        # 사용자가 속한 게임 리턴
+        # game_id = self.user_id2game_id.get(user_id)
+
+        if game_id is None: return None
+
+        game = self.game_id2game.get(game_id)
+
+        if game is None: return None
+
+        return {
+            "gametype": game.get("gametype"),
+            "realtime_gamestate": game.get["instance"].get_game_state()
+            }
 
 # 사용 예시
 if __name__ == "__main__":
