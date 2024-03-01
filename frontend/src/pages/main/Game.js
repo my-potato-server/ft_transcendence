@@ -175,6 +175,7 @@ export default class Game extends Component {
         this.gameContainer.style.marginTop = `${navbarHeight}px`;
         this.gameSelectionButtons.classList.add('d-none');
         this.gameContainer.classList.remove('d-none');
+        
     }
 
     hideCanvas() {

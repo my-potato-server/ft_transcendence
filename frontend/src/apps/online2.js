@@ -9,10 +9,11 @@ export default function OnlinePong(canvasID) {
 
     const userinfo = JSON.parse(sessionStorage.getItem("userinfo"));
 
-    function initializeWebSocket() {
+    async function initializeWebSocket() {
         // 웹소켓이 이미 존재하고 열려있는 상태인지 확인
-        if (socket) {
+        if (socket !== undefined) {
             console.log("Using existing WebSocket connection");
+            await check_room_info();
             return; // 기존 연결을 재사용
         }
     
@@ -20,11 +21,23 @@ export default function OnlinePong(canvasID) {
         socket = new WebSocket("wss://localhost/ws/?token=" + sessionStorage.getItem("token"));
         console.log("Connecting to WebSocket", "wss://localhost/ws/?token=" + sessionStorage.getItem("token"));
     
-        socket.onopen = function(e) {
-            console.log("Connection established");
-            // 초기 설정 수행
-        };
+        // socket.onopen = function(e) {
+        //     console.log("Connection established");
+        //     // 초기 설정 수행
+
+        // };
+        await new Promise((resolve, reject) => {
+            socket.onopen = function(e) {
+                console.log("Connection established");
+                resolve(); // 연결이 성공적으로 맺어지면 Promise를 해결
+            };
     
+            socket.onerror = function(error) {
+                console.log(`[error] ${error.message}`);
+                reject(error); // 연결 과정에서 오류가 발생하면 Promise를 거부
+            };
+        });
+
         socket.onmessage = function(event) {
             const data = JSON.parse(event.data);
             // 서버로부터 받은 메시지 처리
@@ -40,12 +53,12 @@ export default function OnlinePong(canvasID) {
             }
         };
     
-        socket.onerror = function(error) {
-            console.log(`[error] ${error.message}`);
-        };
-
+        // socket.onerror = function(error) {
+        //     console.log(`[error] ${error.message}`);
+        // };
+        await check_room_info();
     }
-
+    initializeWebSocket();
     function handleServerMessage(data) {
         switch(data.method) { // 수정: data.type -> data.method
             case 'gameState':
@@ -241,6 +254,7 @@ export default function OnlinePong(canvasID) {
             // } else {
             //     console.error('Error entering room', enterRoomResponse);
             // }
+            check_room_info();
         } else {
             console.error('Error creating room', createRoomResponse);
         }
@@ -270,7 +284,7 @@ export default function OnlinePong(canvasID) {
     // createAndEnterRoom, listRooms, deleteRoom
 
     // Initialize WebSocket connection
-    initializeWebSocket();
+    // initializeWebSocket();
 
     async function check_room_info() {
         const roomcheck = await sendCommandToServer('matchserver.get_user_state');
@@ -287,7 +301,6 @@ export default function OnlinePong(canvasID) {
         }
     }
 
-    check_room_info();
 
     // Add event listener for keyboard input
     document.addEventListener('keydown', (event) => {
@@ -423,12 +436,15 @@ export default function OnlinePong(canvasID) {
         ctx.fillStyle = 'black';
         ctx.font = '24px Arial';
         ctx.textAlign = 'center'; // 텍스트를 중앙 정렬
-        ctx.fillText(`방 이름: ${roomInfo.name}`, canvas.width / 2, 30);
+        ctx.fillText(`방 이름: ${roomInfo.data.name}`, canvas.width / 2, 30);
     
         // 접속 중인 유저 목록 아래에 표시
         ctx.font = '20px Arial';
         let index = 0;
-        roomInfo.participants.forEach((participants) => {
+        console.log('participants:', roomInfo.participants);
+        roomInfo.data.participants.forEach((participants) => {
+            console.log('participant is :', participants);
+            ctx.fillStyle = 'black';
             ctx.fillText(participants, canvas.width / 2, 60 + (index * 30));
             index++;
         });
