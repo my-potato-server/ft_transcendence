@@ -193,11 +193,13 @@ class MiniGameServer:
         game_id = self.get_new_id()
         # 게임 인스턴스 생성 및 저장
         if game_type == "pong":
-            game["instance"] = PongGameAsync(game_id=game_id, result_callback=result_callback *args, **kwargs)
+            game["instance"] = PongGameAsync(game_id=game_id, result_callback=result_callback, *args, **kwargs)
         else : return "error"
             
         # 다른 게임 타입에 대한 처리
         # ...
+
+
         
         self.game_id2game[game_id] = game
 
