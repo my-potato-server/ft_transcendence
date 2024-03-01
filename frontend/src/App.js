@@ -272,7 +272,7 @@ window.navigateToProfile = async function() {
     if (!isFriendListVisible) {
 		try {
 			const friendList = await fetchFriendList();
-            const friendListHtml = friendList.map(friend => `<li>${friend.user.nickname} - ${friend.isOnline ? 'Online' : 'Offline'}</li>`).join('');
+            const friendListHtml = friendList.map(friend => `<li>${friend.user.nickname} - ${friend.user.is_online ? 'Online' : 'Offline'}</li>`).join('');
             friendListContainer.innerHTML = `
 				<p>친구 목록</p>
 				<ul>${friendListHtml}</ul>
