@@ -127,6 +127,17 @@ class PongGameAsync:
             "game_pause": self.is_paused,
             "gmae_start": self.game_start
         }
+    
+    def get_game_state(self):
+        return {
+            "ball_position": self.ball_position.tolist(),
+            "paddle1_position": self.paddle1_position.tolist(),
+            "paddle2_position": self.paddle2_position.tolist(),
+            "score1": self.score1,
+            "score2": self.score2,
+            "game_over": self.game_over,
+            "game_pause": self.is_paused,
+        }
 
     async def game_loop(self):
         from .minigameserver import MiniGameServer

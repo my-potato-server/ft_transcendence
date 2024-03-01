@@ -241,7 +241,7 @@ class MiniGameServer:
             "players": game.get("players"), 
             "playerindex": playerindex,
             "gametype": game.get("gametype"),
-            "gamestate": game.get["instance"].get_game_state()
+            "gamestate": game.get("instance").get_game_state()
         }
 
     def get_tournament_info(self, user_id):
@@ -263,7 +263,7 @@ class MiniGameServer:
 
             "players": game.get("players"), 
             "gametype": game.get("gametype"),
-            "gamestate": game.get["instance"].get_game_state()
+            "gamestate": game.get("instance").get_game_state()
         }
 
 
@@ -279,8 +279,8 @@ class MiniGameServer:
 
         return {
             "gametype": game.get("gametype"),
-            "realtime_gamestate": game.get["instance"].get_game_state()
-            }
+            "realtime_gamestate": game.get("instance").get_realtime_state()
+        }
 
 # 사용 예시
 if __name__ == "__main__":
