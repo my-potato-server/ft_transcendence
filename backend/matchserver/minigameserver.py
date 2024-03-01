@@ -106,15 +106,15 @@ class MiniGameServer:
     def create_game(self, game_type, players, *args, **kwargs):
         # game = {players:user_id_list, gametype:game_type, instance = gameInstance }
         game = {"players": players, "gametype": game_type}
+        game_id = self.get_new_id()
         # 게임 인스턴스 생성 및 저장
         if game_type == "pong":
-            game["inscance"] = PongGameAsync(*args, **kwargs)
+            game["inscance"] = PongGameAsync(game_id=game_id *args, **kwargs)
         else : return "error"
             
         # 다른 게임 타입에 대한 처리
         # ...
         
-        game_id = self.get_new_id()
         self.game_id2game[game_id] = game
 
         for user_id in players:

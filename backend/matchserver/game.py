@@ -1,7 +1,8 @@
 import numpy as np
+from .minigameserver import MiniGameServer
 
 class PongGameAsync:
-    def __init__(self):
+    def __init__(self, game_id):
         self.arena_bounds = np.array([1.0, 0.5])  # 경기장의 경계 (가로, 세로)
         self.ball_position = np.array([0.0, 0.0])  # 공의 초기 위치
         self.ball_velocity = np.array([0.03, 0.01])  # 공의 초기 속도
@@ -19,6 +20,8 @@ class PongGameAsync:
         self.is_paused = False  # 게임이 일시정지 상태인지 나타내는 플래그
         self.ready = [False, False]
         self.fps = 60
+        self.game_id = game_id
+        self.start_game()
 
     def ready_play(self, playerindex):
         if playerindex < 0 or 1 < playerindex :
@@ -131,8 +134,8 @@ class PongGameAsync:
         while not self.game_over:
             if not self.is_paused:  # 게임이 일시정지 상태가 아닐 때만 업데이트
                 await self.update_ball()
-                # 패들 업데이트는 외부에서 호출됩니다.
             await asyncio.sleep(1/self.fps)  # 초당 60회 업데이트, 일시정지 상태에서도 체크
+        MiniGameServer().remove_game()
 
     def pause_game(self):
         self.is_paused = True
