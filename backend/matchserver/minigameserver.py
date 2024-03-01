@@ -126,6 +126,46 @@ class MiniGameServer:
         return tournament_id
         pass
 
+    def tournament_loop(self, tournament_id=None, call_indentify = None, call_return = None):
+        if not call_indentify == None:
+            tournament_id = call_indentify["tournament_id"]
+
+        if tournament_id == None : return "error"     
+        
+        tournament = self.tournament_id2tournament.get(tournament_id)        
+        if tournament == None : return "error"
+
+        # 여기서 승자 판별을 하자
+            # 만약에 call_indentify 에서 들어온 경우에는 승자를 판별해야 하고
+            # 만약에 tournament id가 직접 들어온 경우에는 그냥 시작 해주면 될 것 같은데
+
+        next_match = tournament.next_match()
+        if len(tournament.next_match()) == 1 : 
+            # 승자가 정해진 경우이다, 마무리 해야함
+            # 결과 서버에 
+            # 
+            pass
+
+        else : # 승자를 입력하고 다음 게임을 진행해야 하는 경우
+
+            pass
+
+        callback_identify = {
+            "tournament_id" : tournament_id,
+            }
+
+        tournament = self.tournament_id2tournament.get(tournament_id)
+        return 
+
+
+        # while True:
+        #     next_match = tournament.next_match()
+        #     if len(tournament.next_match()) == 1 :
+        #         # 승자가 정해진 경우이다, 마무리 해야함
+        #         pass            
+        #     await asyncio.sleep(2)
+
+
     def remove_tournament(self, tournament_id):
         if not tournament_id in self.tournament_id2tournament: return "error - that tournament_id not exist"
 
@@ -147,13 +187,13 @@ class MiniGameServer:
 
     def create_room(self):pass
 
-    def create_game(self, game_type, players, *args, **kwargs):
+    def create_game(self, game_type, players, result_callback = None, *args, **kwargs):
         # game = {players:user_id_list, gametype:game_type, instance = gameInstance }
         game = {"players": players, "gametype": game_type}
         game_id = self.get_new_id()
         # 게임 인스턴스 생성 및 저장
         if game_type == "pong":
-            game["instance"] = PongGameAsync(game_id=game_id, *args, **kwargs)
+            game["instance"] = PongGameAsync(game_id=game_id, result_callback=result_callback *args, **kwargs)
         else : return "error"
             
         # 다른 게임 타입에 대한 처리
@@ -199,8 +239,8 @@ class MiniGameServer:
             game = self.game_id2game.get(game_id)
 
             gameInstance = game.get("instance")
-            if "player" in game and user_id in game["player"]:
-                playernum = game.get("player").index(user_id) + 1
+            if "players" in game and user_id in game["players"]:
+                playernum = game.get("players").index(user_id) + 1
             else:
                 # 적절한 오류 처리나 대체 로직
                 print("Player ID not found in game players list.")
