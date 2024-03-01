@@ -442,7 +442,8 @@ def user_id2user_nickname(user_id):
 
 @database_sync_to_async
 def game_info(user_id):
-    result = MiniGameServer(user_id)
+    # result = MiniGameServer(user_id)
+    result = MiniGameServer().get_game_info(user_id)
     result["players_nickname"] = [user_id2user_nickname(user_id) for user_id in result["players"]]
     return result
 
