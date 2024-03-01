@@ -54,12 +54,14 @@ def get_user_state(user_id):
         
         # 조회된 UserRoom 객체에서 필요한 정보를 추출합니다.
         room_id = user_room.room_id if user_room.room else None
+        tournament_id, game_id = MiniGameServer().get_user_status()
         # game_id = user_room.game_id
         
         # 필요한 정보를 딕셔너리 형태로 반환합니다.
         return {
             'status': 'OK',
             'room_id': room_id,
+            'tournament_id': tournament_id,
             'game_id': game_id
         }
     except UserRoom.DoesNotExist:
@@ -396,28 +398,30 @@ async def send_message_to_room_that_room_was_updated(room_id):
 # def exit_game(game_id):
 #     pass
 
-# async def control_game(cmd, **kwargs):
+async def control_game(user_id, cmd, move=None, **kwargs):
 
-#     # 대진표 받아오기
-#         if cmd == "get_tournament_bracket":
-#             pass
+    # 대진표 받아오기
+        if cmd == "get_tournament_bracket":
+            pass
 
-#     # 게임 조작하기
-#         if cmd == "game_control":
-#             pass
+        if cmd == "ready_to_play": MiniGameServer().control(user_id, "ready to play")
 
-#     # 일시정지하기
-#         if cmd == "game_pause":
-#             pass
 
-#     # 일시정지 풀기
-#         if cmd == "game_resume":
-#             pass
+    # 게임 조작하기
+        if cmd == "game_control":
+            if move == "up" : MiniGameServer().control(user_id, "movepaddle_up")
+            if move == "down" : MiniGameServer().control(user_id, "movepaddle_down")
+            if move == "stop" : MiniGameServer().control(user_id, "movepaddle_stop")
+
+
+    # 일시정지하기
+        if cmd == "game_pause":
+            pass
+
+    # 일시정지 풀기
+        if cmd == "game_resume":
+            pass
         
-
-#     if (cmd == ""):
-#         pass
-#     pass
 
 
 # def create_room2(name, user_id, password=None):

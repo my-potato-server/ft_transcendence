@@ -1,5 +1,4 @@
 import numpy as np
-from .minigameserver import MiniGameServer
 
 class PongGameAsync:
     def __init__(self, game_id):
@@ -128,6 +127,7 @@ class PongGameAsync:
         }
 
     async def game_loop(self):
+        from .minigameserver import MiniGameServer
         while not self.game_start:
             await asyncio.sleep(1/2) # 게임이 시작되기를 기다림
         await asyncio.sleep(1) # 약간의 딜레이

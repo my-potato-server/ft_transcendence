@@ -1,6 +1,7 @@
+import asyncio
 from .game import PongGameAsync
 from .tournament import Tournament
-from .capis import send_message_to
+from asgiref.sync import async_to_sync
 
 class MiniGameServer:
     _instance = None
@@ -27,10 +28,11 @@ class MiniGameServer:
         self.fast_match_pool = {"pong" : []}
 
 
-    async def fast_match_matched(players, gametype):
+    async def fast_match_matched(self, players, gametype):
+        from .capis import send_message_to
+        
         # 게임 만들기
-
-        game_id = create_game(game_type=gametype, players=players)
+        game_id = self.create_game(game_type=gametype, players=players)
 
         if game_id == "error" :
             # message = {'status': "error", 'message' : "매칭에 실패했습니다. 매칭을 다시 시도해 주세요." }
@@ -62,14 +64,14 @@ class MiniGameServer:
             # 게임 만들기에 실패하면 error
 
 
-    async def fast_matching(self):
+    async def fast_matching(self, gametype):
         while len(self.fast_match_pool[gametype]) > 2:
             players = []
             players.append(self.fast_match_pool[gametype].pop(0))
             players.append(self.fast_match_pool[gametype].pop(0))
-            await fast_match_matched(players, gametype)
+            await self.fast_match_matched(players, gametype)
 
-    def add_fast_match(user_id, gametype="pong"):
+    def add_fast_match(self, user_id, gametype="pong"):
         
         #지금은 퐁 게임 뿐
         gametype = "pong"
@@ -193,6 +195,8 @@ class MiniGameServer:
             gameInstance.update_paddle(playernum, [0, 1]) 
         if cmd=="movepaddle_down":
             gameInstance.update_paddle(playernum, [0, -1]) 
+        if cmd=="movepaddle_stop":
+            gameInstance.update_paddle(playernum, [0, 0]) 
 
         # 게임 정보 요청
         if cmd=="gameinfo" :pass
@@ -208,20 +212,20 @@ class MiniGameServer:
 
     def get_user_status(self, user_id):
         # 사용자가 속한 토너먼트
-        tournament_id = user_id2tournament_id.get(user_id)
+        tournament_id = self.user_id2tournament_id.get(user_id)
         # 사용자가 속한 게임 리턴
-        game_id = user_id2game_id.get(user_id)
+        game_id = self.user_id2game_id.get(user_id)
         # 실질적으로는 none이냐 아니냐가 중요할 것 같은데,
         # 게임 연결은 알아서 해 주니까 말이야.
-        return tournament, game
+        return tournament_id, game_id
 
     def get_game_info(self, user_id):
         # 사용자가 속한 게임 리턴
-        game_id = user_id2game_id.get(user_id)
+        game_id = self.user_id2game_id.get(user_id)
 
         if game_id is None: return None
 
-        game = game_id2game.get(game_id)
+        game = self.game_id2game.get(game_id)
 
         if game is None: return None
 
@@ -234,15 +238,15 @@ class MiniGameServer:
 
     def get_tournament_info(self, user_id):
         # 사용자가 속한 토너먼트 리턴
-        tournament_id = user_id2tournament_id.get(user_id)
+        tournament_id = self.user_id2tournament_id.get(user_id)
 
         if tournament_id is None: return None
 
-        tournament = tournament_id2tournament.get(tournament_id)
+        tournament = self.tournament_id2tournament.get(tournament_id)
 
         if tournament is None: return None
 
-        return async_to_sync(tournament.get_tournament_state())
+        return async_to_sync(tournament.get_tournament_state)()
 
         return 
         {
