@@ -70,7 +70,7 @@ class MiniGameServer:
 
     async def fast_matching(self, gametype):
         print("now on fast_matching")
-        while len(self.fast_match_pool[gametype]) > 2:
+        while len(self.fast_match_pool[gametype]) >= 2:
             players = []
             players.append(self.fast_match_pool[gametype].pop(0))
             players.append(self.fast_match_pool[gametype].pop(0))
@@ -85,7 +85,7 @@ class MiniGameServer:
         self.fast_match_pool[gametype].append(user_id)
 
         # 유저가 추가될 떄 매칭로직 실행
-        if len(self.fast_match_pool[gametype]) > 2:
+        if len(self.fast_match_pool[gametype]) >= 2:
             # loop = asyncio.get_event_loop()
             # loop.create_task(self.fast_matching()) 
             # self.fast_matching()
