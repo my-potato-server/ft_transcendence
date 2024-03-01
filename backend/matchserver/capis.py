@@ -444,7 +444,7 @@ def user_id2user_nickname(user_id):
 def game_info(user_id):
     # result = MiniGameServer(user_id)
     result = MiniGameServer().get_game_info(user_id)
-    result["players_nickname"] = [user_id2user_nickname(user_id) for user_id in result["players"]]
+    result["players_nickname"] = [async_to_sync(user_id2user_nickname)(user_id) for user_id in result["players"]]
     return result
 
 # def create_room2(name, user_id, password=None):
