@@ -54,6 +54,11 @@ export default function OnlinePong(canvasID) {
                     drawRoomInfo(data.data); // 방 정보 그리기 함수 호출
                 }
                 break;
+            case 'fast_match_matched':
+                if (data.status === 'OK') {
+                    console.log('Matched with opponent', data.data);
+                    ready_to_start_game();
+                }
             case 'error':
                 console.error(data.message);
                 break;
@@ -87,11 +92,6 @@ export default function OnlinePong(canvasID) {
         }
     }
 
-    // async function sendCommandToServer(method, parameters = {}) {
-    //     const message = {method, parameters};
-    //     socket.send(JSON.stringify(message));
-    //     // Add logic to wait for and process the response from the server
-    // }
     async function sendCommandToServer(method, parameters = {}) {
         return new Promise((resolve, reject) => {
             // 응답 ID 생성
@@ -111,6 +111,16 @@ export default function OnlinePong(canvasID) {
             // 메시지 전송
             socket.send(JSON.stringify(message));
         });
+    }
+
+    async function ready_to_start_game() {
+        const readyResponse = await sendCommandToServer('matchserver.game_info');
+        if (readyResponse.status === 'OK') {
+            console.log('Ready to start game', readyResponse);
+            clearCanvasBlack();
+        } else {
+            console.error('Error ready to start game', readyResponse);
+        }
     }
 
     async function quickmatch() {
@@ -271,6 +281,11 @@ export default function OnlinePong(canvasID) {
     function clearCanvasWhite() {
         ctx.fillStyle = 'white'; // 흰색으로 설정
         ctx.fillRect(0, 0, canvas.width, canvas.height); // 캔버스 전체를 흰색으로 칠함
+    }
+
+    function clearCanvasBlack() {
+        ctx.fillStyle = 'black'; // 검은색으로 설정
+        ctx.fillRect(0, 0, canvas.width, canvas.height); // 캔버스 전체를 검은색으로 칠함
     }
 }
 
