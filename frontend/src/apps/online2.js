@@ -1,7 +1,7 @@
 // src/apps/online2.js
 
 let socket; // Define WebSocket globally within the function scope
-
+let order = 0;
 export default function OnlinePong(canvasID) {
     const canvas = document.getElementById(canvasID);
     const ctx = canvas.getContext('2d');

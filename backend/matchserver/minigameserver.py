@@ -235,7 +235,6 @@ class MiniGameServer:
         
         # gameInstance = game["instance"]
         # playernum = game["player"].index(user_id) + 1
-        
         try:
             game_id = self.user_id2game_id.get(user_id)
             game = self.game_id2game.get(game_id)
