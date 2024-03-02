@@ -30,7 +30,7 @@ export default function OnlinePong(canvasID) {
                 console.log("Connection established");
                 resolve(); // 연결이 성공적으로 맺어지면 Promise를 해결
             };
-    
+
             socket.onerror = function(error) {
                 console.log(`[error] ${error.message}`);
                 reject(error); // 연결 과정에서 오류가 발생하면 Promise를 거부
@@ -43,7 +43,7 @@ export default function OnlinePong(canvasID) {
             // console.log('Received message:', data);
             handleServerMessage(data);
         };
-    
+
         socket.onclose = function(event) {
             if (event.wasClean) {
                 console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
@@ -52,7 +52,7 @@ export default function OnlinePong(canvasID) {
                 console.log('[close] Connection died');
             }
         };
-    
+
         // socket.onerror = function(error) {
         //     console.log(`[error] ${error.message}`);
         // };
@@ -137,7 +137,7 @@ export default function OnlinePong(canvasID) {
             // 응답 ID 생성
             const responseId = userinfo.user.id;
             const message = { method, parameters, responseId };
-        
+
             // 응답 대기
             const responseHandler = (event) => {
                 try {
@@ -153,10 +153,10 @@ export default function OnlinePong(canvasID) {
                 }
             };
             socket.addEventListener('message', responseHandler);
-        
+
             // 메시지 전송
             socket.send(JSON.stringify(message));
-        
+
             // 응답 타임아웃 처리
             // const timeout = 10000; // 10초 후 타임아웃
             // setTimeout(() => {
@@ -282,24 +282,30 @@ export default function OnlinePong(canvasID) {
         ctx.fillStyle = '#DDD'; // UI 배경색
         ctx.fillRect(0, canvas.height - 60, canvas.width, 60);
 
-        // '방 생성' 버튼 그리기
+        // // '방 생성' 버튼 그리기
+        // ctx.fillStyle = '#0A0'; // 버튼색
+        // ctx.fillRect(10, canvas.height - 50, 100, 40);
+        // ctx.fillStyle = '#FFF'; // 텍스트색
+        // ctx.font = '20px Arial';
+        // ctx.fillText('방 생성', 20, canvas.height - 20);
+
+        // // '방 입장' 버튼 그리기
+        // ctx.fillStyle = '#00A'; // 버튼색
+        // ctx.fillRect(120, canvas.height - 50, 100, 40);
+        // ctx.fillStyle = '#FFF'; // 텍스트색
+        // ctx.fillText('방 입장', 130, canvas.height - 20);
+
+        // // '방 삭제' 버튼 그리기
+        // ctx.fillStyle = '#A00'; // 버튼색
+        // ctx.fillRect(230, canvas.height - 50, 100, 40);
+        // ctx.fillStyle = '#FFF'; // 텍스트색
+        // ctx.fillText('방 삭제', 240, canvas.height - 20);
+
         ctx.fillStyle = '#0A0'; // 버튼색
         ctx.fillRect(10, canvas.height - 50, 100, 40);
         ctx.fillStyle = '#FFF'; // 텍스트색
         ctx.font = '20px Arial';
-        ctx.fillText('방 생성', 20, canvas.height - 20);
-
-        // '방 입장' 버튼 그리기
-        ctx.fillStyle = '#00A'; // 버튼색
-        ctx.fillRect(120, canvas.height - 50, 100, 40);
-        ctx.fillStyle = '#FFF'; // 텍스트색
-        ctx.fillText('방 입장', 130, canvas.height - 20);
-
-        // '방 삭제' 버튼 그리기
-        ctx.fillStyle = '#A00'; // 버튼색
-        ctx.fillRect(230, canvas.height - 50, 100, 40);
-        ctx.fillStyle = '#FFF'; // 텍스트색
-        ctx.fillText('방 삭제', 240, canvas.height - 20);
+        ctx.fillText('토너먼트', 20, canvas.height - 20);
 
         ctx.fillStyle = '#AA0';
         ctx.fillRect(340, canvas.height - 50, 100, 40);
@@ -384,13 +390,13 @@ export default function OnlinePong(canvasID) {
         // 캔버스를 흰색으로 초기화
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
+
         // 방 이름 상단 중앙에 표시
         ctx.fillStyle = 'black';
         ctx.font = '24px Arial';
         ctx.textAlign = 'center'; // 텍스트를 중앙 정렬
         ctx.fillText(`방 이름: ${roomInfo.data.name}`, canvas.width / 2, 30);
-    
+
         // 접속 중인 유저 목록 아래에 표시
         ctx.font = '20px Arial';
         let index = 0;
@@ -402,20 +408,19 @@ export default function OnlinePong(canvasID) {
             index++;
         });
     }
-    
+
     function clearCanvasWhite() {
         ctx.fillStyle = 'white'; // 흰색으로 설정
         ctx.fillRect(0, 0, canvas.width, canvas.height); // 캔버스 전체를 흰색으로 칠함
+        ctx.fillStyle = 'black'; // 검은색으로 설정
+        ctx.font = '48px Arial';
+        ctx.fillText('로딩중...', canvas.width / 2 - 100, canvas.height / 2);
     }
 
     function clearCanvasBlack() {
         ctx.fillStyle = 'black'; // 검은색으로 설정
         ctx.fillRect(0, 0, canvas.width, canvas.height); // 캔버스 전체를 검은색으로 칠함
     }
-
-
-
-
 
     // game logic
     let ball = {
@@ -429,7 +434,6 @@ export default function OnlinePong(canvasID) {
         scoreRight: 0,
         color: 'WHITE'
     };
-
 
     let gameover = false;
     let winner = 0;

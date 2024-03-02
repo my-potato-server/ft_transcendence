@@ -183,6 +183,11 @@ export default class Game extends Component {
                         this.currentGame = online(this.canvas.id);
                 });
                 break;
+            case 'offline2':
+                import('../../apps/offline_pong2.js').then(({ default: offline_pong2 }) => {
+                    this.currentGame = offline_pong2(this.canvas.id);
+                });
+                break;
             default:
                 console.error(`Unknown game mode: ${mode}`);
         }
