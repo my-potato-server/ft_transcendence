@@ -33,14 +33,14 @@ export default function OfflinePong(canvasID) {
     let leftPaddleY = canvas.height / 2 - paddleHeight / 2;
     let rightPaddleY = canvas.height / 2 - paddleHeight / 2;
 
-    let leftPaddleX = canvas.width / 2 - paddleWidth / 2;
-    let rightPaddleX = canvas.width / 2 - paddleWidth / 2;
+    let leftPaddleX = canvas.width * (0.3) / 2 ;
+    let rightPaddleX = canvas.width* (2 - 0.3) / 2;
 
     // 키보드 입력 상태 추적
     let keysPressed = {};
 
     const keydownHandler = (event) => {
-        if (["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(event.key)) {
+        if (["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight", "w", "a", "s", "d"].includes(event.key)) {
             event.preventDefault(); // 화살표 키에 대한 기본 동작을 방지
         }
         keysPressed[event.key] = true;
@@ -95,12 +95,12 @@ export default function OfflinePong(canvasID) {
 
         // 패들과의 충돌 감지
         // 왼쪽 패들
-        if (ball.x - ball.radius < 20 + paddleWidth && ball.y > leftPaddleY && ball.y < leftPaddleY + paddleHeight) {
+        if (ball.x - ball.radius < leftPaddleX + paddleWidth && ball.y > leftPaddleY && ball.y < leftPaddleY + paddleHeight) {
             ball.velocityX = -ball.velocityX;
         }
 
         // 오른쪽 패들
-        if (ball.x + ball.radius > canvas.width - 20 - paddleWidth && ball.y > rightPaddleY && ball.y < rightPaddleY + paddleHeight) {
+        if (ball.x + ball.radius > rightPaddleX - paddleWidth && ball.y > rightPaddleY && ball.y < rightPaddleY + paddleHeight) {
             ball.velocityX = -ball.velocityX;
         }
 
@@ -127,18 +127,18 @@ export default function OfflinePong(canvasID) {
 
     function movePaddles() {
     // 왼쪽 패들 상하 움직임
-    if (keysPressed['a'] ) {
+    if (keysPressed['w'] ) {
         leftPaddleY = Math.max(leftPaddleY - paddleSpeed, 0);
     }
-    if (keysPressed['z'] ) {
+    if (keysPressed['s'] ) {
         leftPaddleY = Math.min(leftPaddleY + paddleSpeed, canvas.height - paddleHeight);
     }
 
     // 왼쪽 패들 좌우 움직임
-    if (keysPressed['x']) { // 'q' 키를 왼쪽으로 움직이는 데 사용
+    if (keysPressed['a']) { // 'q' 키를 왼쪽으로 움직이는 데 사용
         leftPaddleX = Math.max(leftPaddleX - paddleSpeed, 0);
     }
-    if (keysPressed['c']) { // 'e' 키를 오른쪽으로 움직이는 데 사용
+    if (keysPressed['d']) { // 'e' 키를 오른쪽으로 움직이는 데 사용
         leftPaddleX = Math.min(leftPaddleX + paddleSpeed, canvas.width - paddleWidth);
     }
 
@@ -186,9 +186,9 @@ export default function OfflinePong(canvasID) {
 
         // 패들 그리기 (위치 업데이트 반영)
         ctx.fillStyle = '#F00';
-        ctx.fillRect(20, leftPaddleY, paddleWidth, paddleHeight); // 왼쪽 패들
+        ctx.fillRect(leftPaddleX, leftPaddleY, paddleWidth, paddleHeight); // 왼쪽 패들
         ctx.fillStyle = '#00F';
-        ctx.fillRect(canvas.width - 30, rightPaddleY, paddleWidth, paddleHeight); // 오른쪽 패들
+        ctx.fillRect(rightPaddleX, rightPaddleY, paddleWidth, paddleHeight); // 오른쪽 패들
     }
 
     // 게임 루프
