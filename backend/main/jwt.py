@@ -8,6 +8,7 @@ def create_token(user):
 		'user_id': user.id,
 		'login': user.login,
 		'nickname': user.nickname,
+		'created_at': user.created_at,
 		'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=30),
 	}
 	token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
