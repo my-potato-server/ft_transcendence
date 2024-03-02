@@ -1,6 +1,8 @@
 import asyncio
 from asyncio import sleep
 
+from channels.db import database_sync_to_async
+
 from .game import PongGameAsync
 from .tournament import Tournament
 from asgiref.sync import async_to_sync, sync_to_async
@@ -28,7 +30,7 @@ class MiniGameServer:
         self.fast_match_pool = {"pong" : [], "tournament" : []}
 
 
-    async def fast_match_matched(self, players, gametype, tournament_id=None, level=None):
+    async def fast_match_matched(self, players, gametype, tournament_id=None, level=2):
         print("now on fast_match_matched")
         from .capis import send_message_to
 
@@ -95,7 +97,7 @@ class MiniGameServer:
             await send_message_to(player, message)
         await sleep(5)
         level = 4
-        tournament_id = sync_to_async(create_tournament_id)()
+        tournament_id = await database_sync_to_async(create_tournament_id)()
         first_game_id = await self.fast_match_matched(players_first_team, gametype, tournament_id, level)
         second_game_id = await self.fast_match_matched(players_second_team, gametype, tournament_id, level)
         first_game = self.game_id2game[first_game_id]
@@ -163,13 +165,13 @@ class MiniGameServer:
     def create_room(self):
         pass
 
-    def create_game(self, game_type, players, tournament_id=None, level=None):
+    def create_game(self, game_type, players, tournament_id=None, level=2):
         game = {"players": players, "gametype": game_type, "is_over": False,
                 "winner_id": None, "instance": None}
         game_id = self.get_new_id()
         if game_type == "pong":
             game["instance"] = PongGameAsync(
-                game_id=game_id, is_tournament=False, tournament_id=tournament_id, level=level
+                game_id=game_id, is_tournament=False, tournament_id=tournament_id, level=2
             )
         elif game_type == "tournament":
             game["instance"] = PongGameAsync(
