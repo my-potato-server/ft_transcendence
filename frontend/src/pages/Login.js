@@ -33,6 +33,14 @@ export default class Login extends Component {
 		if (temploginButton2) {
 			temploginButton2.onclick = () => this.templogin2();
 		}
+		const temploginButton3 = this.$parent.querySelector('.templogin3');
+		if (temploginButton2) {
+			temploginButton3.onclick = () => this.templogin3();
+		}
+		const temploginButton4 = this.$parent.querySelector('.templogin4');
+		if (temploginButton2) {
+			temploginButton4.onclick = () => this.templogin4();
+		}
 		const _42loginButton = this.$parent.querySelector('.ftLogin');
 		if (_42loginButton) {
 			_42loginButton.onclick = () => this._42login();
@@ -390,8 +398,8 @@ export function LoginButton() {
 							<button class="btn btn-lg btn-info btn-block mt-2 ftLogin" type="button" style="opacity: 1;">42 Login</button>
 							<button class="btn btn-lg btn-info btn-block mt-2 templogin" type="button">templogin</button>
 							<button class="btn btn-lg btn-info btn-block mt-2 templogin2" type="button">templogin2</button>
-							<button class="btn btn-lg btn-info btn-block mt-2 templogin2" type="button">templogin3</button>
-							<button class="btn btn-lg btn-info btn-block mt-2 templogin2" type="button">templogin4</button>
+							<button class="btn btn-lg btn-info btn-block mt-2 templogin3" type="button">templogin3</button>
+							<button class="btn btn-lg btn-info btn-block mt-2 templogin4" type="button">templogin4</button>
 						</div>
 					</div>
 				</div>
