@@ -36,8 +36,8 @@ def disconnect_to_server(user, password=None):
     
     # 사용자의 UserRoom 레코드를 찾아 left_at 필드에 현재 시각 기록
     try:
-        tournament_match_add_queue(user.user_id)
-        tournament_match_remove_queue(user.user_id)
+        fast_match_remove_queue(user.id)
+        tournament_match_remove_queue(user.id)
         user_room = UserRoom.objects.get(user=user)
         user_room.left_at = timezone.now()
         user_room.delete()

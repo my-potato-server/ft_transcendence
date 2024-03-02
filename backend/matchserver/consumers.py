@@ -86,7 +86,7 @@ class MyConsumer(AsyncWebsocketConsumer):
  
 
     async def disconnect(self, close_code):
-        if self.user.is_authenticated:
+        if True:
             await capis.disconnect_to_server(self.user)  # 사용자 인스턴스 전달
             await self.channel_layer.group_discard(
                 self.user_session_identify,
