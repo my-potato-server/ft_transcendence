@@ -449,22 +449,19 @@ export default function OnlinePong(canvasID) {
     document.addEventListener('keydown', (event) => {
         // keysPressed[event.key] = true;
 
-        if (['ArrowUp', 'ArrowDown'].includes(event.key)) {
-            socket.send(JSON.stringify({
-                action: 'move_paddle',
-                key: event.key,
-                player: '1',
-                left_paddle_y: leftPaddleY,
-                right_paddle_y: rightPaddleY,
-                ball_position: {
-                    x: ball.x,
-                    y: ball.y
-                },
-                left_player_score: ball.scoreLeft,
-                right_player_score: ball.scoreRight,
-                game_over: gameover,
-                winner: winner
-            }));
+        // if (['ArrowUp', 'ArrowDown'].includes(event.key)) {
+        //     socket.send(JSON.stringify({
+        //         action: 'move_paddle',
+        //         key: event.key,
+        //     }));
+        // }
+        if (event.key === 'ArrowUp') {
+            const data = { method : 'matchserver.control_game', parameters: { cmd: "UP"}}
+            socket.send(JSON.stringify({data}));
+        }
+        if (event.key === 'ArrowDown') {
+            const data = { method : 'matchserver.control_game', parameters: { cmd: "DOWN"}}
+            socket.send(JSON.stringify({data}));
         }
     });
 
