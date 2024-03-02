@@ -36,6 +36,8 @@ def disconnect_to_server(user, password=None):
     
     # 사용자의 UserRoom 레코드를 찾아 left_at 필드에 현재 시각 기록
     try:
+        tournament_match_add_queue(user.user_id)
+        tournament_match_remove_queue(user.user_id)
         user_room = UserRoom.objects.get(user=user)
         user_room.left_at = timezone.now()
         user_room.delete()
@@ -319,10 +321,17 @@ async def fast_match_add_queue(user_id):
     return MiniGameServer().add_fast_match(user_id, "pong")
     pass
 
+async def fast_match_remove_queue(user_id):
+    return MiniGameServer().remove_fast_match(user_id, "pong")
+    pass
+
 async def tournament_match_add_queue(user_id):
     return MiniGameServer().add_tournament_match(user_id, "tournament")
     pass
 
+async def tournament_match_remove_queue(user_id):
+    return MiniGameServer().remove_fast_match(user_id, "tournament")
+    pass
 
 async def control_game(user_id, cmd, move=None, **kwargs):
     # 대진표 받아오기

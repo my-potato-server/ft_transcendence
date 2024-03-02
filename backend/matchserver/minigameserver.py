@@ -75,6 +75,12 @@ class MiniGameServer:
             asyncio.create_task(self.fast_matching(gametype))
         return {'status': "OK", 'message' : "user added at fast match queue"}
 
+    def remove_fast_match(self, user_id, gametype):
+    # print("now on add_fast_match")
+        try : self.fast_match_pool[gametype].remove(user_id)
+        except : print("fail to remove")
+
+
 
     @database_sync_to_async
     def get_nickname_by_user_id_list(self, user_id_list):
