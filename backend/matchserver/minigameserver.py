@@ -94,23 +94,9 @@ class MiniGameServer:
     def get_new_id(self):
         self.lastid += 1
         return str(self.lastid)
-    
-    # def get_new_id(self):
-    #     self.lastid += 1
-    #     return str(self.lastid)
-    
-    # #유저를 게임과 연결
-    # def connect_user2game(self, user_id, game_id):
-    #     self.user_id2game_id[user_id] = game_id
-    #     pass
 
-    # #유저를 게임과 연결 해제
-    # def disconnect_user2game(self, user_id):
-    #     del self.user_id2game_id[user_id]
-    #     pass
 
     def create_tornament(self, game_type, participants):
-        
         tournament = {"participants": participants, "gametype": game_type}
         tournament["instance"] = Tournament(participants=participants)
         tournament_id = self.get_new_id()
@@ -339,10 +325,4 @@ class MiniGameServer:
 
         for user_id in players:
             await send_message_to(user_id, message)
-        return 
-
-# 사용 예시
-if __name__ == "__main__":
-    mini_game_server = MiniGameServer()
-    mini_game_server.create_game("game123", "pong", player1="Alice", player2="Bob")
-    game_instance = mini_game_server.get_game("game123")
+        return

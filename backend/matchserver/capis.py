@@ -376,8 +376,8 @@ async def send_message_to_room(room_id, message):
     
 # 보낼만한 메시지
 async def send_message_to_room_that_room_was_deleted(room_id):
-    #send_message_to_room()
     pass
+
 async def send_message_to_room_that_room_was_updated(room_id):
     print("call send_message_to_room_that_room_was_updated")
     data = await info_room(room_id)
@@ -392,14 +392,6 @@ async def send_message_to_room_that_room_was_updated(room_id):
     }
     await send_message_to_room(room_id, message)
 
-
-# @database_sync_to_async
-# def enter_game(game_id):
-#     pass
-
-# @database_sync_to_async
-# def exit_game(game_id):
-#     pass
 
 async def fast_match_add_queue(user_id):
     return MiniGameServer().add_fast_match(user_id)
@@ -438,11 +430,3 @@ def game_info(user_id):
     result = MiniGameServer().get_game_info(user_id)
     result["players_nickname"] = [async_to_sync(user_id2user_nickname)(user_id) for user_id in result["players"]]
     return result
-
-# def create_room2(name, user_id, password=None):
-#     MiniGameServer.create_room()
-
-# def enter_room2(name, user_id, password=None):
-# def exit_room2(name, user_id, password=None):
-# def delete_room2(name, user_id, password=None):
-# def delete_room2(name, user_id, password=None):

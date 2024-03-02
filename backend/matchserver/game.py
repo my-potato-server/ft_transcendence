@@ -1,5 +1,6 @@
 import random
 import asyncio
+from asgiref.sync import sync_to_async
 
 from game.utils import create_match_history, create_tournament_id
 
@@ -129,6 +130,16 @@ class PongGameAsync:
             await asyncio.sleep(1/self.fps)  # 초당 60회 업데이트, 일시정지 상태에서도 체크
 
         # 결과 저장
+        await sync_to_async(self.save_result)()
+        MiniGameServer().remove_game(self.game_id, self.winner)  # 게임 종료 후 게임 삭제
+        
+    def start_game(self):
+        loop = asyncio.get_event_loop()
+        loop.create_task(self.game_loop())  # game_loop를 비동기 태스크로 실행
+        # 여기에서 start_game 메서드는 game_loop의 완료를 기다리지 않고 바로 리턴함
+
+
+    def save_result(self):
         tournament_id = create_tournament_id()
         create_match_history(
             tournament_id,
@@ -138,9 +149,3 @@ class PongGameAsync:
             self.left_player_score if self.winner == 1 else self.right_player_score,
             self.right_player_score if self.winner == 2 else self.left_player_score,
         )
-        MiniGameServer().remove_game(self.game_id, self.winner)  # 게임 종료 후 게임 삭제
-        
-    def start_game(self):
-        loop = asyncio.get_event_loop()
-        loop.create_task(self.game_loop())  # game_loop를 비동기 태스크로 실행
-        # 여기에서 start_game 메서드는 game_loop의 완료를 기다리지 않고 바로 리턴함
