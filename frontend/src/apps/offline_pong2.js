@@ -33,6 +33,9 @@ export default function OfflinePong(canvasID) {
     let leftPaddleY = canvas.height / 2 - paddleHeight / 2;
     let rightPaddleY = canvas.height / 2 - paddleHeight / 2;
 
+    let leftPaddleX = canvas.width / 2 - paddleWidth / 2;
+    let rightPaddleX = canvas.width / 2 - paddleWidth / 2;
+
     // 키보드 입력 상태 추적
     let keysPressed = {};
 
