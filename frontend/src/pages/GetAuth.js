@@ -15,7 +15,7 @@ export default class GetAuth extends Component {
     template() {
         console.log("GetAuth template");
         return `
-            <title>GetAuth</title>
+            <button style="background-image: url('https://ntcube.co.kr/img/loading-gears.gif');background-size: cover;background-repeat: no-repeat;width:100%;height:2000px"></button>
         `;
     }
 

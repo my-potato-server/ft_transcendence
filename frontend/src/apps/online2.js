@@ -77,7 +77,7 @@ export default function OnlinePong(canvasID) {
                 break;
             case 'server.game':
                 if (data.status === 'OK') {
-                    console.log('Game started', data.data);
+                    // console.log('Game started', data.data);
                     gamestatus = true;
                     updateGameScreen(data.data.realtime_gamestate);
                 }
@@ -143,7 +143,7 @@ export default function OnlinePong(canvasID) {
                 try {
                     const data = JSON.parse(event.data);
                     if (data.responseId === responseId) {
-                        console.log('Got it');
+                        // console.log('Got it');
                         socket.removeEventListener('message', responseHandler); // 이 핸들러 제거
                         resolve(data); // 응답 데이터로 프로미스 해결
                     }
@@ -431,18 +431,11 @@ export default function OnlinePong(canvasID) {
         color: 'WHITE'
     };
 
-    var data = {
-        ball_position: {
-            x: 640,
-            y: 360
-        }
-    };
 
     let gameover = false;
     let winner = 0;
     const paddleHeight = 60;
     const paddleWidth = 10;
-    const paddleSpeed = 4;
     let leftPaddleY = canvas.height / 2 - paddleHeight / 2;
     let rightPaddleY = canvas.height / 2 - paddleHeight / 2;
 
@@ -455,16 +448,17 @@ export default function OnlinePong(canvasID) {
         //         key: event.key,
         //     }));
         // }
-
-        if (event.key === 'ArrowUp') {
-            event.preventDefault();
-            const data = { method : 'matchserver.control_game', parameters: { cmd: "game_control", move: 'up'}}
-            socket.send(JSON.stringify(data));
-        }
-        if (event.key === 'ArrowDown') {
-            event.preventDefault();
-            const data = { method : 'matchserver.control_game', parameters: { cmd: "game_control", move: 'down'}}
-            socket.send(JSON.stringify(data));
+        if (gamestatus === true) {
+            if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                const data = { method : 'matchserver.control_game', parameters: { cmd: "game_control", move: 'up'}}
+                socket.send(JSON.stringify(data));
+            }
+            if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                const data = { method : 'matchserver.control_game', parameters: { cmd: "game_control", move: 'down'}}
+                socket.send(JSON.stringify(data));
+            }
         }
     });
 
@@ -488,6 +482,7 @@ export default function OnlinePong(canvasID) {
                 ctx.font = '48px serif';
                 ctx.fillText('Player 2 Win!', canvas.width / 2 - 100, canvas.height / 2);
             }
+            close(socket);
             return;
         }
 
@@ -515,6 +510,9 @@ export default function OnlinePong(canvasID) {
 
     function updateGameScreen(data) {
         // console.log(data);
+        if (data.game_over) {
+            gamestatus = false;
+        }
         leftPaddleY = data.left_paddle_y;
         rightPaddleY = data.right_paddle_y;
         ball.x = data.ball_position.x;

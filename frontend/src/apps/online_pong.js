@@ -73,30 +73,7 @@ export default function OnlinePong(canvasID) {
         }, 1000); // 1초마다 재시도
     };
 
-    const keydownHandler = (event) => {
-        if (["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(event.key)) {
-            event.preventDefault(); // 화살표 키에 대한 기본 동작을 방지
-        }
-        // keysPressed[event.key] = true;
-
-        if (['ArrowUp', 'ArrowDown'].includes(event.key)) {
-            socket.send(JSON.stringify({
-                action: 'move_paddle',
-                key: event.key,
-                player: thisPlayer,
-                left_paddle_y: leftPaddleY,
-                right_paddle_y: rightPaddleY,
-                ball_position: {
-                    x: ball.x,
-                    y: ball.y
-                },
-                left_player_score: ball.scoreLeft,
-                right_player_score: ball.scoreRight,
-                game_over: gameover,
-                winner: winner
-            }));
-        }
-    };
+    
 
     document.addEventListener('keydown', keydownHandler);
 

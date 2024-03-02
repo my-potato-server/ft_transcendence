@@ -250,10 +250,10 @@ class MiniGameServer:
 
         # 패들 움직임
         if cmd=="movepaddle_up":
-            gameInstance.update_paddle(playernum, -4)
+            gameInstance.update_paddle(playernum, -8)
             return {'status': 'OK', 'message': 'paddle moved'}
         if cmd=="movepaddle_down":
-            gameInstance.update_paddle(playernum, 4)
+            gameInstance.update_paddle(playernum, 8)
             return {'status': 'OK', 'message': 'paddle moved'}
 
         # 게임 정보 요청
