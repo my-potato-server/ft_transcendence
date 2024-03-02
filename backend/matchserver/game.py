@@ -4,10 +4,10 @@ import asyncio
 
 class PongGameAsync:
     def __init__(self, game_id, result_callback = None, callback_indetify = None):
-        self.arena_bounds = np.array([16.0, 9.0])  # 경기장의 경계 (가로, 세로)
+        self.arena_bounds = np.array([1.0, 0.5])  # 경기장의 경계 (가로, 세로)
         self.ball_position = np.array([0.0, 0.0])  # 공의 초기 위치
-        self.ball_velocity = np.array([0.03, 0.01])  # 공의 초기 속도
-        self.ball_maxspeed = 0.2
+        self.ball_velocity = np.array([0.5, 0.2])  # 공의 초기 속도
+        self.ball_maxspeed = 0.5
         self.paddle1_position = np.array([-0.8 * self.arena_bounds[0], 0.0])  # 패들1의 초기 위치
         self.paddle2_position = np.array([0.8 * self.arena_bounds[0], 0.0])  # 패들2의 초기 위치
         self.paddle1_velocity = np.array([0.0, 0.0])  # 패들1의 초기 속도
@@ -20,7 +20,7 @@ class PongGameAsync:
         self.game_over = False  # 게임 종료 상태
         self.is_paused = False  # 게임이 일시정지 상태인지 나타내는 플래그
         self.ready = [False, False]
-        self.fps = 60
+        self.fps = 30
         self.game_id = game_id
         self.result_callback = result_callback
         self.callback_indetify = callback_indetify
@@ -42,10 +42,10 @@ class PongGameAsync:
 
     def update_ball(self):
         # 공 위치 업데이트 (1초에 60번 업데이트를 가정하여 속도 조정)
-        self.ball_position += self.ball_velocity / self.fps
+        self.ball_position += (self.ball_velocity / self.fps)
 
         # 경계 조건 검사 및 공 반사
-        if not (0 <= self.ball_position[1] <= self.arena_bounds[1]):
+        if not (-self.arena_bounds[1] <= self.ball_position[1] <= self.arena_bounds[1]):
             self.ball_velocity[1] = -self.ball_velocity[1]
 
         # 공이 좌우 경계를 벗어났을 때 점수 처리 및 위치 초기화

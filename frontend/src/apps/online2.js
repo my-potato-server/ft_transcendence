@@ -91,16 +91,16 @@ export default function OnlinePong(canvasID) {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     
         // 공 그리기
-        const ballX = state.ball_position[0] * canvas.width / 2 + canvas.width / 2; // 공의 x 좌표 계산
-        const ballY = state.ball_position[1] * canvas.height / 2 + canvas.height / 2; // 공의 y 좌표 계산
+        const ballX = -state.ball_position[0] * canvas.width / 2 + canvas.width / 2; // 공의 x 좌표 계산
+        const ballY = -state.ball_position[1] * canvas.height / 2 + canvas.height / 2; // 공의 y 좌표 계산
         ctx.fillStyle = 'WHITE';
         ctx.beginPath();
         ctx.arc(ballX, ballY, 10, 0, Math.PI * 2, true); // 공의 반지름을 10으로 설정
         ctx.fill();
     
         // 패들 그리기
-        const paddle1Y = state.paddle1_position[1] * canvas.height / 2 + canvas.height / 2;
-        const paddle2Y = state.paddle2_position[1] * canvas.height / 2 + canvas.height / 2;
+        const paddle1Y = - state.paddle1_position[1] * canvas.height / 2 + canvas.height / 2;
+        const paddle2Y = - state.paddle2_position[1] * canvas.height / 2 + canvas.height / 2;
         const paddleHeight = 100; // 패들의 높이
         const paddleWidth = 10; // 패들의 너비
         ctx.fillStyle = 'WHITE';
