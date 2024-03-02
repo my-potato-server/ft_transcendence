@@ -116,12 +116,14 @@ export default function OnlinePong(canvasID) {
             ctx.fillStyle = 'black';
             ctx.font = '48px serif';
             //토너먼트 대진표 작성. data.first_team, data.second_team으로 구분
-            ctx.fillText("First Team", canvas.width / 2 - 300, canvas.height / 2);
-            ctx.fillText(data.first_team[0], canvas.width / 2 - 100, canvas.height / 2);
-            ctx.fillText(data.first_team[1], canvas.width / 2 + 100, canvas.height / 2);
-            ctx.fillText("Second Team", canvas.width / 2 - 300, canvas.height / 2 - 200);
-            ctx.fillText(data.second_team[0], canvas.width / 2 - 100, canvas.height / 2 - 200);
-            ctx.fillText(data.second_team[1], canvas.width / 2 + 100, canvas.height / 2 - 200);
+            ctx.fillText("First Team", canvas.width / 2 - 400, canvas.height / 2);
+            ctx.fillText(data.first_team[0], canvas.width / 2, canvas.height / 2);
+            ctx.fillText('vs', canvas.width / 2 + 200, canvas.height / 2);
+            ctx.fillText(data.first_team[1], canvas.width / 2 + 400, canvas.height / 2);
+            ctx.fillText("Second Team", canvas.width / 2 - 400, canvas.height / 2 - 200);
+            ctx.fillText(data.second_team[0], canvas.width / 2, canvas.height / 2 - 200);
+            ctx.fillText('vs', canvas.width / 2 + 200, canvas.height / 2 - 200);
+            ctx.fillText(data.second_team[1], canvas.width / 2 + 400, canvas.height / 2 - 200);
         }
         if (status === 'first_win') {
             ctx.fillStyle = 'black';
@@ -134,7 +136,7 @@ export default function OnlinePong(canvasID) {
             ctx.font = '48px serif';
             //토너먼트 대진표 작성. data.first_team, data.second_team으로 구분
             ctx.fillText("Last Team", canvas.width / 2 - 300, canvas.height / 2);
-            ctx.fillText(data.players, canvas.width / 2 - 100, canvas.height / 2);
+            ctx.fillText(data.players, canvas.width / 2 + 100, canvas.height / 2);
         }
     }
     function updateGameState(gameState) {
@@ -600,9 +602,9 @@ export default function OnlinePong(canvasID) {
         if (data.game_over) {
             gamestatus = false;
         }
-        if (data.left_id === userinfo.user.id) {
+        if (data.left_user_id === userinfo.user.id) {
             player = 'left';
-        } else if (data.right_id === userinfo.user.id) {
+        } else if (data.right_user_id === userinfo.user.id) {
             player = 'right';
         }
         leftPaddleY = data.left_paddle_y;
