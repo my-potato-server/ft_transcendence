@@ -82,18 +82,18 @@ export default function OfflinePong(canvasID) {
         ctx.stroke(); // 팔각형의 윤곽을 그림
     }
 
-    function drawPaddles(ctx, centerX, centerY, sideLength) {
+    function drawPaddles() {
 
         ctx.fillStyle = 'Blue';
 
         // 상단 패들 (팔각형 변으로부터 20픽셀 떨어진 위치에 배치)
-        ctx.fillRect(centerX - paddleLength / 2, centerY - sideLength / Math.sqrt(2) + diagonalOffset - paddleWidth, paddleLength, paddleWidth);
+        ctx.fillRect(paddleAx, PaddleAy - offseta, paddleLength, paddleWidth);
         // 하단 패들
-        ctx.fillRect(centerX - paddleLength / 2, centerY + sideLength / Math.sqrt(2) - diagonalOffset, paddleLength, paddleWidth);
+        ctx.fillRect(paddleBx, paddleBy - offsetb, paddleLength, paddleWidth);
         // 왼쪽 패들
-        ctx.fillRect(centerX - sideLength / Math.sqrt(2) + diagonalOffset - paddleWidth, centerY - paddleLength / 2, paddleWidth, paddleLength);
+        ctx.fillRect(paddleCx - offsetc, paddleCy, paddleWidth, paddleLength);
         // 오른쪽 패들
-        ctx.fillRect(centerX + sideLength / Math.sqrt(2) - diagonalOffset, centerY - paddleLength / 2, paddleWidth, paddleLength);
+        ctx.fillRect(paddleDx - offsetd, paddleDy, paddleWidth, paddleLength);
     }
 
     // 캔버스의 중앙을 계산
@@ -157,7 +157,7 @@ export default function OfflinePong(canvasID) {
         ctx.fillText(ball.scoreRight, 3 * canvas.width / 4, 50);
         ctx.fillText(ball.scoreTop, canvas.width / 2, 50);
         ctx.fillText(ball.scoreBottom, canvas.width / 2, canvas.height - 50);
-        drawPaddles(ctx, centerX, centerY, sideLength);
+        drawPaddles();
     }
 
     function gameLoop() {

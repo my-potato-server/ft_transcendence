@@ -87,17 +87,20 @@ export default function OnlinePong(canvasID) {
                     console.log('Matched with opponent', data.data);
                     make_screen_tournamnet('game_start', data.data);
                 }
+                break;
             case 'tournament_first_win':
                 if (data.status === 'OK') {
                     console.log('You are the first game winner', data.data);
                     make_screen_tournamnet('first_win', data.data);
                 }
+                break;
             case 'tournament_final_matched':
                 if (data.status === 'OK') {
                     console.log('Matched with opponent', data.data);
                     make_screen_tournamnet('second_game_start', data.data);
                     //make_screen -> 화면에 대진표 그리기
                 }
+                break;
             case 'error':
                 console.error(data.message);
                 break;
@@ -105,6 +108,32 @@ export default function OnlinePong(canvasID) {
         }
     }
 
+    function make_screen_tournamnet(status, data) {
+        console.log('status', status);
+        console.log("data", data);
+        clearCanvasWhite2();
+        if (status === 'game_start') {
+            ctx.fillStyle = 'black';
+            ctx.font = '48px serif';
+            //토너먼트 대진표 작성. data.first_team, data.second_team으로 구분
+            ctx.fillText(data.first_team[0], canvas.width / 2 - 100, canvas.height / 2);
+            ctx.fillText(data.first_team[1], canvas.width / 2 + 100, canvas.height / 2);
+            ctx.fillText(data.second_team[0], canvas.width / 2 - 100, canvas.height / 2 - 200);
+            ctx.fillText(data.second_team[1], canvas.width / 2 + 100, canvas.height / 2 - 200);
+        }
+        if (status === 'first_win') {
+            ctx.fillStyle = 'black';
+            ctx.font = '48px serif';
+            //토너먼트 대진표 작성. data.first_team, data.second_team으로 구분
+            ctx.fillText('You are the first game winner', canvas.width / 2 - 100, canvas.height / 2);
+        }
+        if (status === 'second_game_start') {
+            ctx.fillStyle = 'black';
+            ctx.font = '48px serif';
+            //토너먼트 대진표 작성. data.first_team, data.second_team으로 구분
+            ctx.fillText(data.players, canvas.width / 2 - 100, canvas.height / 2);
+        }
+    }
     function updateGameState(gameState) {
         // Clear canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -184,7 +213,7 @@ export default function OnlinePong(canvasID) {
     }
 
     async function tournament() {
-        const tournamentResponse = await sendCommandToServer('matchserver.tournament_add_queue', {user_id: userinfo.user.id});
+        const tournamentResponse = await sendCommandToServer('matchserver.tournament_match_add_queue', {user_id: userinfo.user.id});
         if (tournamentResponse.status === 'OK') {
             console.log('Tournament added to queue successfully', tournamentResponse);
         }
@@ -445,6 +474,13 @@ export default function OnlinePong(canvasID) {
         ctx.fillStyle = 'black'; // 검은색으로 설정
         ctx.font = '48px Arial';
         ctx.fillText('로딩중...', canvas.width / 2 - 100, canvas.height / 2);
+    }
+
+    function clearCanvasWhite2() {
+        ctx.fillStyle = 'white'; // 흰색으로 설정
+        ctx.fillRect(0, 0, canvas.width, canvas.height); // 캔버스 전체를 흰색으로 칠함
+        ctx.fillStyle = 'black'; // 검은색으로 설정
+        ctx.font = '48px Arial';
     }
 
     function clearCanvasBlack() {
