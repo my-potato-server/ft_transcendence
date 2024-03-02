@@ -494,7 +494,15 @@ export default function OnlinePong(canvasID) {
             }
         }
     });
-
+    document.addEventListener('keypress', (event) => {
+        if (gamestatus === true) {
+            if (event.key === 'q') {
+                event.preventDefault();
+                const data = { method : 'matchserver.control_game', parameters: { cmd: "pause"}}
+                socket.send(JSON.stringify(data));
+            }
+        }
+    });
     function drawBall() {
         ctx.beginPath();
         ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2, false);

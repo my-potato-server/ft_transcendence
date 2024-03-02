@@ -36,6 +36,9 @@ export default function GameButton() {
 				<button id="offline3" class="btn btn-primary btn-lg game-button" style="height: 300px; width: 100%;opacity:0.6;border-radius:50%;">Offline3</button>
 			</div>
 			<div class="col">
+				<button id="offline4" class="btn btn-primary btn-lg game-button" style="height: 300px; width: 100%;opacity:0.6;border-radius:50%;">Offline4</button>
+			</div>
+			<div class="col">
 				<button id="online" class="btn btn-primary btn-lg game-button" style="height: 300px; width: 100%;opacity:0.6;border-radius:50%;">Online</button>
 			</div>
 		</div>
