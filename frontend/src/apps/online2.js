@@ -256,22 +256,22 @@ export default function OnlinePong(canvasID) {
     }
 
 
-    // Add event listener for keyboard input
-    document.addEventListener('keydown', (event) => {
-        let cmd = {};
-        switch(event.key) {
-            case 'ArrowUp':
-                cmd = { action: 'move', direction: 'up' };
-                break;
-            case 'ArrowDown':
-                cmd = { action: 'move', direction: 'down' };
-                break;
-            // Handle other key inputs
-        }
-        if (cmd.action) {
-            sendCommandToServer('matchserver.control', cmd);
-        }
-    });
+    // // Add event listener for keyboard input
+    // document.addEventListener('keydown', (event) => {
+    //     let cmd = {};
+    //     switch(event.key) {
+    //         case 'ArrowUp':
+    //             cmd = { action: 'move', direction: 'up' };
+    //             break;
+    //         case 'ArrowDown':
+    //             cmd = { action: 'move', direction: 'down' };
+    //             break;
+    //         // Handle other key inputs
+    //     }
+    //     if (cmd.action) {
+    //         sendCommandToServer('matchserver.control', cmd);
+    //     }
+    // });
 
 
     function drawUI() {
