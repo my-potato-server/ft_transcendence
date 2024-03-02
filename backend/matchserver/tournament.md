@@ -103,6 +103,17 @@
 
 ---
 
+## ETC. 게임 일시정지 시키기
+### Request
+```json
+{
+  "method":"matchserver.control_game",
+  "parameters": {"cmd": "pause"},
+  "responseId":1
+}
+```
+
+
 ## ETC-0. Online 버튼 누르기
 ### Request. get_user_state로 유저의 상태를 확인한다.
 ```json

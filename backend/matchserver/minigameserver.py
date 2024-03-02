@@ -245,6 +245,9 @@ class MiniGameServer:
         if cmd=="movepaddle_down":
             gameInstance.update_paddle(playernum, 16)
             return {'status': 'OK', 'message': 'paddle moved'}
+        if cmd=="pause":
+            gameInstance.pause_game()
+            return {'status': 'OK', 'message': 'game paused'}
 
         # 게임 정보 요청
         if cmd=="gameinfo": pass

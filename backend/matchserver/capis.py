@@ -328,13 +328,15 @@ async def control_game(user_id, cmd, move=None, **kwargs):
     # 대진표 받아오기
         if cmd == "get_tournament_bracket":
             pass
-        if cmd == "ready_to_play": MiniGameServer().control(user_id, "ready to play")
+        if cmd == "ready_to_play":
+            MiniGameServer().control(user_id, "ready to play")
+        if cmd == "pause":
+            MiniGameServer().control(user_id, "pause")
 
     # 게임 조작하기
         if cmd == "game_control":
             if move == "up" : return MiniGameServer().control(user_id, "movepaddle_up")
             if move == "down" : return MiniGameServer().control(user_id, "movepaddle_down")
-            # if move == "stop" : return MiniGameServer().control(user_id, "movepaddle_stop")
         return ({})
 
 

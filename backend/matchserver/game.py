@@ -26,6 +26,7 @@ class PongGameAsync:
 
         self.game_start = False # 게임 시작 상태
         self.game_over = False  # 게임 종료 상태
+        self.game_pause = False  # 게임 일시정지 상태
         self.ready = [False, False]
         self.fps = 60
         self.game_id = game_id
@@ -98,6 +99,9 @@ class PongGameAsync:
         elif self.right_paddle_y <= 0:
             self.right_paddle_y = 0
 
+    def pause_game(self):
+        self.game_pause = True if self.game_pause == False else False
+
     def reset_ball(self):
         self.ball_position = {'x': 640, 'y': 360}
         self.ball_velocity = {'x': random.choice([-3, 3]), 'y': random.choice([-4, 4])}
@@ -128,6 +132,9 @@ class PongGameAsync:
             await asyncio.sleep(1/2) # 게임이 시작되기를 기다림
         await asyncio.sleep(1) # 약간의 딜레이
         while not self.game_over:
+            if self.game_pause:
+                await asyncio.sleep(1/self.fps)
+                continue
             self.move_ball()
             self.check_game_over()
             await MiniGameServer().broadcast_realtime_gamestate2user(self.game_id)
