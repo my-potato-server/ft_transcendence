@@ -78,6 +78,16 @@ export default function injectProfileStyles() {
         font-weight: bold;
     }
 
+    .Sigh {
+        color: #777;
+        background-color: #fff;
+        border: 1px solid #000;
+        font-size: 0.8em;
+        font-weight: tilt;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
     .dropdown-content {
         display: none;
         text-align: left;
