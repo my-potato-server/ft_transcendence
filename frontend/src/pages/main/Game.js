@@ -131,6 +131,7 @@ export default class Game extends Component {
 
         // 캔버스 요소가 이미 있으면 재사용, 없으면 새로 생성
         if (!this.canvas) {
+            console.log('create new canvas');
             this.canvas = document.createElement('canvas');
             this.canvas.id = 'gameCanvas';
             this.canvas.width = 1280;
@@ -138,9 +139,9 @@ export default class Game extends Component {
             this.canvas.style.border = '2px solid White';
             this.gameContainer.appendChild(this.canvas);
         }
-
-        const ctx = this.canvas.getContext('2d');
-        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        console.log('web canvas check', this.canvas);
+        // const ctx = this.canvas.getContext('2d');
+        // ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         // Load the appropriate game module based on the selection
         switch (mode) {
@@ -175,7 +176,6 @@ export default class Game extends Component {
         this.gameContainer.style.marginTop = `${navbarHeight}px`;
         this.gameSelectionButtons.classList.add('d-none');
         this.gameContainer.classList.remove('d-none');
-        
     }
 
     hideCanvas() {

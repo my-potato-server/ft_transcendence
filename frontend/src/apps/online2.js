@@ -79,7 +79,7 @@ export default function OnlinePong(canvasID) {
                 if (data.status === 'OK') {
                     console.log('Game started', data.data);
                     gamestatus = true;
-                    updateGameScreen(data.data);
+                    updateGameScreen(data.data.realtime_gamestate);
                 }
                 break;
             case 'error':
@@ -456,11 +456,11 @@ export default function OnlinePong(canvasID) {
         //     }));
         // }
         if (event.key === 'ArrowUp') {
-            const data = { method : 'matchserver.control_game', parameters: { cmd: "UP"}}
+            const data = { method : 'matchserver.control_game', parameters: { cmd: "game_control", move: 'up'}}
             socket.send(JSON.stringify({data}));
         }
         if (event.key === 'ArrowDown') {
-            const data = { method : 'matchserver.control_game', parameters: { cmd: "DOWN"}}
+            const data = { method : 'matchserver.control_game', parameters: { cmd: "game_control", move: 'down'}}
             socket.send(JSON.stringify({data}));
         }
     });
