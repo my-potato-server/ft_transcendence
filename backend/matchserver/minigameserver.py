@@ -39,7 +39,6 @@ class MiniGameServer:
         game_id = self.create_game(game_type=gametype, players=players)
 
         if game_id == "error" :
-            # message = {'status': "error", 'message' : "매칭에 실패했습니다. 매칭을 다시 시도해 주세요." }
             message = {
                 'method': "fast_match_matched",
                 'status': "error",
@@ -47,12 +46,9 @@ class MiniGameServer:
                 'message' : "매칭에 실패했습니다. 매칭을 다시 시도해 주세요.",
                 'data': None
             }
-
             for user_id in players:
                 await send_message_to(user_id, message)
-        
-        else : 
-            # message = {'status': "OK", 'message' : "매칭에 실패했습니다. 매칭을 다시 시도해 주세요." }
+        else :
             message = {
                 'method': "fast_match_matched",
                 'status': "OK",
@@ -205,25 +201,18 @@ class MiniGameServer:
         # 게임 인스턴스 생성 및 저장
         if game_type == "pong":
             game["instance"] = PongGameAsync(game_id=game_id, result_callback=result_callback, *args, **kwargs)
-        else : return "error"
-            
-        # 다른 게임 타입에 대한 처리
-        # ...
+        else:
+            return "error"
 
-
-        
         self.game_id2game[game_id] = game
-
         for user_id in players:
             self.user_id2game_id[user_id] = game_id
-
         return game_id
 
 
     def remove_game(self, game_id, *args, **kwargs):
-        
-        if not game_id in self.game_id2game: return "error - that game-id not exist"
-
+        if not game_id in self.game_id2game:
+            return "error - that game-id not exist"
         players = self.game_id2game[game_id]["players"]
         inscance = self.game_id2game[game_id]["instance"]
         gametype = self.game_id2game[game_id]["gametype"]
@@ -241,11 +230,6 @@ class MiniGameServer:
 
 
     def control(self, user_id, cmd, **kwargs):
-
-        # game = self.game_id2game[ self.user_id2game_id(user_id) ]
-        
-        # gameInstance = game["instance"]
-        # playernum = game["player"].index(user_id) + 1
         try:
             game_id = self.user_id2game_id.get(user_id)
             game = self.game_id2game.get(game_id)
@@ -254,9 +238,7 @@ class MiniGameServer:
             if "players" in game and user_id in game["players"]:
                 playernum = game.get("players").index(user_id) + 1
             else:
-                # 적절한 오류 처리나 대체 로직
                 return {'status': 'Error', 'message': 'Player ID not found in game players list.'}
-                # print("Player ID not found in game players list.")
         except KeyError as e:
             # 키가 없을 경우의 오류 처리
             print(f"Wrong game_id, - KeyError: {e}")
@@ -271,28 +253,20 @@ class MiniGameServer:
         # 게임에 참여 : 클라이언트가 완전히 게임을 시작할 준비가 되었을때
         if cmd=="ready to play" :
             gameInstance.ready_play(playernum)
-        # 게임 일시 정지
-        if cmd=="puase":
-            # gameInstance.pause_game(game["players"].index(user_id) + 1)
-            pass
-        # 게임 일시정지 해제
-        if cmd=="resume": 
-            # gameInstance.resume_game(game["players"].index(user_id) + 1)
-            pass
 
         # 패들 움직임
         if cmd=="movepaddle_up":
-            gameInstance.update_paddle(playernum, [0, 1]) 
+            gameInstance.update_paddle(playernum, -4)
             return {'status': 'OK', 'message': 'paddle moved'}
         if cmd=="movepaddle_down":
-            gameInstance.update_paddle(playernum, [0, -1]) 
+            gameInstance.update_paddle(playernum, 4)
             return {'status': 'OK', 'message': 'paddle moved'}
-        if cmd=="movepaddle_stop":
-            gameInstance.update_paddle(playernum, [0, 0]) 
-            return {'status': 'OK', 'message': 'paddle moved'}
+        # if cmd=="movepaddle_stop":
+        #     gameInstance.update_paddle(playernum, [0, 0])
+        #     return {'status': 'OK', 'message': 'paddle moved'}
 
         # 게임 정보 요청
-        if cmd=="gameinfo" :pass
+        if cmd=="gameinfo": pass
 
     def get_game(self, game_id):
         # 게임 인스턴스 반환
@@ -344,12 +318,8 @@ class MiniGameServer:
 
         return async_to_sync(tournament.get_tournament_state)()
 
-        return 
-        {
-            #대진표
-            
-
-            "players": game.get("players"), 
+        return {
+            "players": game.get("players"),
             "gametype": game.get("gametype"),
             "gamestate": game.get("instance").get_game_state()
         }
@@ -360,11 +330,11 @@ class MiniGameServer:
         # game_id = self.user_id2game_id.get(user_id)
         from .capis import send_message_to
 
-        if game_id is None: return None
-
+        if game_id is None:
+            return None
         game = self.game_id2game.get(game_id)
-
-        if game is None: return None
+        if game is None:
+            return None
 
         message = {
             'method': "server.game",
@@ -378,7 +348,6 @@ class MiniGameServer:
 
         for user_id in players:
             await send_message_to(user_id, message)
-
         return 
 
 # 사용 예시

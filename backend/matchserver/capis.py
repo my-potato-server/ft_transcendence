@@ -407,30 +407,19 @@ async def fast_match_add_queue(user_id):
 
 
 async def control_game(user_id, cmd, move=None, **kwargs):
-
     # 대진표 받아오기
         if cmd == "get_tournament_bracket":
             pass
-
         if cmd == "ready_to_play": MiniGameServer().control(user_id, "ready to play")
-
 
     # 게임 조작하기
         if cmd == "game_control":
             if move == "up" : return MiniGameServer().control(user_id, "movepaddle_up")
             if move == "down" : return MiniGameServer().control(user_id, "movepaddle_down")
-            if move == "stop" : return MiniGameServer().control(user_id, "movepaddle_stop")
-
-
-    # 일시정지하기
-        if cmd == "game_pause":
-            pass
-
-    # 일시정지 풀기
-        if cmd == "game_resume":
-            pass
-        
+            # if move == "stop" : return MiniGameServer().control(user_id, "movepaddle_stop")
         return ({})
+
+
 @database_sync_to_async
 def user_id2user_nickname(user_id):
     try:
