@@ -385,11 +385,7 @@ export default function OnlinePong(canvasID) {
         //     clearCanvasWhite();
         // }
 
-        // 토너먼트
-        if (x >= 10 && x <= 110 && y >= canvas.height - 50 && y <= canvas.height - 10) {
-            tournament();
-            clearCanvasWhite();
-        }
+
         // // '방 입장' 버튼 클릭 확인
         // if (x >= 120 && x <= 220 && y >= canvas.height - 50 && y <= canvas.height - 10) {
         //     listRooms().then(rooms => {
@@ -402,11 +398,17 @@ export default function OnlinePong(canvasID) {
         // if (x >= 230 && x <= 330 && y >= canvas.height - 50 && y <= canvas.height - 10) {
         //     deleteRoom();
         // }
-
-        // '빠른 대전' 버튼 클릭 확인
-        if (x >= 340 && x <= 440 && y >= canvas.height - 50 && y <= canvas.height - 10) {
-            quickmatch();
-            clearCanvasWhite();
+        if (gamestatus === false) {
+            // 토너먼트
+            if (x >= 10 && x <= 110 && y >= canvas.height - 50 && y <= canvas.height - 10) {
+                tournament();
+                clearCanvasWhite();
+            }
+            // '빠른 대전' 버튼 클릭 확인
+            if (x >= 340 && x <= 440 && y >= canvas.height - 50 && y <= canvas.height - 10) {
+                quickmatch();
+                clearCanvasWhite();
+            }
         }
     }
     canvas.removeEventListener('click', previousClickHandler); // Remove previous click handler if exists
