@@ -192,7 +192,8 @@ class MiniGameServer:
         return game_id
 
 
-    def create_room(self):pass
+    def create_room(self):
+        pass
 
     def create_game(self, game_type, players, result_callback = None, *args, **kwargs):
         # game = {players:user_id_list, gametype:game_type, instance = gameInstance }
@@ -210,7 +211,7 @@ class MiniGameServer:
         return game_id
 
 
-    def remove_game(self, game_id, *args, **kwargs):
+    def remove_game(self, game_id, winner: int):
         if not game_id in self.game_id2game:
             return "error - that game-id not exist"
         players = self.game_id2game[game_id]["players"]
@@ -220,12 +221,7 @@ class MiniGameServer:
         # 플레이어와 게임 사이의 연결 제거
         for user_id in players:
             del self.user_id2game_id[user_id]
-
-        # 게임 결과 서버에 전송
-        # await... 서버 api 호출
-
         del self.game_id2game[game_id]
-
         return game_id
 
 
@@ -243,16 +239,14 @@ class MiniGameServer:
             # 키가 없을 경우의 오류 처리
             print(f"Wrong game_id, - KeyError: {e}")
             return {'status': 'Error', 'message': f"Wrong game_id, - KeyError: {e}"}
-
         except ValueError as e:
             # 리스트에서 값 찾기 실패
             print(f"User not in game, ValueError: {e}")
             return {'status': 'Error', 'message': f"User not in game, ValueError: {e}"}
 
-
         # 게임에 참여 : 클라이언트가 완전히 게임을 시작할 준비가 되었을때
         if cmd=="ready to play" :
-            gameInstance.ready_play(playernum)
+            gameInstance.ready_play(playernum, user_id)
 
         # 패들 움직임
         if cmd=="movepaddle_up":
@@ -261,9 +255,6 @@ class MiniGameServer:
         if cmd=="movepaddle_down":
             gameInstance.update_paddle(playernum, 4)
             return {'status': 'OK', 'message': 'paddle moved'}
-        # if cmd=="movepaddle_stop":
-        #     gameInstance.update_paddle(playernum, [0, 0])
-        #     return {'status': 'OK', 'message': 'paddle moved'}
 
         # 게임 정보 요청
         if cmd=="gameinfo": pass
@@ -341,7 +332,7 @@ class MiniGameServer:
             'status': "OK",
             'data': {
                 "gametype": game.get("gametype"),
-                "realtime_gamestate": game.get("instance").get_realtime_state()
+                "realtime_gamestate": game.get("instance").get_game_state()
             }
         }
         players = game.get("players")

@@ -1,6 +1,7 @@
-import numpy as np
 import random
 import asyncio
+
+from game.utils import create_match_history, create_tournament_id
 
 
 class PongGameAsync:
@@ -13,6 +14,9 @@ class PongGameAsync:
         self.right_player_score = 0  # 플레이어 2의 점수
         self.winner = None  # 승자
 
+        self.left_user_id = None
+        self.right_user_id = None
+
         self.game_start = False # 게임 시작 상태
         self.game_over = False  # 게임 종료 상태
         self.ready = [False, False]
@@ -23,7 +27,12 @@ class PongGameAsync:
         self.start_game()
 
 
-    def ready_play(self, playerindex):
+    def ready_play(self, playerindex, user_id):
+        if playerindex == 1:
+            self.left_user_id = user_id
+        if playerindex == 2:
+            self.right_user_id = user_id
+
         player = playerindex - 1
         print("ready play", player)
         if player < 0 or 1 < player :
@@ -99,18 +108,6 @@ class PongGameAsync:
             "game_start": self.game_start,
             'winner': self.winner,
         }
-    
-    def get_realtime_state(self):
-        return {
-            'left_paddle_y': self.left_paddle_y,
-			'right_paddle_y': self.right_paddle_y,
-			'ball_position': self.ball_position,
-			'left_player_score': self.left_player_score,
-			'right_player_score': self.right_player_score,
-            "game_over": self.game_over,
-            "game_start": self.game_start,
-            'winner': self.winner,
-        }
 
     def check_game_over(self):
         if self.left_player_score >= 5:
@@ -130,9 +127,18 @@ class PongGameAsync:
             self.check_game_over()
             await MiniGameServer().broadcast_realtime_gamestate2user(self.game_id)
             await asyncio.sleep(1/self.fps)  # 초당 60회 업데이트, 일시정지 상태에서도 체크
+
         # 결과 저장
-        # self.result_callback(call_return=self.get_game_state(), call_indetify=self.callback_indetify)
-        MiniGameServer().remove_game(self.game_id)  # 게임 종료 후 게임 삭제
+        tournament_id = create_tournament_id()
+        create_match_history(
+            tournament_id,
+            2,
+            self.left_user_id if self.winner == 1 else self.right_user_id,
+            self.right_user_id if self.winner == 2 else self.left_user_id,
+            self.left_player_score if self.winner == 1 else self.right_player_score,
+            self.right_player_score if self.winner == 2 else self.left_player_score,
+        )
+        MiniGameServer().remove_game(self.game_id, self.winner)  # 게임 종료 후 게임 삭제
         
     def start_game(self):
         loop = asyncio.get_event_loop()
