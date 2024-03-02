@@ -19,7 +19,7 @@ export default function OfflinePong(canvasID) {
         x: canvas.width / 2,
         y: canvas.height / 2,
         radius: 10,
-        speed: 4,
+        speed: 2,
         velocityX: 4 * (Math.random() > 0.5 ? 1 : -1),
         velocityY: 4 * (Math.random() > 0.5 ? 1 : -1),
         scoreLeft: 0,
@@ -33,8 +33,14 @@ export default function OfflinePong(canvasID) {
     let leftPaddleY = canvas.height / 2 - paddleHeight / 2;
     let rightPaddleY = canvas.height / 2 - paddleHeight / 2;
 
-    let leftPaddleX = canvas.width * (0.3) / 2 ;
-    let rightPaddleX = canvas.width* (2 - 0.3) / 2;
+    let leftPaddleX = canvas.width * (0.1) / 2 ;
+    let rightPaddleX = canvas.width* (2 - 0.1) / 2;
+
+    let leftPaddleY2 = canvas.height * (1) / 2 - paddleHeight / 2;
+    let rightPaddleY2 = canvas.height * (1) / 2 - paddleHeight / 2; 
+    
+    let leftPaddleX2 = canvas.width * (0.4) / 2;
+    let rightPaddleX2 = canvas.width * (2 - 0.4) / 2; 
 
     // 키보드 입력 상태 추적
     let keysPressed = {};
@@ -104,6 +110,17 @@ export default function OfflinePong(canvasID) {
             ball.velocityX = -ball.velocityX;
         }
 
+        // 왼쪽 패들2
+        if ((leftPaddleX2 - paddleWidth * 1/2 < ball.x && ball.x < leftPaddleX2 + paddleWidth * 1/2 ) && (ball.y > leftPaddleY2 && ball.y < leftPaddleY2 + paddleHeight)) {
+            ball.velocityX = -ball.velocityX;
+        }
+
+        // 오른쪽 패들2
+        if ((rightPaddleX2 - paddleWidth * 1/2 < ball.x && ball.x < rightPaddleX2 + paddleWidth * 1/2 ) && (ball.y > rightPaddleY2 && ball.y < rightPaddleY2 + paddleHeight)) {
+            ball.velocityX = -ball.velocityX;
+        }
+
+
         // 왼쪽 또는 오른쪽 벽과의 충돌 (점수 계산)
         if (ball.x + ball.radius > canvas.width) {
             ball.scoreLeft++; // 왼쪽 플레이어 점수 증가
@@ -134,12 +151,37 @@ export default function OfflinePong(canvasID) {
         leftPaddleY = Math.min(leftPaddleY + paddleSpeed, canvas.height - paddleHeight);
     }
 
-    // 왼쪽 패들 좌우 움직임
-    if (keysPressed['a']) { // 'q' 키를 왼쪽으로 움직이는 데 사용
-        leftPaddleX = Math.max(leftPaddleX - paddleSpeed, -paddleWidth/2);
+    // // 왼쪽 패들 좌우 움직임
+    // if (keysPressed['a']) { // 'q' 키를 왼쪽으로 움직이는 데 사용
+    //     leftPaddleX = Math.max(leftPaddleX - paddleSpeed, -paddleWidth/2);
+    // }
+    // if (keysPressed['d']) { // 'e' 키를 오른쪽으로 움직이는 데 사용
+    //     leftPaddleX = Math.min(leftPaddleX + paddleSpeed, canvas.width/2 - paddleWidth/2);
+    // }
+
+    // 왼쪽2 패들 상하 움직임
+    if (keysPressed['r'] ) {
+        leftPaddleY2 = Math.max(leftPaddleY2 - paddleSpeed, 0);
     }
-    if (keysPressed['d']) { // 'e' 키를 오른쪽으로 움직이는 데 사용
-        leftPaddleX = Math.min(leftPaddleX + paddleSpeed, canvas.width/2 - paddleWidth/2);
+    if (keysPressed['f'] ) {
+        leftPaddleY2 = Math.min(leftPaddleY2 + paddleSpeed, canvas.height - paddleHeight);
+    }
+
+    // // 왼쪽2 패들 좌우 움직임
+    // if (keysPressed['f']) { // 'q' 키를 왼쪽으로 움직이는 데 사용
+    //     leftPaddleX = Math.max(leftPaddleX - paddleSpeed, -paddleWidth/2);
+    // }
+    // if (keysPressed['h']) { // 'e' 키를 오른쪽으로 움직이는 데 사용
+    //     leftPaddleX = Math.min(leftPaddleX + paddleSpeed, canvas.width/2 - paddleWidth/2);
+    // }
+
+
+    // 오른쪽 패들2 상하 움직임
+    if (keysPressed['i']) {
+        rightPaddleY2 = Math.max(rightPaddleY2 - paddleSpeed, 0);
+    }
+    if (keysPressed['k']) {
+        rightPaddleY2 = Math.min(rightPaddleY2 + paddleSpeed, canvas.height - paddleHeight);
     }
 
     // 오른쪽 패들 상하 움직임
@@ -150,13 +192,15 @@ export default function OfflinePong(canvasID) {
         rightPaddleY = Math.min(rightPaddleY + paddleSpeed, canvas.height - paddleHeight);
     }
 
-    // 오른쪽 패들 좌우 움직임
-    if (keysPressed['ArrowLeft']) { // 화살표 왼쪽 키를 왼쪽으로 움직이는 데 사용
-        rightPaddleX = Math.max(rightPaddleX - paddleSpeed, canvas.width/2 - paddleWidth/2);
-    }
-    if (keysPressed['ArrowRight']) { // 화살표 오른쪽 키를 오른쪽으로 움직이는 데 사용
-        rightPaddleX = Math.min(rightPaddleX + paddleSpeed, canvas.width - paddleWidth/2);
-    }
+    
+
+    // // 오른쪽 패들 좌우 움직임
+    // if (keysPressed['ArrowLeft']) { // 화살표 왼쪽 키를 왼쪽으로 움직이는 데 사용
+    //     rightPaddleX = Math.max(rightPaddleX - paddleSpeed, canvas.width/2 - paddleWidth/2);
+    // }
+    // if (keysPressed['ArrowRight']) { // 화살표 오른쪽 키를 오른쪽으로 움직이는 데 사용
+    //     rightPaddleX = Math.min(rightPaddleX + paddleSpeed, canvas.width - paddleWidth/2);
+    // }
     }
 
     //
@@ -184,12 +228,39 @@ export default function OfflinePong(canvasID) {
         ctx.fillText(ball.scoreLeft, canvas.width / 4, 50);
         ctx.fillText(ball.scoreRight, 3 * canvas.width / 4, 50);
 
-        // 패들 그리기 (위치 업데이트 반영)
-        ctx.fillStyle = '#F00';
+    //     // 패들 그리기 (위치 업데이트 반영)
+    //     ctx.fillStyle = '#F00';
+    //     ctx.fillRect(leftPaddleX, leftPaddleY, paddleWidth, paddleHeight); // 왼쪽 패들
+    //     ctx.fillStyle = '#00F';
+    //     ctx.fillRect(rightPaddleX, rightPaddleY, paddleWidth, paddleHeight); // 오른쪽 패들
+
+    //     // 패들 그리기 (위치 업데이트 반영)
+    //     ctx.fillStyle = '#F00';
+    //     ctx.fillRect(leftPaddleX2, leftPaddleY2, paddleWidth, paddleHeight); // 왼쪽 패들
+    //     ctx.fillStyle = '#00F';
+    //     ctx.fillRect(rightPaddleX2, rightPaddleY2, paddleWidth, paddleHeight); // 오른쪽 패들
+    // 
+
+
+        // 첫 번째 팀 (녹색 계열)
+        // 밝은 명도, 약간 낮은 채도를 가진 색상
+        ctx.fillStyle = 'hsl(120, 70%, 75%)'; // 밝은 녹색
         ctx.fillRect(leftPaddleX, leftPaddleY, paddleWidth, paddleHeight); // 왼쪽 패들
-        ctx.fillStyle = '#00F';
+        ctx.fillStyle = 'hsl(130, 70%, 75%)'; // 조금 다른 밝은 녹색
+        ctx.fillRect(leftPaddleX2, leftPaddleY2, paddleWidth, paddleHeight); // 왼쪽 패들
+
+        // 두 번째 팀 (파란색 계열)
+        // 밝은 명도, 약간 낮은 채도를 가진 색상
+        ctx.fillStyle = 'hsl(240, 70%, 75%)'; // 밝은 파란색
         ctx.fillRect(rightPaddleX, rightPaddleY, paddleWidth, paddleHeight); // 오른쪽 패들
+        ctx.fillStyle = 'hsl(250, 70%, 75%)'; // 조금 다른 밝은 파란색
+        ctx.fillRect(rightPaddleX2, rightPaddleY2, paddleWidth, paddleHeight); // 오른쪽 패들
+
+
     }
+
+
+
 
     // 게임 루프
     function gameLoop() {
