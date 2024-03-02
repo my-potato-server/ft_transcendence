@@ -2,7 +2,7 @@ export default function OfflinePong(canvasID) {
 
     const canvas = document.getElementById(canvasID);
     const ctx = canvas.getContext('2d');
-
+    let animationFrameId;
 
     let ball = {
         x: canvas.width / 2,
@@ -12,9 +12,54 @@ export default function OfflinePong(canvasID) {
         velocityX: 4 * (Math.random() > 0.5 ? 1 : -1),
         velocityY: 4 * (Math.random() > 0.5 ? 1 : -1),
         scoreLeft: 0,
-        scoreRight: 0
+        scoreRight: 0,
+        scoreTop: 0,
+        scoreBottom: 0
     };
 
+    let keysPressed = {};
+
+    const keydownHandler = (event) => {
+        if (["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(event.key)) {
+            event.preventDefault(); // 화살표 키에 대한 기본 동작을 방지
+        }
+        keysPressed[event.key] = true;
+
+        if (event.key === 'Enter' && gameState === 'ended') {
+            resetGame();
+        }
+    };
+
+    const keyupHandler = (event) => {
+        delete keysPressed[event.key];
+    };
+
+    document.addEventListener('keydown', keydownHandler);
+    document.addEventListener('keyup', keyupHandler);
+
+    function showWinner() {
+        ctx.font = '48px Arial';
+        ctx.fillStyle = '#FFF';
+        ctx.fillText(`${winner} player Win! (${leftScore} : ${rightScore})`, canvas.width / 2 - 200, canvas.height / 2 - 50);
+        ctx.fillText("Press Enter to replay", canvas.width / 2 - 250, canvas.height / 2 + 50);
+    }
+
+    function resetGame() {
+        gameState = 'playing';
+        ball.scoreLeft = 0;
+        ball.scoreRight = 0;
+        ball.scoreTop = 0;
+        ball.scoreBottom = 0;
+        resetBall();
+        gameLoop();
+    }
+
+    function resetBall() {
+        ball.x = canvas.width / 2;
+        ball.y = canvas.height / 2;
+        ball.velocityX = 4 * (Math.random() > 0.5 ? 1 : -1);
+        ball.velocityY = 4 * (Math.random() > 0.5 ? 1 : -1);
+    }
 
     function drawOctagonArena(ctx, centerX, centerY, sideLength) {
         ctx.fillStyle = 'Black';
@@ -76,24 +121,50 @@ export default function OfflinePong(canvasID) {
 
     function movePaddles() {
         // 상 하 좌 우 각 패들 움직임
-        if (keyPressed['q'])
+        if (keysPressed['q'])
             offseta = Math.max(offseta - paddleSpeed, -paddleWidth / 2);
-        if (keyPressed['a'])
+        if (keysPressed['a'])
             offseta = Math.min(offseta + paddleSpeed, canvas.width / 2 - paddleWidth / 2);
-        if (keyPressed['e'])
+        if (keysPressed['e'])
             offsetb = Math.max(offsetb - paddleSpeed, -paddleWidth / 2);
-        if (keyPressed['d'])
+        if (keysPressed['d'])
             offsetb = Math.min(offsetb + paddleSpeed, canvas.width / 2 - paddleWidth / 2);
-        if (keyPressed['t'])
+        if (keysPressed['t'])
             offsetc = Math.max(offsetc - paddleSpeed, -paddleWidth / 2);
-        if (keyPressed['g'])
+        if (keysPressed['g'])
             offsetc = Math.min(offsetc + paddleSpeed, canvas.width / 2 - paddleWidth / 2);
-        if (keyPressed['i'])
+        if (keysPressed['i'])
             offsetd = Math.max(offsetd - paddleSpeed, -paddleWidth / 2);
-        if (keyPressed['k'])
+        if (keysPressed['k'])
             offsetd = Math.min(offsetd + paddleSpeed, canvas.width / 2 - paddleWidth / 2);
     }
 
-    drawOctagonArena(ctx, centerX, centerY, sideLength);
-    drawPaddles(ctx, centerX, centerY, sideLength);
+    function drawBall() {
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2, false);
+        ctx.fillStyle = '#FFF';
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    function draw() {
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        drawOctagonArena(ctx, centerX, centerY, sideLength);
+        drawBall();
+        ctx.font = '48px Arial';
+        ctx.fillText(ball.scoreLeft, canvas.width / 4, 50);
+        ctx.fillText(ball.scoreRight, 3 * canvas.width / 4, 50);
+        ctx.fillText(ball.scoreTop, canvas.width / 2, 50);
+        ctx.fillText(ball.scoreBottom, canvas.width / 2, canvas.height - 50);
+        drawPaddles(ctx, centerX, centerY, sideLength);
+    }
+
+    function gameLoop() {
+        movePaddles();
+        draw();
+        animationFrameId = requestAnimationFrame(gameLoop);
+    }
+
+    gameLoop();
 }

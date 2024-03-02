@@ -15,10 +15,6 @@ export default class Profile extends Component {
             status : false
         }
 
-        // if (this.$parent.auth) {
-        //     this.infos = JSON.parse(this.$parent.userinfo).user;
-        //     console.log("Profile", this.infos);
-        // }
         this.infos = this.$parent.userinfo;
         this.sigh = this.$parent.sigh;
         console.log("Profile", this.infos);
@@ -80,7 +76,8 @@ export default class Profile extends Component {
             const infos = {
                 id : this.infos.id,
                 login : this.infos.login,
-                nickname : this.infos.nickname
+                nickname : this.infos.nickname,
+                since : this.infos.created_at
             }
             infoContainer.innerHTML = `
             <pre>
@@ -88,6 +85,7 @@ export default class Profile extends Component {
                 <div>id : ${infos.id}</div>
                 <div>name : ${infos.login}</div>
                 <div>nickname : ${infos.nickname}</div>
+                <div>since : ${this.infos.created_at}</div>
             </pre>`;
             infoContainer.style.display = 'block';
             this.buttoncheck.userinfo = true;

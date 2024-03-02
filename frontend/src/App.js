@@ -14,17 +14,22 @@ class app {
 		const auth = sessionStorage.getItem('auth') === 'true'; // 문자열 "true"를 boolean으로 변환
 		const token = sessionStorage.getItem('token');
 		const userinfo = sessionStorage.getItem('userinfo');
-		let onlineSocket;
 		console.log("userinfo", userinfo);
 		console.log("new app");
 		if (auth && token && userinfo) {
 			this.root.auth = true;
 			this.root.token = token;
 			this.root.userinfo = JSON.parse(userinfo).user;
+			this.root.onlineSocket = new WebSocket('wss://localhost/ws/account/online/');
+			this.root.onlineSocket.onopen = function (event) {
+				const payload = JSON.stringify({ token: sessionStorage.getItem('token') });
+				this.send(payload);
+			};
 		} else {
 			this.root.auth = false;
 			this.root.token = '';
 			this.root.userinfo = {};
+			this.root.onlineSocket = null;
 		}
 		this.sigh = sessionStorage.getItem('sigh');
 		if (this.sigh === undefined) {

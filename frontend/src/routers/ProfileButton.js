@@ -52,7 +52,6 @@ export default function ProfileButton() {
 					<button type="buttonc" class="Sigh">${sigh}</button>
 				</div>
 				<div class="level">Level: 999</div>
-				<div class="joined">가입일: 2022.07.04. D+583</div>
 			</div>
 		</div>
 	</div>
