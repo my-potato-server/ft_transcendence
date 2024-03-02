@@ -1,43 +1,38 @@
 import asyncio
+from asyncio import sleep
+
 from .game import PongGameAsync
 from .tournament import Tournament
-from asgiref.sync import async_to_sync
+from asgiref.sync import async_to_sync, sync_to_async
 
 debug = True
 
 class MiniGameServer:
     _instance = None
 
-
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls._instance.initialize()
         return cls._instance
-
  
     # game = {players:user_id_list, gametype:"pong", instance = gameInstance }
     def initialize(self):
         self.user_id2game_id = {}
         self.game_id2game = {}
         self.lastid = 0
-
         self.user_id2tournament_id = {}  # 오타 수정
         self.tournament_id2tournament = {}  # 오타 수정
-
         self.user_id2room_id = {}
         self.room_id2room = {}
+        self.fast_match_pool = {"pong" : [], "tournament" : []}
 
-        self.fast_match_pool = {"pong" : []}
 
-
-    async def fast_match_matched(self, players, gametype):
+    async def fast_match_matched(self, players, gametype, tournament_id=None, level=None):
         print("now on fast_match_matched")
         from .capis import send_message_to
-        
-        # 게임 만들기
-        game_id = self.create_game(game_type=gametype, players=players)
 
+        game_id = self.create_game(gametype, players, tournament_id, level)
         if game_id == "error" :
             message = {
                 'method': "fast_match_matched",
@@ -58,10 +53,7 @@ class MiniGameServer:
             }
             for user_id in players:
                 await send_message_to(user_id, message)
-
-        # 플레이어에게 알림 보내기
-            # 게임이 만들어졌으면 OK
-            # 게임 만들기에 실패하면 error
+        return game_id
 
 
     async def fast_matching(self, gametype):
@@ -72,122 +64,119 @@ class MiniGameServer:
             players.append(self.fast_match_pool[gametype].pop(0))
             await self.fast_match_matched(players, gametype)
 
-    def add_fast_match(self, user_id, gametype="pong"):
+    def add_fast_match(self, user_id, gametype):
         print("now on add_fast_match")
-        #지금은 퐁 게임 뿐
-        gametype = "pong"
-
-        # 대기열에 추가
         self.fast_match_pool[gametype].append(user_id)
-
-        # 유저가 추가될 떄 매칭로직 실행
         if len(self.fast_match_pool[gametype]) >= 2:
-            # loop = asyncio.get_event_loop()
-            # loop.create_task(self.fast_matching()) 
-            # self.fast_matching()
             asyncio.create_task(self.fast_matching(gametype))
-
         return {'status': "OK", 'message' : "user added at fast match queue"}
-        
 
+
+    async def tournament_matching(self, gametype):
+        from .capis import send_message_to
+        from game.utils import create_tournament_id
+
+        print("now on tournament_matching")
+        players_first_team = []
+        players_second_team = []
+        while len(self.fast_match_pool[gametype]) >= 4:
+            players_first_team.append(self.fast_match_pool[gametype].pop(0))
+            players_first_team.append(self.fast_match_pool[gametype].pop(0))
+            players_second_team.append(self.fast_match_pool[gametype].pop(0))
+            players_second_team.append(self.fast_match_pool[gametype].pop(0))
+            self.tournament_matching_launch = False
+        for player in players_first_team + players_second_team:
+            await send_message_to(
+                player,
+                {
+                    'method': "tournament_matched",
+                    'status': "OK",
+                    'message' : "토너먼트 매칭이 완료되었습니다.",
+                    'data': {"first_team": players_first_team, "second_team": players_second_team}
+                }
+            )
+        await sleep(5)
+        level = 4
+        tournament_id = sync_to_async(create_tournament_id)()
+        first_game_id = await self.fast_match_matched(players_first_team, gametype, tournament_id, level)
+        second_game_id = await self.fast_match_matched(players_second_team, gametype, tournament_id, level)
+        first_game = self.game_id2game[first_game_id]
+        second_game = self.game_id2game[second_game_id]
+        first_game_winner = None
+        second_game_winner = None
+        is_clear_first_game = False
+        is_clear_second_game = False
+        while not is_clear_first_game or not is_clear_second_game:
+            if first_game["is_over"] and not is_clear_first_game:
+                first_game_winner = first_game["winner_id"]
+                self.remove_game(first_game_id)
+                is_clear_first_game = True
+                await send_message_to(
+                    first_game_winner,
+                    {
+                        'method': "tournament_first_win",
+                        'status': "OK",
+                        'message': "첫번째 토너먼트에서 승리하였습니다.",
+                        'data': None
+                    }
+                )
+            if second_game["is_over"] and not is_clear_second_game:
+                second_game_winner = second_game["winner_id"]
+                self.remove_game(second_game_id)
+                is_clear_second_game = True
+                await send_message_to(
+                    second_game_winner,
+                    {
+                        'method': "tournament_first_win",
+                        'status': "OK",
+                        'message': "첫번째 토너먼트에서 승리하였습니다.",
+                        'data': None
+                    }
+                )
+            await sleep(0.1)
+        players = [first_game_winner, second_game_winner]
+        for player in players:
+            await send_message_to(
+                player,
+                {
+                    'method': "tournament_final_matched",
+                    'status': "OK",
+                    'message' : "토너먼트 결승 매칭이 완료되었습니다.",
+                    'data': {"players": players}
+                }
+            )
+        await sleep(5)
+        level = 2
+        await self.fast_match_matched(players, gametype, tournament_id, level)
+
+
+    def add_tournament_match(self, user_id, gametype):
+        print("now on add_tournament_match")
+        self.fast_match_pool[gametype].append(user_id)
+        if len(self.fast_match_pool[gametype]) >= 4:
+            asyncio.create_task(self.tournament_matching(gametype))
+        return {'status': "OK", 'message' : "user added at tournament match queue"}
 
     def get_new_id(self):
         self.lastid += 1
         return str(self.lastid)
 
 
-    def create_tornament(self, game_type, participants):
-        tournament = {"participants": participants, "gametype": game_type}
-        tournament["instance"] = Tournament(participants=participants)
-        tournament_id = self.get_new_id()
-        for user_id in participants:
-            self.user_id2tournament_id[user_id] = tournament_id
-        
-        self.tournament_id2tournament[tournament_id] = tournament
-
-        return tournament_id
-        pass
-
-    def tournament_loop(self, tournament_id=None, call_indentify = None, call_return = None):
-        if not (call_indentify == None and call_return == None): # 진행중인 토너먼트에서 불린 경우 
-            tournament_id = call_indentify["tournament_id"]
-
-        if tournament_id == None : return "error"     
-        
-        #토너먼트 ID 확보 완료
-
-        tournament = self.tournament_id2tournament.get(tournament_id)        
-        if tournament == None : return "error"
-
-        # 토너먼트 딕셔너리 확보 완료
-
-        participants = tournament.get("players")
-        game_type = tournament.get("gametype")
-        instance = tournament.get("instance")
-
-        if not (participants and game_type and instance): return "error"
-
-
-        # 여기서 승자 판별을 하자
-            # 만약에 call_indentify 에서 들어온 경우에는 승자를 판별해야 하고
-            # 만약에 tournament id가 직접 들어온 경우에는 그냥 시작 해주면 될 것 같은데
-
-        next_match = tournament.next_match()
-        if len(tournament.next_match()) == 1 : 
-            # 승자가 정해진 경우이다, 마무리 해야함
-            # 결과 서버에 
-            # 
-            pass
-
-        else : # 승자를 입력하고 다음 게임을 진행해야 하는 경우
-
-            pass
-
-        callback_identify = {
-            "tournament_id" : tournament_id,
-            }
-
-        tournament = self.tournament_id2tournament.get(tournament_id)
-        return 
-
-
-        # while True:
-        #     next_match = tournament.next_match()
-        #     if len(tournament.next_match()) == 1 :
-        #         # 승자가 정해진 경우이다, 마무리 해야함
-        #         pass            
-        #     await asyncio.sleep(2)
-
-
-    def remove_tournament(self, tournament_id):
-        if not tournament_id in self.tournament_id2tournament: return "error - that tournament_id not exist"
-
-        players = self.game_id2game[game_id]["players"]
-        inscance = self.game_id2game[game_id]["instance"]
-        gametype = self.game_id2game[game_id]["gametype"]
-
-        # 플레이어와 게임 사이의 연결 제거
-        for user_id in players:
-            del self.user_id2game_id[user_id]
-
-        # 게임 결과 서버에 전송
-        # await... 서버 api 호출
-
-        del self.game_id2game[game_id]
-
-        return game_id
-
-
     def create_room(self):
         pass
 
-    def create_game(self, game_type, players, result_callback = None, *args, **kwargs):
-        # game = {players:user_id_list, gametype:game_type, instance = gameInstance }
-        game = {"players": players, "gametype": game_type}
+    def create_game(self, game_type, players, tournament_id=None, level=None):
+        game = {"players": players, "gametype": game_type, "is_over": False,
+                "winner_id": None, "instance": None}
         game_id = self.get_new_id()
-        # 게임 인스턴스 생성 및 저장
         if game_type == "pong":
-            game["instance"] = PongGameAsync(game_id=game_id, result_callback=result_callback, *args, **kwargs)
+            game["instance"] = PongGameAsync(
+                game_id=game_id, is_tournament=False, tournament_id=tournament_id, level=level
+            )
+        elif game_type == "tournament":
+            game["instance"] = PongGameAsync(
+                game_id=game_id, is_tournament=True, tournament_id=tournament_id, level=level
+            )
         else:
             return "error"
 
@@ -197,7 +186,7 @@ class MiniGameServer:
         return game_id
 
 
-    def remove_game(self, game_id, winner: int):
+    def remove_game(self, game_id):
         if not game_id in self.game_id2game:
             return "error - that game-id not exist"
         players = self.game_id2game[game_id]["players"]
@@ -209,6 +198,11 @@ class MiniGameServer:
             del self.user_id2game_id[user_id]
         del self.game_id2game[game_id]
         return game_id
+
+
+    def result_tournament_game(self, game_id, winner_id):
+        self.game_id2game[game_id]["is_over"] = True
+        self.game_id2game[game_id]["winner_id"] = winner_id
 
 
     def control(self, user_id, cmd, **kwargs):
@@ -249,11 +243,6 @@ class MiniGameServer:
         # 게임 인스턴스 반환
         return self.games.get(game_id)
 
-    # def remove_game(self, game_id):
-    #     # 게임 인스턴스 제거
-    #     if game_id in self.games:
-    #         del self.games[game_id]
-
     def get_user_status(self, user_id):
         # 사용자가 속한 토너먼트
         tournament_id = self.user_id2tournament_id.get(user_id)
@@ -266,12 +255,11 @@ class MiniGameServer:
     def get_game_info(self, user_id):
         # 사용자가 속한 게임 리턴
         game_id = self.user_id2game_id.get(user_id)
-
-        if game_id is None: return None
-
+        if game_id is None:
+            return None
         game = self.game_id2game.get(game_id)
-
-        if game is None: return None
+        if game is None:
+            return None
 
         if "players" in game and user_id in game["players"]:
             playerindex = game.get("players").index(user_id)
@@ -279,24 +267,6 @@ class MiniGameServer:
         return {
             "players": game.get("players"), 
             "playerindex": playerindex,
-            "gametype": game.get("gametype"),
-            "gamestate": game.get("instance").get_game_state()
-        }
-
-    def get_tournament_info(self, user_id):
-        # 사용자가 속한 토너먼트 리턴
-        tournament_id = self.user_id2tournament_id.get(user_id)
-
-        if tournament_id is None: return None
-
-        tournament = self.tournament_id2tournament.get(tournament_id)
-
-        if tournament is None: return None
-
-        return async_to_sync(tournament.get_tournament_state)()
-
-        return {
-            "players": game.get("players"),
             "gametype": game.get("gametype"),
             "gamestate": game.get("instance").get_game_state()
         }
