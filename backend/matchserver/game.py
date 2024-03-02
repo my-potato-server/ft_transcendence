@@ -8,7 +8,7 @@ from game.models import Tournament, MatchHistory, UserMatchRecord
 
 
 class PongGameAsync:
-    def __init__(self, game_id, is_tournament=False, tournament_id=None, level=None):
+    def __init__(self, game_id, is_tournament=False, tournament_id=None, level=2):
         self.ball_position = {'x': 640, 'y': 360}
         self.ball_velocity = {'x': random.choice([-3, 3]), 'y': random.choice([-4, 4])}
         self.left_paddle_y = 360
@@ -134,15 +134,13 @@ class PongGameAsync:
             await asyncio.sleep(1/self.fps)  # 초당 60회 업데이트, 일시정지 상태에서도 체크
 
         # 결과 저장
-        self.save_result()
+        await self.save_result()
         if self.is_tournament and self.level != 2:
-            print("call result_tournament_game")
             MiniGameServer().result_tournament_game(
                 game_id=self.game_id,
                 winner_id=self.left_user_id if self.winner == 1 else self.right_user_id,
             )
         else:
-            print("call remove_game")
             MiniGameServer().remove_game(self.game_id)  # 게임 종료 후 게임 삭제
         
     def start_game(self):
@@ -155,6 +153,7 @@ class PongGameAsync:
     def save_result(self):
         tournament_id = Tournament.objects.create().id
         tournament_id = self.tournament_id if self.tournament_id is not None else tournament_id
+
         win_user_id = self.left_user_id if self.winner == 1 else self.right_user_id
         lose_user_id = self.right_user_id if self.winner == 1 else self.left_user_id
         winner_score = self.left_player_score if self.winner == 1 else self.right_player_score
@@ -183,15 +182,4 @@ class PongGameAsync:
             loser_score=loser_score,
             is_walkover=False,
         )
-
-
-        # match_history = create_match_history(
-        #     self.tournament_id if self.tournament_id is not None else tournament_id,
-        #     self.level if self.level is not None else 2,
-        #     self.left_user_id if self.winner == 1 else self.right_user_id,
-        #     self.right_user_id if self.winner == 1 else self.left_user_id,
-        #     self.left_player_score if self.winner == 1 else self.right_player_score,
-        #     self.right_player_score if self.winner == 1 else self.left_player_score,
-        # )
-        print("save_result", match_history.id)
         return match_history

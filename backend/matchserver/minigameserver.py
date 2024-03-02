@@ -1,9 +1,13 @@
 import asyncio
 from asyncio import sleep
+from asgiref.sync import async_to_sync, sync_to_async
+from channels.db import database_sync_to_async
 
 from .game import PongGameAsync
 from .tournament import Tournament
-from asgiref.sync import async_to_sync, sync_to_async
+
+from account.models import User
+
 
 debug = True
 
@@ -28,7 +32,7 @@ class MiniGameServer:
         self.fast_match_pool = {"pong" : [], "tournament" : []}
 
 
-    async def fast_match_matched(self, players, gametype, tournament_id=None, level=None):
+    async def fast_match_matched(self, players, gametype, tournament_id=None, level=2):
         print("now on fast_match_matched")
         from .capis import send_message_to
 
@@ -72,6 +76,11 @@ class MiniGameServer:
         return {'status': "OK", 'message' : "user added at fast match queue"}
 
 
+    @database_sync_to_async
+    def get_nickname_by_user_id_list(self, user_id_list):
+        return [User.objects.get(id=user_id).nickname for user_id in user_id_list]
+
+
     async def tournament_matching(self, gametype):
         from .capis import send_message_to
         from game.utils import create_tournament_id
@@ -85,17 +94,19 @@ class MiniGameServer:
             players_second_team.append(self.fast_match_pool[gametype].pop(0))
             players_second_team.append(self.fast_match_pool[gametype].pop(0))
             self.tournament_matching_launch = False
+        first_team_nickname = await self.get_nickname_by_user_id_list(players_first_team)
+        second_team_nickname = await self.get_nickname_by_user_id_list(players_second_team)
         message = {
             'method': "tournament_matched",
             'status': "OK",
             'message' : "토너먼트 매칭이 완료되었습니다.",
-            'data': {"first_team": players_first_team, "second_team": players_second_team}
+            'data': {"first_team": first_team_nickname, "second_team": second_team_nickname}
         }
         for player in players_first_team + players_second_team:
             await send_message_to(player, message)
         await sleep(5)
         level = 4
-        tournament_id = sync_to_async(create_tournament_id)()
+        tournament_id = await database_sync_to_async(create_tournament_id)()
         first_game_id = await self.fast_match_matched(players_first_team, gametype, tournament_id, level)
         second_game_id = await self.fast_match_matched(players_second_team, gametype, tournament_id, level)
         first_game = self.game_id2game[first_game_id]
@@ -133,6 +144,7 @@ class MiniGameServer:
                 )
             await sleep(0.1)
         players = [first_game_winner, second_game_winner]
+        players_nickname = await self.get_nickname_by_user_id_list(players)
         for player in players:
             await send_message_to(
                 player,
@@ -140,7 +152,7 @@ class MiniGameServer:
                     'method': "tournament_final_matched",
                     'status': "OK",
                     'message' : "토너먼트 결승 매칭이 완료되었습니다.",
-                    'data': {"players": players}
+                    'data': {"players": players_nickname}
                 }
             )
         await sleep(5)
@@ -163,13 +175,13 @@ class MiniGameServer:
     def create_room(self):
         pass
 
-    def create_game(self, game_type, players, tournament_id=None, level=None):
+    def create_game(self, game_type, players, tournament_id=None, level=2):
         game = {"players": players, "gametype": game_type, "is_over": False,
                 "winner_id": None, "instance": None}
         game_id = self.get_new_id()
         if game_type == "pong":
             game["instance"] = PongGameAsync(
-                game_id=game_id, is_tournament=False, tournament_id=tournament_id, level=level
+                game_id=game_id, is_tournament=False, tournament_id=tournament_id, level=2
             )
         elif game_type == "tournament":
             game["instance"] = PongGameAsync(
