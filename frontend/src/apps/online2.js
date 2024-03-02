@@ -455,13 +455,16 @@ export default function OnlinePong(canvasID) {
         //         key: event.key,
         //     }));
         // }
+
         if (event.key === 'ArrowUp') {
+            event.preventDefault();
             const data = { method : 'matchserver.control_game', parameters: { cmd: "game_control", move: 'up'}}
-            socket.send(JSON.stringify({data}));
+            socket.send(JSON.stringify(data));
         }
         if (event.key === 'ArrowDown') {
+            event.preventDefault();
             const data = { method : 'matchserver.control_game', parameters: { cmd: "game_control", move: 'down'}}
-            socket.send(JSON.stringify({data}));
+            socket.send(JSON.stringify(data));
         }
     });
 
