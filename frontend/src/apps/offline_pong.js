@@ -123,7 +123,7 @@ export default function OfflinePong(canvasID) {
     //
 
     function movePaddles() {
-        if (keysPressed['w'] || keysPressed['a']) {
+        if (keysPressed['ㅁ'] || keysPressed['a']) {
             leftPaddleY = Math.max(leftPaddleY - paddleSpeed, 0);
         }
         if (keysPressed['s'] || keysPressed['d']) {
