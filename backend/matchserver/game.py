@@ -133,6 +133,7 @@ class PongGameAsync:
         await asyncio.sleep(1) # 약간의 딜레이
         while not self.game_over:
             if self.game_pause:
+                await MiniGameServer().broadcast_realtime_gamestate2user(self.game_id)
                 await asyncio.sleep(1/self.fps)
                 continue
             self.move_ball()
