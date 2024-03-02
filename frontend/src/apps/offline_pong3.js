@@ -29,12 +29,14 @@ export default function OfflinePong(canvasID) {
     // 패들 위치 및 속도 정의
     const paddleHeight = 100;
     const paddleWidth = 25;
-    const paddleSpeed = 4;
+    const paddleSpeed = 3;
     let leftPaddleY = canvas.height / 2 - paddleHeight / 2;
     let rightPaddleY = canvas.height / 2 - paddleHeight / 2;
 
     let leftPaddleX = canvas.width * (0.3) / 2 ;
     let rightPaddleX = canvas.width* (2 - 0.3) / 2;
+    
+    let collisoin_buffer = 0
 
     // 키보드 입력 상태 추적
     let keysPressed = {};
@@ -95,13 +97,19 @@ export default function OfflinePong(canvasID) {
 
         // 패들과의 충돌 감지
         // 왼쪽 패들
-        if ((leftPaddleX - paddleWidth * 1/2 < ball.x && ball.x < leftPaddleX + paddleWidth * 1/2 ) && (ball.y > leftPaddleY && ball.y < leftPaddleY + paddleHeight)) {
-            ball.velocityX = -ball.velocityX;
-        }
+        if (collisoin_buffer > 1) {collisoin_buffer -=1}
+        else{
+            // if ((leftPaddleX - paddleWidth * 1/2 < ball.x && ball.x < leftPaddleX + paddleWidth * 1/2 ) && (ball.y > leftPaddleY && ball.y < leftPaddleY + paddleHeight)) {
+            if ((leftPaddleX + paddleWidth * 1/2 < ball.x && ball.x < leftPaddleX + paddleWidth * 3/2 ) && (ball.y > leftPaddleY && ball.y < leftPaddleY + paddleHeight)) {
+                ball.velocityX = -ball.velocityX;
+                collisoin_buffer = 40
+            }
 
-        // 오른쪽 패들
-        if ((rightPaddleX - paddleWidth * 1/2 < ball.x && ball.x < rightPaddleX + paddleWidth * 1/2 ) && (ball.y > rightPaddleY && ball.y < rightPaddleY + paddleHeight)) {
-            ball.velocityX = -ball.velocityX;
+            // 오른쪽 패들
+            if ((rightPaddleX - paddleWidth * 1/2 < ball.x && ball.x < rightPaddleX + paddleWidth * 1/2 ) && (ball.y > rightPaddleY && ball.y < rightPaddleY + paddleHeight)) {
+                ball.velocityX = -ball.velocityX;
+                collisoin_buffer = 40
+            }
         }
 
         // 왼쪽 또는 오른쪽 벽과의 충돌 (점수 계산)
