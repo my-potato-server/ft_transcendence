@@ -78,6 +78,7 @@ class MiniGameServer:
 
     def remove_fast_match(self, user_id, gametype):
     # print("now on add_fast_match")
+        print("remove fast match")
         try : self.fast_match_pool[gametype].remove(user_id)
         except : print("fail to remove")
 
