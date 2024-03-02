@@ -95,12 +95,12 @@ export default function OfflinePong(canvasID) {
 
         // 패들과의 충돌 감지
         // 왼쪽 패들
-        if (ball.x - ball.radius < leftPaddleX + paddleWidth && ball.y > leftPaddleY && ball.y < leftPaddleY + paddleHeight) {
+        if ((leftPaddleX - paddleWidth * 1/2 < ball.x && ball.x < leftPaddleX + paddleWidth * 1/2 ) && (ball.y > leftPaddleY && ball.y < leftPaddleY + paddleHeight)) {
             ball.velocityX = -ball.velocityX;
         }
 
         // 오른쪽 패들
-        if (ball.x + ball.radius > rightPaddleX - paddleWidth && ball.y > rightPaddleY && ball.y < rightPaddleY + paddleHeight) {
+        if ((rightPaddleX - paddleWidth * 1/2 < ball.x && ball.x < rightPaddleX + paddleWidth * 1/2 ) && (ball.y > rightPaddleY && ball.y < rightPaddleY + paddleHeight)) {
             ball.velocityX = -ball.velocityX;
         }
 
@@ -136,10 +136,10 @@ export default function OfflinePong(canvasID) {
 
     // 왼쪽 패들 좌우 움직임
     if (keysPressed['a']) { // 'q' 키를 왼쪽으로 움직이는 데 사용
-        leftPaddleX = Math.max(leftPaddleX - paddleSpeed, 0);
+        leftPaddleX = Math.max(leftPaddleX - paddleSpeed, -paddleWidth/2);
     }
     if (keysPressed['d']) { // 'e' 키를 오른쪽으로 움직이는 데 사용
-        leftPaddleX = Math.min(leftPaddleX + paddleSpeed, canvas.width - paddleWidth);
+        leftPaddleX = Math.min(leftPaddleX + paddleSpeed, canvas.width/2 - paddleWidth/2);
     }
 
     // 오른쪽 패들 상하 움직임
@@ -152,10 +152,10 @@ export default function OfflinePong(canvasID) {
 
     // 오른쪽 패들 좌우 움직임
     if (keysPressed['ArrowLeft']) { // 화살표 왼쪽 키를 왼쪽으로 움직이는 데 사용
-        rightPaddleX = Math.max(rightPaddleX - paddleSpeed, 0);
+        rightPaddleX = Math.max(rightPaddleX - paddleSpeed, canvas.width/2 - paddleWidth/2);
     }
     if (keysPressed['ArrowRight']) { // 화살표 오른쪽 키를 오른쪽으로 움직이는 데 사용
-        rightPaddleX = Math.min(rightPaddleX + paddleSpeed, canvas.width - paddleWidth);
+        rightPaddleX = Math.min(rightPaddleX + paddleSpeed, canvas.width - paddleWidth/2);
     }
     }
 
