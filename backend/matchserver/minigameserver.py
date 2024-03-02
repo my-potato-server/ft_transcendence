@@ -85,16 +85,14 @@ class MiniGameServer:
             players_second_team.append(self.fast_match_pool[gametype].pop(0))
             players_second_team.append(self.fast_match_pool[gametype].pop(0))
             self.tournament_matching_launch = False
+        message = {
+            'method': "tournament_matched",
+            'status': "OK",
+            'message' : "토너먼트 매칭이 완료되었습니다.",
+            'data': {"first_team": players_first_team, "second_team": players_second_team}
+        }
         for player in players_first_team + players_second_team:
-            await send_message_to(
-                player,
-                {
-                    'method': "tournament_matched",
-                    'status': "OK",
-                    'message' : "토너먼트 매칭이 완료되었습니다.",
-                    'data': {"first_team": players_first_team, "second_team": players_second_team}
-                }
-            )
+            await send_message_to(player, message)
         await sleep(5)
         level = 4
         tournament_id = sync_to_async(create_tournament_id)()

@@ -1,5 +1,109 @@
 
-## 0. Online 버튼 누르기
+## 0. 토너먼트 매칭 입장
+### Request
+```json
+{
+  "method":"matchserver.tournament_match_add_queue",
+  "responseId":1
+}
+```
+### Response
+4명 될 때까지 대기
+```json
+{
+    "method": "matchserver.tournament_match_add_queue",
+    "status": "OK",
+    "identify": null,
+    "responseId": 3,
+    "data": {
+        "status": "OK",
+        "message": "user added at tournament match queue"
+    }
+}
+```
+4명 되면 아래 메시지가 옴
+```json
+{
+    "method": "tournament_matched",
+    "status": "OK",
+    "message": "토너먼트 매칭이 완료되었습니다.",
+    "data": {
+        "first_team": [
+            3,
+            4
+        ],
+        "second_team": [
+            5,
+            6
+        ]
+    },
+    "type": "send_message"
+}
+```
+빠른 대전 처럼 매칭되었다는 메시지 추가로 옴
+```json
+{
+    "method": "fast_match_matched",
+    "status": "OK",
+    "identify": "server",
+    "message": "매칭되었습니다. 곧 게임을 시작합니다.",
+    "data": null,
+    "type": "send_message"
+}
+```
+
+## 1. 첫번째 토너먼트 시작
+토너먼트 게임은 빠른대전과 방식은 거의 비슷
+### Request
+```json
+{
+  "method":"matchserver.control_game",
+  "parameters": {"cmd": "ready_to_play"},
+  "responseId":1
+}
+```
+### Response. 정상적으로 준비되면
+```json
+{
+    "method": "matchserver.control_game",
+    "status": "OK",
+    "identify": null,
+    "responseId": 3,
+    "data": {}
+}
+```
+
+## 2. 토너먼트 게임 진행
+빠른 대전이랑 똑같음
+토너먼트 승리시 아래처럼 결승 진출자에게는 response가 있음
+```json
+{
+    "method": "tournament_first_win",
+    "status": "OK",
+    "message": "첫번째 토너먼트에서 승리하였습니다.",
+    "data": null,
+    "type": "send_message"
+}
+```
+다른 사람 경기가 끝날떄까지 대기
+끝나면 결승 진출자 둘에게 아래와 같은 응답이 감
+```json
+{
+  "method": "tournament_final_matched", 
+  "status": "OK", 
+  "message": "토너먼트 결승 매칭이 완료되었습니다.", 
+  "data": {"players": [4, 5]}, 
+  "type": "send_message"
+}
+```
+
+## 3. 토너먼트 결승전 진행
+빠른 대전이랑 똑같음
+
+
+---
+
+## ETC-0. Online 버튼 누르기
 ### Request. get_user_state로 유저의 상태를 확인한다.
 ```json
 {
