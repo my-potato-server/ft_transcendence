@@ -373,6 +373,7 @@ window.logout = function() {
 	sessionStorage.removeItem('auth');
     sessionStorage.removeItem('token');
 	sessionStorage.removeItem('userinfo');
+	sessionStorage.removeItem('sigh');
 	// this.root.onlineSocket.close();
 	const psocket = myApp.root.onlineSocket;
 	psocket.close();
