@@ -82,6 +82,22 @@ export default function OnlinePong(canvasID) {
                     updateGameScreen(data.data.realtime_gamestate);
                 }
                 break;
+            case 'tournament_matched':
+                if (data.status === 'OK') {
+                    console.log('Matched with opponent', data.data);
+                    make_screen_tournamnet('game_start', data.data);
+                }
+            case 'tournament_first_win':
+                if (data.status === 'OK') {
+                    console.log('You are the first game winner', data.data);
+                    make_screen_tournamnet('first_win', data.data);
+                }
+            case 'tournament_final_matched':
+                if (data.status === 'OK') {
+                    console.log('Matched with opponent', data.data);
+                    make_screen_tournamnet('second_game_start', data.data);
+                    //make_screen -> 화면에 대진표 그리기
+                }
             case 'error':
                 console.error(data.message);
                 break;
@@ -167,6 +183,13 @@ export default function OnlinePong(canvasID) {
         });
     }
 
+    async function tournament() {
+        const tournamentResponse = await sendCommandToServer('matchserver.tournament_add_queue', {user_id: userinfo.user.id});
+        if (tournamentResponse.status === 'OK') {
+            console.log('Tournament added to queue successfully', tournamentResponse);
+        }
+        console.log(tournamentResponse);
+    }
 
     async function ready_to_start_game() {
         console.log('Ready to start game');
@@ -356,24 +379,29 @@ export default function OnlinePong(canvasID) {
 
         // 랜덤한 수 하나 생성
         const randomNum = Math.floor(Math.random() * 100);
-        // '방 생성' 버튼 클릭 확인
+        // // '방 생성' 버튼 클릭 확인
+        // if (x >= 10 && x <= 110 && y >= canvas.height - 50 && y <= canvas.height - 10) {
+        //     createAndEnterRoom('temproom' + randomNum, null); // 여기서 '새 방'은 예시 이름, 실제 구현에서는 사용자 입력을 받아야 함
+        //     clearCanvasWhite();
+        // }
+
+        // 토너먼트
         if (x >= 10 && x <= 110 && y >= canvas.height - 50 && y <= canvas.height - 10) {
-            createAndEnterRoom('temproom' + randomNum, null); // 여기서 '새 방'은 예시 이름, 실제 구현에서는 사용자 입력을 받아야 함
+            tournament();
             clearCanvasWhite();
         }
+        // // '방 입장' 버튼 클릭 확인
+        // if (x >= 120 && x <= 220 && y >= canvas.height - 50 && y <= canvas.height - 10) {
+        //     listRooms().then(rooms => {
+        //         // 방 목록 처리 로직 (예: 팝업 또는 새 UI 영역에 방 목록 표시)
+        //         console.log('방 목록:', rooms);
+        //     });
+        // }
 
-        // '방 입장' 버튼 클릭 확인
-        if (x >= 120 && x <= 220 && y >= canvas.height - 50 && y <= canvas.height - 10) {
-            listRooms().then(rooms => {
-                // 방 목록 처리 로직 (예: 팝업 또는 새 UI 영역에 방 목록 표시)
-                console.log('방 목록:', rooms);
-            });
-        }
-
-        // '방 삭제' 버튼 클릭 확인
-        if (x >= 230 && x <= 330 && y >= canvas.height - 50 && y <= canvas.height - 10) {
-            deleteRoom();
-        }
+        // // '방 삭제' 버튼 클릭 확인
+        // if (x >= 230 && x <= 330 && y >= canvas.height - 50 && y <= canvas.height - 10) {
+        //     deleteRoom();
+        // }
 
         // '빠른 대전' 버튼 클릭 확인
         if (x >= 340 && x <= 440 && y >= canvas.height - 50 && y <= canvas.height - 10) {
