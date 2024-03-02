@@ -1,8 +1,10 @@
 import random
 import asyncio
 from asgiref.sync import sync_to_async
+from channels.db import database_sync_to_async
 
-from game.utils import create_match_history, create_tournament_id
+from account.models import User
+from game.models import Tournament, MatchHistory, UserMatchRecord
 
 
 class PongGameAsync:
@@ -132,13 +134,15 @@ class PongGameAsync:
             await asyncio.sleep(1/self.fps)  # 초당 60회 업데이트, 일시정지 상태에서도 체크
 
         # 결과 저장
-        await sync_to_async(self.save_result)()
+        self.save_result()
         if self.is_tournament and self.level != 2:
-            await MiniGameServer().result_tournament_game(
+            print("call result_tournament_game")
+            MiniGameServer().result_tournament_game(
                 game_id=self.game_id,
                 winner_id=self.left_user_id if self.winner == 1 else self.right_user_id,
             )
         else:
+            print("call remove_game")
             MiniGameServer().remove_game(self.game_id)  # 게임 종료 후 게임 삭제
         
     def start_game(self):
@@ -147,12 +151,47 @@ class PongGameAsync:
         # 여기에서 start_game 메서드는 game_loop의 완료를 기다리지 않고 바로 리턴함
 
 
+    @database_sync_to_async
     def save_result(self):
-        create_match_history(
-            self.tournament_id if not None else create_tournament_id(),
-            self.level if not None else 2,
-            self.left_user_id if self.winner == 1 else self.right_user_id,
-            self.right_user_id if self.winner == 1 else self.left_user_id,
-            self.left_player_score if self.winner == 1 else self.right_player_score,
-            self.right_player_score if self.winner == 1 else self.left_player_score,
+        tournament_id = Tournament.objects.create().id
+        tournament_id = self.tournament_id if self.tournament_id is not None else tournament_id
+        win_user_id = self.left_user_id if self.winner == 1 else self.right_user_id
+        lose_user_id = self.right_user_id if self.winner == 1 else self.left_user_id
+        winner_score = self.left_player_score if self.winner == 1 else self.right_player_score
+        loser_score = self.right_player_score if self.winner == 1 else self.left_player_score
+
+        tournament = Tournament.objects.get(id=tournament_id)
+        win_user = User.objects.filter(id=win_user_id).first()
+        lose_user = User.objects.filter(id=lose_user_id).first() if lose_user_id is not None else None
+
+        tournament.users.add(win_user)
+        win_user_record, _ = UserMatchRecord.objects.get_or_create(user=win_user)
+        win_user_record.win_count += 1
+        win_user_record.save()
+        if lose_user:
+            tournament.users.add(lose_user)
+            lose_user_record, _ = UserMatchRecord.objects.get_or_create(user=lose_user)
+            lose_user_record.lose_count += 1
+            lose_user_record.save()
+
+        match_history = MatchHistory.objects.create(
+            tournament=tournament,
+            level=self.level,
+            win_user=win_user,
+            winner_score=winner_score,
+            lose_user=lose_user,
+            loser_score=loser_score,
+            is_walkover=False,
         )
+
+
+        # match_history = create_match_history(
+        #     self.tournament_id if self.tournament_id is not None else tournament_id,
+        #     self.level if self.level is not None else 2,
+        #     self.left_user_id if self.winner == 1 else self.right_user_id,
+        #     self.right_user_id if self.winner == 1 else self.left_user_id,
+        #     self.left_player_score if self.winner == 1 else self.right_player_score,
+        #     self.right_player_score if self.winner == 1 else self.left_player_score,
+        # )
+        print("save_result", match_history.id)
+        return match_history

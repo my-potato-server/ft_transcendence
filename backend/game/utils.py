@@ -30,7 +30,7 @@ def create_match_history(
 		lose_user_record.lose_count += 1
 		lose_user_record.save()
 
-	MatchHistory.objects.create(
+	match_history = MatchHistory.objects.create(
 		tournament=tournament,
 		level=level,
 		win_user=win_user,
@@ -39,3 +39,4 @@ def create_match_history(
 		loser_score=loser_score,
 		is_walkover=is_walkover,
 	)
+	return match_history
