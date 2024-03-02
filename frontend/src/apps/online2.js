@@ -6,7 +6,7 @@ export default function OnlinePong(canvasID) {
     let gamestatus = false;
     const canvas = document.getElementById(canvasID);
     const ctx = canvas.getContext('2d');
-
+    let player = '';
     const userinfo = JSON.parse(sessionStorage.getItem("userinfo"));
 
     async function initializeWebSocket() {
@@ -116,8 +116,10 @@ export default function OnlinePong(canvasID) {
             ctx.fillStyle = 'black';
             ctx.font = '48px serif';
             //토너먼트 대진표 작성. data.first_team, data.second_team으로 구분
+            ctx.fillText("First Team", canvas.width / 2 - 300, canvas.height / 2);
             ctx.fillText(data.first_team[0], canvas.width / 2 - 100, canvas.height / 2);
             ctx.fillText(data.first_team[1], canvas.width / 2 + 100, canvas.height / 2);
+            ctx.fillText("Second Team", canvas.width / 2 - 300, canvas.height / 2 - 200);
             ctx.fillText(data.second_team[0], canvas.width / 2 - 100, canvas.height / 2 - 200);
             ctx.fillText(data.second_team[1], canvas.width / 2 + 100, canvas.height / 2 - 200);
         }
@@ -131,6 +133,7 @@ export default function OnlinePong(canvasID) {
             ctx.fillStyle = 'black';
             ctx.font = '48px serif';
             //토너먼트 대진표 작성. data.first_team, data.second_team으로 구분
+            ctx.fillText("Last Team", canvas.width / 2 - 300, canvas.height / 2);
             ctx.fillText(data.players, canvas.width / 2 - 100, canvas.height / 2);
         }
     }
@@ -251,40 +254,40 @@ export default function OnlinePong(canvasID) {
         console.log(quickmatchResponse);
     }
 
-    async function createAndEnterRoom(roomName, password = null) {
-        const createRoomResponse = await sendCommandToServer('matchserver.create_room', {name: roomName, password});
-        if (createRoomResponse.status === 'OK') {
-            console.log('Room created successfully', createRoomResponse);
-            // const enterRoomResponse = await sendCommandToServer('matchserver.enter_room', {room_id: createRoomResponse.data.room_id});
-            // if (enterRoomResponse.status === 'OK') {
-            //     console.log('Entered the room successfully', enterRoomResponse);
-            // } else {
-            //     console.error('Error entering room', enterRoomResponse);
-            // }
-            check_room_info();
-        } else {
-            console.error('Error creating room', createRoomResponse);
-        }
-    }
+    // async function createAndEnterRoom(roomName, password = null) {
+    //     const createRoomResponse = await sendCommandToServer('matchserver.create_room', {name: roomName, password});
+    //     if (createRoomResponse.status === 'OK') {
+    //         console.log('Room created successfully', createRoomResponse);
+    //         // const enterRoomResponse = await sendCommandToServer('matchserver.enter_room', {room_id: createRoomResponse.data.room_id});
+    //         // if (enterRoomResponse.status === 'OK') {
+    //         //     console.log('Entered the room successfully', enterRoomResponse);
+    //         // } else {
+    //         //     console.error('Error entering room', enterRoomResponse);
+    //         // }
+    //         check_room_info();
+    //     } else {
+    //         console.error('Error creating room', createRoomResponse);
+    //     }
+    // }
 
-    async function listRooms() {
-        const listRoomResponse = await sendCommandToServer('matchserver.list_room');
-        if (listRoomResponse.status === 'OK') {
-            console.log('List of rooms:', listRoomResponse.data);
-            // 로비 목록을 사용자에게 표시
-        } else {
-            console.error('Error listing rooms', listRoomResponse);
-        }
-    }
+    // async function listRooms() {
+    //     const listRoomResponse = await sendCommandToServer('matchserver.list_room');
+    //     if (listRoomResponse.status === 'OK') {
+    //         console.log('List of rooms:', listRoomResponse.data);
+    //         // 로비 목록을 사용자에게 표시
+    //     } else {
+    //         console.error('Error listing rooms', listRoomResponse);
+    //     }
+    // }
 
-    async function deleteRoom() {
-        const deleteRoomResponse = await sendCommandToServer('matchserver.delete_room');
-        if (deleteRoomResponse.status === 'OK') {
-            console.log('Room deleted successfully', deleteRoomResponse);
-        } else {
-            console.error('Error deleting room', deleteRoomResponse);
-        }
-    }
+    // async function deleteRoom() {
+    //     const deleteRoomResponse = await sendCommandToServer('matchserver.delete_room');
+    //     if (deleteRoomResponse.status === 'OK') {
+    //         console.log('Room deleted successfully', deleteRoomResponse);
+    //     } else {
+    //         console.error('Error deleting room', deleteRoomResponse);
+    //     }
+    // }
 
 
     // Define functions to create, enter, list, and delete rooms
@@ -407,7 +410,7 @@ export default function OnlinePong(canvasID) {
         const y = event.clientY - rect.top;
 
         // 랜덤한 수 하나 생성
-        const randomNum = Math.floor(Math.random() * 100);
+        // const randomNum = Math.floor(Math.random() * 100);
         // // '방 생성' 버튼 클릭 확인
         // if (x >= 10 && x <= 110 && y >= canvas.height - 50 && y <= canvas.height - 10) {
         //     createAndEnterRoom('temproom' + randomNum, null); // 여기서 '새 방'은 예시 이름, 실제 구현에서는 사용자 입력을 받아야 함
@@ -580,8 +583,15 @@ export default function OnlinePong(canvasID) {
         ctx.fillText(ball.scoreLeft, canvas.width / 2 - 30, 50);
         ctx.fillText(ball.scoreRight, canvas.width / 2 + 30, 50);
 
-        ctx.fillStyle = 'WHITE';
+        if (player === 'left') {
+            ctx.fillStyle = 'RED';
+        } else
+            ctx.fillStyle = 'WHITE';
         ctx.fillRect(0, leftPaddleY, paddleWidth, paddleHeight);
+        if (player === 'right') {
+            ctx.fillStyle = 'RED';
+        } else
+            ctx.fillStyle = 'WHITE';
         ctx.fillRect(canvas.width - paddleWidth, rightPaddleY, paddleWidth, paddleHeight);
     }
 
@@ -589,6 +599,11 @@ export default function OnlinePong(canvasID) {
         // console.log(data);
         if (data.game_over) {
             gamestatus = false;
+        }
+        if (data.left_id === userinfo.user.id) {
+            player = 'left';
+        } else if (data.right_id === userinfo.user.id) {
+            player = 'right';
         }
         leftPaddleY = data.left_paddle_y;
         rightPaddleY = data.right_paddle_y;
