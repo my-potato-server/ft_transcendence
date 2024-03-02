@@ -65,22 +65,22 @@ class PongGameAsync:
             self.reset_ball()
         # 위쪽 벽에 부딪히면
         elif self.ball_position['y'] <= 0:
-            self.ball_velocity['y'] = -self.ball_velocity['y']
-            self.ball_velocity['x'] *= 1.05
+            self.ball_velocity['y'] = -self.ball_velocity['y'] + random.random() * 1.5
+            self.ball_velocity['x'] *= 1.25
         # 아래쪽 벽에 부딪히면
         elif self.ball_position['y'] >= 720:
-            self.ball_velocity['y'] = -self.ball_velocity['y']
-            self.ball_velocity['x'] *= 1.05
+            self.ball_velocity['y'] = -self.ball_velocity['y'] - random.random() * 1.5
+            self.ball_velocity['x'] *= 1.25
         # 왼쪽 패들에 부딪히면
         elif self.ball_position['x'] <= 20 and self.left_paddle_y - 40 <= self.ball_position[
             'y'] <= self.left_paddle_y + 40:
-            self.ball_velocity['x'] = -self.ball_velocity['x']
-            self.ball_velocity['x'] *= 1.05
+            self.ball_velocity['x'] = -self.ball_velocity['x'] + random.random() * 1.5
+            self.ball_velocity['x'] *= 1.25
         # 오른쪽 패들에 부딪히면
         elif self.ball_position['x'] >= 1260 and self.right_paddle_y - 40 <= self.ball_position[
             'y'] <= self.right_paddle_y + 40:
-            self.ball_velocity['x'] = -self.ball_velocity['x']
-            self.ball_velocity['x'] *= 1.05
+            self.ball_velocity['x'] = -self.ball_velocity['x'] - random.random() * 1.5
+            self.ball_velocity['x'] *= 1.25
 
     def update_paddle(self, playernum, direction):
         if playernum == 1:
@@ -98,7 +98,7 @@ class PongGameAsync:
 
     def reset_ball(self):
         self.ball_position = {'x': 640, 'y': 360}
-        self.ball_velocity = {'x': random.choice([-3, 3]), 'y': random.choice([-1, 1])}
+        self.ball_velocity = {'x': random.choice([-3, 3]), 'y': random.choice([-4, 4])}
 
     def get_game_state(self):
         return {

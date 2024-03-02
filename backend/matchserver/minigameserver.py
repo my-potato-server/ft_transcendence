@@ -15,7 +15,7 @@ class MiniGameServer:
             cls._instance = super().__new__(cls)
             cls._instance.initialize()
         return cls._instance
- 
+
     # game = {players:user_id_list, gametype:"pong", instance = gameInstance }
     def initialize(self):
         self.user_id2game_id = {}
@@ -230,10 +230,10 @@ class MiniGameServer:
 
         # 패들 움직임
         if cmd=="movepaddle_up":
-            gameInstance.update_paddle(playernum, -8)
+            gameInstance.update_paddle(playernum, -16)
             return {'status': 'OK', 'message': 'paddle moved'}
         if cmd=="movepaddle_down":
-            gameInstance.update_paddle(playernum, 8)
+            gameInstance.update_paddle(playernum, 16)
             return {'status': 'OK', 'message': 'paddle moved'}
 
         # 게임 정보 요청
