@@ -127,6 +127,7 @@ class PongGameAsync:
         await asyncio.sleep(1) # 약간의 딜레이
         while not self.game_over:
             self.move_ball()
+            self.check_game_over()
             await MiniGameServer().broadcast_realtime_gamestate2user(self.game_id)
             await asyncio.sleep(1/self.fps)  # 초당 60회 업데이트, 일시정지 상태에서도 체크
         # 결과 저장
