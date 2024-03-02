@@ -230,6 +230,10 @@ export default class Game extends Component {
             console.log("stop game and closing websocket");
             this.currentGame.close(); // 웹소켓 연결 종료
         }
+        if (this.currentGame && this.currentGame.stop) {
+            console.log("stop game");
+            this.currentGame.stop(); // 현재 게임 종료 로직
+        }
         this.hideCanvas(); // 캔버스를 숨기는 함수를 호출합니다.
     }
     // showCanvas() {

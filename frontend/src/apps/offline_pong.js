@@ -199,5 +199,5 @@ export default function OfflinePong(canvasID) {
     // 게임 시작
     gameLoop();
 
-    return stop;
+    return {stop: stop};
 }

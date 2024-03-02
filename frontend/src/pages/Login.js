@@ -396,10 +396,6 @@ export function LoginButton() {
 					<div class="card">
 						<div class="card-body">
 							<button class="btn btn-lg btn-info btn-block mt-2 ftLogin" type="button" style="opacity: 1;">42 Login</button>
-							<button class="btn btn-lg btn-info btn-block mt-2 templogin" type="button">templogin</button>
-							<button class="btn btn-lg btn-info btn-block mt-2 templogin2" type="button">templogin2</button>
-							<button class="btn btn-lg btn-info btn-block mt-2 templogin3" type="button">templogin3</button>
-							<button class="btn btn-lg btn-info btn-block mt-2 templogin4" type="button">templogin4</button>
 						</div>
 					</div>
 				</div>
@@ -407,6 +403,28 @@ export function LoginButton() {
 		</div>
     `;
 }
+
+// export function LoginButton() {
+//     console.log("Login");
+// 	injectLoginStyles();
+//     return `
+// 		<div class="container mt-5">
+// 			<div class="row justify-content-center">
+// 				<div class="col-md-6">
+// 					<div class="card">
+// 						<div class="card-body">
+// 							<button class="btn btn-lg btn-info btn-block mt-2 ftLogin" type="button" style="opacity: 1;">42 Login</button>
+// 							<button class="btn btn-lg btn-info btn-block mt-2 templogin" type="button">templogin</button>
+// 							<button class="btn btn-lg btn-info btn-block mt-2 templogin2" type="button">templogin2</button>
+// 							<button class="btn btn-lg btn-info btn-block mt-2 templogin3" type="button">templogin3</button>
+// 							<button class="btn btn-lg btn-info btn-block mt-2 templogin4" type="button">templogin4</button>
+// 						</div>
+// 					</div>
+// 				</div>
+// 			</div>
+// 		</div>
+//     `;
+// }
 
 // db login exist ver
 // export function LoginButton() {

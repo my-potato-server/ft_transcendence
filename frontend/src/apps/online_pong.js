@@ -164,6 +164,7 @@ export default function OnlinePong(canvasID) {
         socket.close();
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         document.removeEventListener('keydown', keydownHandler);
+        document.removeEventListener('keypress', keypressHandler);
     }
 
     return stop;

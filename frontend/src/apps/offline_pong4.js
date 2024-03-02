@@ -166,5 +166,13 @@ export default function OfflinePong(canvasID) {
         animationFrameId = requestAnimationFrame(gameLoop);
     }
 
+    function stop() {
+        cancelAnimationFrame(animationFrameId);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        document.removeEventListener('keydown', keydownHandler);
+        document.removeEventListener('keyup', keyupHandler);
+    }
     gameLoop();
+
+    return {stop: stop};
 }

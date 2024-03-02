@@ -624,6 +624,31 @@ export default function OnlinePong(canvasID) {
             socket = null;
             console.log("WebSocket connection closed.");
         }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        document.removeEventListener('click', clickEventHandler);
+        document.removeEventListener('keydown', (event) => {
+            if (gamestatus === true) {
+                if (event.key === 'ArrowUp') {
+                    event.preventDefault();
+                    const data = { method : 'matchserver.control_game', parameters: { cmd: "game_control", move: 'up'}}
+                    socket.send(JSON.stringify(data));
+                }
+                if (event.key === 'ArrowDown') {
+                    event.preventDefault();
+                    const data = { method : 'matchserver.control_game', parameters: { cmd: "game_control", move: 'down'}}
+                    socket.send(JSON.stringify(data));
+                }
+            }
+        });
+        document.removeEventListener('keypress', (event) => {
+            if (gamestatus === true) {
+                if (event.key === 'q') {
+                    event.preventDefault();
+                    const data = { method : 'matchserver.control_game', parameters: { cmd: "pause"}}
+                    socket.send(JSON.stringify(data));
+                }
+            }
+        });
     }
 
     drawUI(); // UI 초기 그리기
