@@ -31,6 +31,10 @@ export default function ProfileButton() {
 	const info = sessionStorage.getItem('userinfo');
 	const image = JSON.parse(info).user.image;
 	const name = JSON.parse(info).user.nickname;
+	let sigh = sessionStorage.getItem('sigh');
+	if (sigh === null) {
+		sigh = "nothing special";
+	}
 	console.log("image", image);
 	return `
 	<div class="profile-container">
@@ -43,6 +47,9 @@ export default function ProfileButton() {
 			<div class="user-info">
 				<div class="name">
 					<button type="buttonb" class="Nickname">${name}</button>
+				</div>
+				<div class="sigh">
+					<button type="buttonc" class="Sigh">${sigh}</button>
 				</div>
 				<div class="level">Level: 999</div>
 				<div class="joined">가입일: 2022.07.04. D+583</div>

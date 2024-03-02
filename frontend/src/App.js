@@ -26,6 +26,10 @@ class app {
 			this.root.token = '';
 			this.root.userinfo = {};
 		}
+		this.sigh = sessionStorage.getItem('sigh');
+		if (this.sigh === undefined) {
+			this.sigh = 'nothing special';
+		}
 		this.Login = new Login(ObjectForDI);
 		this.render();
 		this.setDummyEvent();
@@ -370,7 +374,8 @@ window.logout = function() {
     sessionStorage.removeItem('token');
 	sessionStorage.removeItem('userinfo');
 	// this.root.onlineSocket.close();
-	myApp.root.onlineSocket.close();
+	const psocket = myApp.root.onlineSocket;
+	psocket.close();
     myApp.setState({ locate: '/' });
 };
 

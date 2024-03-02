@@ -20,6 +20,7 @@ export default class Profile extends Component {
         //     console.log("Profile", this.infos);
         // }
         this.infos = this.$parent.userinfo;
+        this.sigh = this.$parent.sigh;
         console.log("Profile", this.infos);
     }
 
@@ -58,6 +59,10 @@ export default class Profile extends Component {
         const Nickname = this.$parent.querySelector('button[class="Nickname"]');
         if (Nickname) {
             Nickname.onclick = () => this.nickname();
+        }
+        const Sigh = this.$parent.querySelector('button[class="Sigh"]');
+        if (Sigh) {
+            Sigh.onclick = () => this.Sighf();
         }
     }
 
@@ -400,6 +405,17 @@ export default class Profile extends Component {
         if (navPhoto) {
             navPhoto.querySelector('img').src = imageUrl; // 변경된 이미지 URL로 프로필 사진 업데이트
         }
+    }
+
+    Sighf() {
+        const newSigh = prompt("현재 심정은?");
+        this.$parent.sigh = newSigh;
+        this.sigh = newSigh;
+        const SighButton = document.querySelector('.Sigh');
+        if (SighButton) {
+            SighButton.textContent = newSigh; // 변경된 심정으로 텍스트 업데이트
+        }
+        sessionStorage.setItem('sigh', newSigh);
     }
 }
 
