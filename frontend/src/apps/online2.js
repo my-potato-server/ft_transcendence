@@ -1,6 +1,6 @@
 // src/apps/online2.js
 
-let socket; // Define WebSocket globally within the function scope
+let socket = null; // Define WebSocket globally within the function scope
 
 export default function OnlinePong(canvasID) {
     let gamestatus = false;
@@ -11,16 +11,15 @@ export default function OnlinePong(canvasID) {
 
     async function initializeWebSocket() {
         // 웹소켓이 이미 존재하고 열려있는 상태인지 확인
-        if (socket !== undefined) {
-            console.log("Using existing WebSocket connection");
-            await check_room_info();
-            return; // 기존 연결을 재사용
-        }
-    
+        // if (socket !== undefined) {
+        //     console.log("Using existing WebSocket connection");
+        //     socket.close();
+        //     // await check_room_info();
+        // } else {
         // 새로운 웹소켓 연결 생성
-        socket = new WebSocket("wss://localhost/ws/?token=" + sessionStorage.getItem("token"));
-        console.log("Connecting to WebSocket", "wss://localhost/ws/?token=" + sessionStorage.getItem("token"));
-    
+            socket = new WebSocket("wss://localhost/ws/?token=" + sessionStorage.getItem("token"));
+            console.log("Connecting to WebSocket", "wss://localhost/ws/?token=" + sessionStorage.getItem("token"));
+        // }
         // socket.onopen = function(e) {
         //     console.log("Connection established");
         //     // 초기 설정 수행
@@ -41,6 +40,7 @@ export default function OnlinePong(canvasID) {
         socket.onmessage = function(event) {
             const data = JSON.parse(event.data);
             // 서버로부터 받은 메시지 처리
+            // console.log('Received message:', data);
             handleServerMessage(data);
         };
     
@@ -58,10 +58,10 @@ export default function OnlinePong(canvasID) {
         // };
         await check_room_info();
     }
-    initializeWebSocket();
     function handleServerMessage(data) {
         switch(data.method) { // 수정: data.type -> data.method
             case 'gameState':
+                // console.log('sulm');
                 updateGameState(data.gameState);
                 break;
             case 'client.room_was_update':
@@ -158,11 +158,11 @@ export default function OnlinePong(canvasID) {
             socket.send(JSON.stringify(message));
         
             // 응답 타임아웃 처리
-            const timeout = 10000; // 10초 후 타임아웃
-            setTimeout(() => {
-                socket.removeEventListener('message', responseHandler);
-                reject(new Error('응답 시간 초과')); // 타임아웃 에러 처리
-            }, timeout);
+            // const timeout = 10000; // 10초 후 타임아웃
+            // setTimeout(() => {
+            //     socket.removeEventListener('message', responseHandler);
+            //     reject(new Error('응답 시간 초과')); // 타임아웃 에러 처리
+            // }, timeout);
 
         });
     }
@@ -185,6 +185,7 @@ export default function OnlinePong(canvasID) {
         const startGame = await sendCommandToServer('matchserver.control_game', {cmd : "ready_to_play"});
         if (startGame.status === 'OK') {
             console.log('Game started', startGame);
+            check_room_info();
         } else {
             console.error('Error starting game', startGame);
         }
@@ -305,8 +306,6 @@ export default function OnlinePong(canvasID) {
         ctx.fillStyle = '#FFF';
         ctx.fillText('빠른 대전', 350, canvas.height - 20);
     }
-
-    drawUI(); // UI 초기 그리기
 
     // canvas.addEventListener('click', function(event) {
     //     // 캔버스 내 클릭 위치 확인
@@ -523,10 +522,20 @@ export default function OnlinePong(canvasID) {
         winner = data.winner;
         draw();
     };
+
+    function closeWebSocket() {
+        if (socket) {
+            socket.close();
+            socket = null;
+            console.log("WebSocket connection closed.");
+        }
+    }
+
+    drawUI(); // UI 초기 그리기
+    initializeWebSocket();
+
+    return {
+        close: closeWebSocket, // 게임 종료시 호출할 수 있는 메서드 추가
+        // 여기에 OnlinePong에서 사용할 수 있는 다른 메서드나 프로퍼티를 추가할 수 있습니다.
+    };
 }
-
-
-// Functions to manage rooms: createAndEnterRoom, listRooms, deleteRoom can be defined here
-// Since these functions would interact with the server, they would use the sendCommandToServer function
-// For brevity, their implementations are not repeated here, but you would define them similarly
-// to how they were outlined in the previous messages, making sure they're accessible within the OnlinePong function scope.
