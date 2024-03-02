@@ -72,52 +72,24 @@ def get_user_state(user_id):
 @database_sync_to_async
 def create_room(user_id, name, password=None):
     #입력 유효성 검사.================
-    ###
     ### 이름은 string 이여야 함
     if not isinstance(name, str):
         return {'status': 'Error', 'message': "Name must be a string"}
-        # raise ValueError("Name must be a string")
-    ###
     ### 비밀번호는 없거나 문자열이여야 함
     if password is not None and not isinstance(password, str):
         return {'status': 'Error', 'message': "Password must be a string or None"}
-        # raise ValueError("Password must be a string or None")
-    ###
     ### 방 이름 길이 검사
     if len(name) > 100:
         return {'status': 'Error', 'message': "Name length must be less than or equal to 100 characters"}
-    ###
     ### 방 이름 허용문자 검사
     if not re.match("^[A-Za-z0-9 -]+$", name):
         return {'status': 'Error', 'message': "Name must only contain letters, numbers, spaces, or hyphens"}
-    ###
     ### 방 비밀번호 길이 검사
     if password and len(password) > 100:
         return {'status': 'Error', 'message': "Password length must be less than or equal to 100 characters"}
-    ###
-    ### 비밀번호 복잡성 검사 추가
-    # if password:
-    #     min_length = 8
-    #     if len(password) < min_length:
-    #         return {'status': 'Error', 'message': f"Password must be at least {min_length} characters long"}
-    #     if not re.search("[A-Z]", password):
-    #         return {'status': 'Error', 'message': "Password must contain at least one uppercase letter"}
-    #     if not re.search("[a-z]", password):
-    #         return {'status': 'Error', 'message': "Password must contain at least one lowercase letter"}
-    #     if not re.search("[0-9]", password):
-    #         return {'status': 'Error', 'message': "Password must contain at least one digit"}
-    #     if not re.search("[!@#$%^&*(),.?\":{}|<>]", password):
-    #         return {'status': 'Error', 'message': "Password must contain at least one special character"}
-
-    ###
-    ### 유저는 방에 참여하고 있으면 안 됨.
 
     try:
-        # User 인스턴스를 가져옵니다.
         chief = User.objects.get(id=user_id)
-
-        # 유저가 이미 방에 참여하고 있는지 확인
-        # user_room = UserRoom.objects.filter(user=chief, room__isnull=False).first()
         user_room = UserRoom.objects.get(user=chief)
         if user_room.room:
             return {'status': 'Error', 'message': 'User is already in a room.'}
@@ -135,49 +107,6 @@ def create_room(user_id, name, password=None):
     except Exception as e:
         print(f'Failed to create room: {e}')
         return {'status': 'Error', 'message': 'Failed to create room due to an integrity error.'}
-
-    # try:
-    #     # 유저가 이미 방에 참여하고 있는지 확인
-    #     user_room = UserRoom.objects.filter(user__id=user_id, room__isnull=False).first()
-    #     if user_room:
-    #         # 이미 다른 방에 참여 중이면 에러 메시지 반환
-    #         return {'status': 'Error', 'message': 'User is already in a room.'}
-        
-    #         # 데이터베이스 접근하여 방 생성 =====
-    #     room, created = Room.objects.get_or_create(name=name, cheif=user_id, defaults={'password': password})
-    #     if created:
-    #         return {'status': 'OK', 'message': 'Room created', 'room_id': room.id}
-    #     else:
-    #         return {'status': 'Error', 'message': 'Room already exists'}
-    # except Exception as e:
-    #     # 예외 정보 로깅
-    #     print(f'Failed to create room: {e}')
-    #     return {'status': 'Error', 'message': 'Failed to create room due to an integrity error.'}
-
-    # except :
-        # return {'status': 'Error', 'message': 'Failed to create room due to an integrity error.'}   
-
-        # # 유저가 참여하고 있지 않은 경우, 새로운 방 생성
-        # with transaction.atomic():
-        #     room = Room.objects.create(name=room_name)
-        #     UserRoom.objects.update_or_create(
-        #         user_id=user_id,
-        #         defaults={'room': room}
-        #     )
-        #     return {'status': 'OK', 'message': 'Room created successfully.', 'room_id': room.id}
-
-
-
-
-# @database_sync_to_async
-# def delete_room(room_id):
-#     # 데이터베이스 접근하여 방 삭제 =====
-#     try:
-#         room = Room.objects.get(id=room_id)
-#         room.delete()
-#         return {'status': 'OK', 'message': 'Room deleted', 'room_id': room_id}
-#     except Room.DoesNotExist:
-#         return {'status': 'Error', 'message': 'Room does not exist'}
 
 
 # 방 조회하기
@@ -287,13 +216,6 @@ def info_room(room_id, user_id=None):
         return {'status': 'Error', 'message': 'Room does not exist'}
 
 
-
-# async def undefined_method(self, **kwargs):
-#     # 방 삭제 로직 구현
-#     # 예시 응답
-#     return {'status': 'OK', 'message': 'Room deleted', 'room_id': kwargs.get('room_id')}
-
-
 # 클라이언트에게 웹 소켓으로 메시지를 보냄.
 async def send_message_to(user_session_identify, method, status, identify, data=None):
     channel_layer = get_channel_layer()
@@ -394,7 +316,11 @@ async def send_message_to_room_that_room_was_updated(room_id):
 
 
 async def fast_match_add_queue(user_id):
-    return MiniGameServer().add_fast_match(user_id)
+    return MiniGameServer().add_fast_match(user_id, "pong")
+    pass
+
+async def tournament_match_add_queue(user_id):
+    return MiniGameServer().add_tournament_match(user_id, "tournament")
     pass
 
 

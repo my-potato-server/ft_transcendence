@@ -6,7 +6,7 @@ from game.utils import create_match_history, create_tournament_id
 
 
 class PongGameAsync:
-    def __init__(self, game_id, result_callback = None, callback_indetify = None):
+    def __init__(self, game_id, is_tournament=False, tournament_id=None, level=None):
         self.ball_position = {'x': 640, 'y': 360}
         self.ball_velocity = {'x': random.choice([-3, 3]), 'y': random.choice([-4, 4])}
         self.left_paddle_y = 360
@@ -14,6 +14,10 @@ class PongGameAsync:
         self.left_player_score = 0  # 플레이어 1의 점수
         self.right_player_score = 0  # 플레이어 2의 점수
         self.winner = None  # 승자
+
+        self.is_tournament = is_tournament
+        self.tournament_id = tournament_id
+        self.level = level
 
         self.left_user_id = None
         self.right_user_id = None
@@ -23,8 +27,6 @@ class PongGameAsync:
         self.ready = [False, False]
         self.fps = 60
         self.game_id = game_id
-        self.result_callback = result_callback
-        self.callback_indetify = callback_indetify
         self.start_game()
 
 
@@ -36,12 +38,12 @@ class PongGameAsync:
 
         player = playerindex - 1
         print("ready play", player)
-        if player < 0 or 1 < player :
+        if player < 0 or 1 < player:
             return "player index out of range error"
         else :
             self.ready[player] = True
             print("ready play true", player)
-        if all(self.ready) == True :
+        if all(self.ready) == True:
             self.game_start = True
             print("game start")
         pass
@@ -131,7 +133,13 @@ class PongGameAsync:
 
         # 결과 저장
         await sync_to_async(self.save_result)()
-        MiniGameServer().remove_game(self.game_id, self.winner)  # 게임 종료 후 게임 삭제
+        if self.is_tournament and self.level != 2:
+            await MiniGameServer().result_tournament_game(
+                game_id=self.game_id,
+                winner_id=self.left_user_id if self.winner == 1 else self.right_user_id,
+            )
+        else:
+            MiniGameServer().remove_game(self.game_id)  # 게임 종료 후 게임 삭제
         
     def start_game(self):
         loop = asyncio.get_event_loop()
@@ -140,12 +148,11 @@ class PongGameAsync:
 
 
     def save_result(self):
-        tournament_id = create_tournament_id()
         create_match_history(
-            tournament_id,
-            2,
+            self.tournament_id if not None else create_tournament_id(),
+            self.level if not None else 2,
             self.left_user_id if self.winner == 1 else self.right_user_id,
-            self.right_user_id if self.winner == 2 else self.left_user_id,
+            self.right_user_id if self.winner == 1 else self.left_user_id,
             self.left_player_score if self.winner == 1 else self.right_player_score,
-            self.right_player_score if self.winner == 2 else self.left_player_score,
+            self.right_player_score if self.winner == 1 else self.left_player_score,
         )

@@ -57,35 +57,21 @@ def get_user_id(user_room):
 
 class MyConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        # self.user = self.scope["user"]
-        # if self.user.is_authenticated:
-
-
-        # ws://yourserver/ws/?token=<your_token>
-        # 쿼리 파라미터에서 토큰을 가져옵니다.
+        # ws://yourserver/ws/?token=<your_token> 쿼리 파라미터에서 토큰을 가져옵니다.
         query_string = self.scope['query_string'].decode()
         params = parse_qs(query_string)
         token = params.get('token', [None])[0]
-
-        # User = get_user_model()
         user_id = decode_jwt_get_user_id(token)
         try:
             self.user = await database_sync_to_async(User.objects.get)(id=user_id)
         except:
             await self.close()
 
-
         if True:#임시조치
             await self.accept()
             self.user_room, created  = await capis.connect_to_server(self.user)  # 사용자 인스턴스 전달
-            # if not created : 
-            #     print("cannot make user_room row in table, close connection")
-            #     await self.close()
-            #     return
-            # self.user_session_identify = f'user_session_{self.user_room.user.id}'
             self.user_id = user_id
             self.user_session_identify = f'user_session_{self.user_id}'
-            # self.user_id = self.user_room.user.id
 
             await self.channel_layer.group_add(     # 사용자별 그룹에 가입
                 self.user_session_identify,
@@ -164,24 +150,6 @@ class MyConsumer(AsyncWebsocketConsumer):
     async def send_message(self, event):
         print("send_event : " , event)
         await self.send(text_data=json.dumps(event))
-        # # event 딕셔너리에서 메시지 데이터 추출
-        # method = event['method']
-        # status = event['status']
-        # identify = event['identify']
-        # data = event['data']
-
-        # event -= {'type': 'send_message'}
-
-        # # 클라이언트에게 메시지 전송
-        # await self.send(text_data=json.dumps({
-        #     'method': method,
-        #     'status': status,
-        #     'identify': identify,
-        #     'data': data
-        # }))
-        
-        # 클라이언트에게 메시지 전송
-        # await self.send(text_data=json.dumps(event))
 
 
 
