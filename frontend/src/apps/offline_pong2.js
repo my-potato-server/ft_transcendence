@@ -1,4 +1,4 @@
-// src/apps/offline_pong.js
+// src/apps/offline_pong2.js
 
 export default function OfflinePong(canvasID) {
 
