@@ -36,14 +36,15 @@ def disconnect_to_server(user, password=None):
     
     # 사용자의 UserRoom 레코드를 찾아 left_at 필드에 현재 시각 기록
     try:
-        tournament_match_add_queue(user.user_id)
-        tournament_match_remove_queue(user.user_id)
+        async_to_sync(fast_match_remove_queue)(user.id)
+        async_to_sync(tournament_match_remove_queue)(user.id)
         user_room = UserRoom.objects.get(user=user)
         user_room.left_at = timezone.now()
         user_room.delete()
         # user_room.save()
-    except UserRoom.DoesNotExist:
+    except Exception as e:
         # 사용자에 대한 UserRoom 레코드가 없는 경우, 필요한 처리 수행
+        print("error to disconnect", e)
         pass
     pass
 

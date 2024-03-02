@@ -302,11 +302,11 @@ export default function OnlinePong(canvasID) {
         if (roomcheck.status === 'OK') {
             console.log('roomcheck', roomcheck);
             if (roomcheck.data.room_id !== null) {
-                const roomInfo = await sendCommandToServer('matchserver.info_room', {room_id: roomcheck.data.room_id});
-                if (roomInfo.status === 'OK') {
-                    console.log('roomInfo', roomInfo);
-                    drawRoomInfo(roomInfo.data);
-                }
+                // const roomInfo = await sendCommandToServer('matchserver.info_room', {room_id: roomcheck.data.room_id});
+                // if (roomInfo.status === 'OK') {
+                //     console.log('roomInfo', roomInfo);
+                //     drawRoomInfo(roomInfo.data);
+                // }
             }
         }
     }

@@ -70,13 +70,15 @@ class MiniGameServer:
 
     def add_fast_match(self, user_id, gametype):
         print("now on add_fast_match")
-        self.fast_match_pool[gametype].append(user_id)
+        if user_id not in self.fast_match_pool[gametype]:
+            self.fast_match_pool[gametype].append(user_id)
         if len(self.fast_match_pool[gametype]) >= 2:
             asyncio.create_task(self.fast_matching(gametype))
         return {'status': "OK", 'message' : "user added at fast match queue"}
 
     def remove_fast_match(self, user_id, gametype):
     # print("now on add_fast_match")
+        print("remove fast match")
         try : self.fast_match_pool[gametype].remove(user_id)
         except : print("fail to remove")
 

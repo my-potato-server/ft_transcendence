@@ -116,6 +116,8 @@ class PongGameAsync:
             "game_over": self.game_over,
             "game_start": self.game_start,
             'winner': self.winner,
+            "left_user_id": self.left_user_id,
+            "right_user_id": self.right_user_id,
         }
 
     def check_game_over(self):
